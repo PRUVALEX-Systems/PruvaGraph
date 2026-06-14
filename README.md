@@ -11,7 +11,7 @@ Built for developers who love Claude Code — but not the bill.
 
 > Made by [PRUVALEX](https://pruvalex.eu) — open source, MIT licensed.
 
-[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-pruvalex.pruvagraph-007ACC?style=flat-square&logo=visualstudiocode)]([https://marketplace.visualstudio.com/items?itemName=pruvalex.pruvagraph](https://marketplace.visualstudio.com/items?itemName=PRUVALEX.pruvalex-pruvagraph))
+[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-pruvalex.pruvagraph-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=PRUVALEX.pruvalex-pruvagraph)
 [![PyPI](https://img.shields.io/badge/PyPI-pruvagraph-blue?style=flat-square&logo=pypi)](https://pypi.org/project/pruvagraph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-00E57A?style=flat-square)](./LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/PRUVALEX-Systems/pruvagraph/ci.yml?style=flat-square&label=CI)](https://github.com/PRUVALEX-Systems/pruvagraph/actions)
