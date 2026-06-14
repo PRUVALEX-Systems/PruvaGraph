@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────
+# PRUVALEX PruvaGraph — .vscodeignore
+# Excludes everything NOT needed in the .vsix
+# ─────────────────────────────────────────────
+
+# Python backend (installed separately via pip)
+python/**
+
+# Build scripts & CI
+scripts/**
+.github/**
+
+# Already-built VSIX files
+dist/**
+
+# Dev tooling
+node_modules/**
+.vscode/**
+.vscode-test/**
+*.test.js
+*.spec.js
+
+# Source control
+.git/**
+.gitignore
+
+# Docs (keep README + CHANGELOG in vsix)
+*.md
+!README.md
+!CHANGELOG.md
+
+# OS noise
+.DS_Store
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini

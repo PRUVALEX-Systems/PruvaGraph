@@ -1,0 +1,239 @@
+{
+  "name": "pruvalex-pruvagraph",
+  "displayName": "PRUVALEX PruvaGraph",
+  "description": "🧠 Codebase knowledge graphs. 99%+ LLM cost reduction. Free local analysis — zero API cost for code.",
+  "version": "1.0.1",
+  "publisher": "pruvalex",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pruvalex/pruvagraph"
+  },
+  "homepage": "https://pruvalex.eu",
+  "bugs": {
+    "url": "https://github.com/pruvalex/pruvagraph/issues"
+  },
+  "galleryBanner": {
+    "color": "#0D1117",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "knowledge-graph",
+    "llm-cost-reduction",
+    "cost-optimization",
+    "code-analysis",
+    "mcp",
+    "claude",
+    "cursor",
+    "graph",
+    "tree-sitter",
+    "free",
+    "ai",
+    "token-reduction",
+    "pruvalex",
+    "pruvagraph",
+    "codebase-graph"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pruvagraph.build",
+        "title": "Build Graph",
+        "category": "PruvaGraph",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "pruvagraph.query",
+        "title": "Query Graph",
+        "category": "PruvaGraph",
+        "icon": "$(search)"
+      },
+      {
+        "command": "pruvagraph.costReport",
+        "title": "Cost Report",
+        "category": "PruvaGraph",
+        "icon": "$(graph-line)"
+      },
+      {
+        "command": "pruvagraph.installMCP",
+        "title": "Install MCP (Claude Code / Cursor)",
+        "category": "PruvaGraph",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "pruvagraph.openViz",
+        "title": "Open Visualizer",
+        "category": "PruvaGraph",
+        "icon": "$(browser)"
+      },
+      {
+        "command": "pruvagraph.clearCache",
+        "title": "Clear Cache",
+        "category": "PruvaGraph",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "pruvagraph.watchToggle",
+        "title": "Toggle Watch Mode",
+        "category": "PruvaGraph",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "pruvagraph.findCallers",
+        "title": "Find Callers of Symbol",
+        "category": "PruvaGraph"
+      },
+      {
+        "command": "pruvagraph.getDeps",
+        "title": "Get Dependencies of Symbol",
+        "category": "PruvaGraph"
+      },
+      {
+        "command": "pruvagraph.installPkg",
+        "title": "Install Python Package (pip install pruvagraph)",
+        "category": "PruvaGraph",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "pruvagraph.dryRun",
+        "title": "Dry Run — Estimate Cost Savings",
+        "category": "PruvaGraph",
+        "icon": "$(beaker)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pruvagraph-sidebar",
+          "title": "PRUVALEX PruvaGraph",
+          "icon": "$(graph)"
+        }
+      ]
+    },
+    "views": {
+      "pruvagraph-sidebar": [
+        {
+          "type": "webview",
+          "id": "pruvagraphPanel",
+          "name": "Graph Explorer"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "pruvagraph.findCallers",
+          "group": "pruvagraph@1",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "pruvagraph.getDeps",
+          "group": "pruvagraph@2",
+          "when": "editorHasSelection"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "pruvagraph.build",
+          "when": "view == pruvagraphPanel",
+          "group": "navigation@1"
+        },
+        {
+          "command": "pruvagraph.query",
+          "when": "view == pruvagraphPanel",
+          "group": "navigation@2"
+        },
+        {
+          "command": "pruvagraph.openViz",
+          "when": "view == pruvagraphPanel",
+          "group": "navigation@3"
+        }
+      ],
+      "commandPalette": [
+        { "command": "pruvagraph.build" },
+        { "command": "pruvagraph.query" },
+        { "command": "pruvagraph.costReport" },
+        { "command": "pruvagraph.installMCP" },
+        { "command": "pruvagraph.openViz" },
+        { "command": "pruvagraph.clearCache" },
+        { "command": "pruvagraph.watchToggle" },
+        { "command": "pruvagraph.installPkg" },
+        { "command": "pruvagraph.dryRun" }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "pruvagraph.build",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g"
+      },
+      {
+        "command": "pruvagraph.query",
+        "key": "ctrl+shift+/",
+        "mac": "cmd+shift+/"
+      }
+    ],
+    "configuration": {
+      "title": "PRUVALEX PruvaGraph",
+      "properties": {
+        "pruvagraph.watchMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-rebuild graph when files change."
+        },
+        "pruvagraph.dedupThreshold": {
+          "type": "number",
+          "default": 0.82,
+          "minimum": 0.5,
+          "maximum": 1.0,
+          "description": "Jaccard similarity threshold for semantic dedup (0.5–1.0). Lower = more aggressive grouping."
+        },
+        "pruvagraph.llmBackend": {
+          "type": "string",
+          "default": "none",
+          "enum": ["none", "claude", "gemini", "openai", "ollama"],
+          "enumDescriptions": [
+            "Free — code only (tree-sitter + regex). No API key needed.",
+            "Claude Haiku for docs/PDFs. Needs ANTHROPIC_API_KEY.",
+            "Gemini Flash for docs/PDFs. Needs GEMINI_API_KEY.",
+            "GPT-4o-mini for docs/PDFs. Needs OPENAI_API_KEY.",
+            "Local Ollama — free, needs Ollama running."
+          ],
+          "description": "LLM backend for doc/PDF extraction (code files are always free)."
+        },
+        "pruvagraph.excludePatterns": {
+          "type": "array",
+          "default": ["node_modules", ".git", "dist", "build", "__pycache__", "pruvagraph-out"],
+          "description": "Directories/patterns to exclude from analysis."
+        },
+        "pruvagraph.maxFilesPerBatch": {
+          "type": "number",
+          "default": 50,
+          "description": "Max files to process in one batch (for progress reporting)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "vsce package --no-dependencies",
+    "publish": "vsce publish --no-dependencies",
+    "publish-ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^2.24.0",
+    "ovsx": "^0.9.0"
+  }
+}
