@@ -57,7 +57,7 @@ Repository = "https://github.com/pruvalex/pruvagraph"
 Issues = "https://github.com/pruvalex/pruvagraph/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["packages/core/pruvagraph"]
+packages = ["pruvagraph"]
 
 [tool.ruff]
 line-length = 100

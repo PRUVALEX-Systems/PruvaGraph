@@ -25,18 +25,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install minimal dependencies
+        working-directory: python
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
       - name: Lint (ruff)
-        run: ruff check packages/core/pruvagraph/ --select E,F,I
+        working-directory: python
+        run: ruff check . --select E,F,I
 
       - name: Import check
+        working-directory: python
         run: |
           python -c "import pruvagraph; print(pruvagraph.__version__)"
 
       - name: Run tests
+        working-directory: python
         run: |
           python -m pytest tests/ -v --tb=short 2>/dev/null || echo "No tests yet — skipping"
 
@@ -57,14 +61,13 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Package extension
-        working-directory: packages/vscode
         run: vsce package --no-dependencies --out pruvalex-pruvagraph-${{ github.sha }}.vsix
 
       - name: Upload .vsix artifact
         uses: actions/upload-artifact@v4
         with:
           name: pruvagraph-vsix-${{ github.sha }}
-          path: packages/vscode/*.vsix
+          path: "*.vsix"
           retention-days: 14
 
   # ── Release: publish to PyPI + VS Code Marketplace ─────────
@@ -83,6 +86,7 @@ jobs:
           python-version: "3.12"
 
       - name: Build Python wheel
+        working-directory: python
         run: |
           pip install build
           python -m build
@@ -90,6 +94,7 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          packages-dir: python/dist/
           password: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Set up Node.js
@@ -98,7 +103,6 @@ jobs:
           node-version: '20'
 
       - name: Publish to VS Code Marketplace
-        working-directory: packages/vscode
         run: |
           npm install -g @vscode/vsce ovsx
           vsce publish --no-dependencies --pat ${{ secrets.VSCE_PAT }}
