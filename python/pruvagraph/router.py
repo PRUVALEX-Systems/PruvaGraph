@@ -32,12 +32,10 @@ from __future__ import annotations
 
 import json
 import subprocess
-import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Tier definitions
@@ -190,8 +188,8 @@ class CascadeRouter:
             "format": "json",
         }
         try:
-            import urllib.request
             import urllib.error
+            import urllib.request
 
             data = json.dumps(payload).encode()
             req  = urllib.request.Request(
@@ -210,8 +208,9 @@ class CascadeRouter:
     ) -> dict[str, Any]:
         """Extract via Google Gemini (requires GOOGLE_API_KEY env var)."""
         try:
-            import google.generativeai as genai  # pip install google-generativeai
             import os
+
+            import google.generativeai as genai  # pip install google-generativeai
 
             genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
             model = genai.GenerativeModel(
@@ -234,8 +233,9 @@ class CascadeRouter:
     ) -> dict[str, Any]:
         """Extract via OpenAI (requires OPENAI_API_KEY env var)."""
         try:
-            from openai import OpenAI
             import os
+
+            from openai import OpenAI
 
             client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
             prompt = _build_prompt(file_contents) + "\n\nOutput JSON only."
@@ -258,6 +258,7 @@ class CascadeRouter:
         """Extract via Claude with prompt caching (uses prompt_cache.py)."""
         try:
             import anthropic
+
             from pruvagraph.prompt_cache import call_with_cache
 
             client = anthropic.Anthropic()

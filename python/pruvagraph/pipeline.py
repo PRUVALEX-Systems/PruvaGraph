@@ -14,17 +14,16 @@ Order of operations for each file:
 from __future__ import annotations
 
 import asyncio
-import json
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from pruvagraph.batch import BatchPlan, pack_batches
 from pruvagraph.cache import GraphCache
-from pruvagraph.cost import CostTracker, CostReport
+from pruvagraph.cost import CostReport, CostTracker
 from pruvagraph.dedup import deduplicate, project_extraction
-from pruvagraph.batch import pack_batches, BatchPlan
 
 _OUT_DIR = "pruvagraph-out"
 
@@ -126,14 +125,14 @@ async def build_graph_async(root: str | Path, **kwargs: Any) -> BuildResult:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def _run_pipeline(cfg: BuildConfig) -> BuildResult:
-    from pruvagraph.detect import collect_files, FileType
-    from pruvagraph.extract import extract_code_file
-    from pruvagraph.llm_extract import extract_doc_batch
+    from pruvagraph.analyze import analyze
     from pruvagraph.build import build_nx_graph
     from pruvagraph.cluster import cluster_leiden
-    from pruvagraph.analyze import analyze
-    from pruvagraph.report import render_report
+    from pruvagraph.detect import FileType, collect_files
     from pruvagraph.export import export_graph
+    from pruvagraph.extract import extract_code_file
+    from pruvagraph.llm_extract import extract_doc_batch
+    from pruvagraph.report import render_report
 
     start = time.time()
     out_dir = cfg.root / cfg.out_dir

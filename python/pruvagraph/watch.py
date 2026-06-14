@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any
 
 
 def watch_and_update(root: Path, out_dir: str = "pruvagraph-out") -> None:
@@ -31,8 +30,8 @@ def watch_and_update(root: Path, out_dir: str = "pruvagraph-out") -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def _watch_watchdog(root: Path, out_dir: str) -> None:
+    from watchdog.events import FileSystemEvent, FileSystemEventHandler
     from watchdog.observers import Observer
-    from watchdog.events import FileSystemEventHandler, FileSystemEvent
 
     _debounce: dict[str, float] = {}
     DEBOUNCE_SECONDS = 2.0

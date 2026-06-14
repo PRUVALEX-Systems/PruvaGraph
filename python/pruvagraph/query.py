@@ -9,14 +9,11 @@ Two modes:
 """
 from __future__ import annotations
 
-import json
 import math
 import re
-from pathlib import Path
 from typing import Any
 
 import networkx as nx
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Public API
@@ -258,7 +255,9 @@ def _call_anthropic(system: str, prompt: str) -> str:
 
 
 def _call_gemini(system: str, prompt: str) -> str:
-    import httpx, os, json
+    import os
+
+    import httpx
     key = os.environ.get("GEMINI_API_KEY", "")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}"
     body = {"contents": [{"parts": [{"text": f"{system}\n\n{prompt}"}]}]}
@@ -268,7 +267,9 @@ def _call_gemini(system: str, prompt: str) -> str:
 
 
 def _call_openai(system: str, prompt: str) -> str:
-    import httpx, os, json
+    import os
+
+    import httpx
     key = os.environ.get("OPENAI_API_KEY", "")
     url = "https://api.openai.com/v1/chat/completions"
     body = {
@@ -285,7 +286,7 @@ def _call_openai(system: str, prompt: str) -> str:
 
 
 def _call_ollama(system: str, prompt: str) -> str:
-    import httpx, json
+    import httpx
     url = "http://localhost:11434/api/generate"
     body = {"model": "llama3.2", "prompt": f"{system}\n\n{prompt}", "stream": False}
     resp = httpx.post(url, json=body, timeout=60)

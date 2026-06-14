@@ -12,7 +12,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Pricing (per 1M tokens)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -99,7 +98,7 @@ def _count_tokens(text: str) -> int:
 
 def _estimate_raw_tokens(root: Path) -> int:
     """Walk the repo and count all tokens in code/doc files."""
-    from pruvagraph.detect import collect_files, FileType
+    from pruvagraph.detect import FileType, collect_files
 
     total = 0
     try:

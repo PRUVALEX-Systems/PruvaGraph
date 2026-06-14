@@ -18,17 +18,15 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
+from typing import Any
 
 import click
 
 try:
     from rich.console import Console
     from rich.table import Table
-    from rich.panel import Panel
-    from rich import print as rprint
     _RICH = True
 except ImportError:
     _RICH = False
@@ -105,7 +103,7 @@ def main(
         click.echo(f"Error: '{root}' does not exist.", err=True)
         sys.exit(1)
 
-    from pruvagraph.pipeline import build_graph, BudgetExceededError
+    from pruvagraph.pipeline import BudgetExceededError, build_graph
 
     try:
         result = build_graph(
@@ -144,8 +142,9 @@ def query(question: str, root: str, backend: str) -> None:
         click.echo("No graph found. Run 'pruvagraph .' first.", err=True)
         sys.exit(1)
 
-    from pruvagraph.query import query as _query
     import networkx as nx
+
+    from pruvagraph.query import query as _query
     G = nx.node_link_graph(json.loads(graph_json.read_text()))
     answer = _query(G, question, backend=backend)
     click.echo(answer)
@@ -239,7 +238,7 @@ def hook_install(root: str) -> None:
 
     script = """#!/bin/bash
 # PruvaGraph auto-update hook
-CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -E '\\.(ts|tsx|js|jsx|py|go|rs|kt|swift|dart|vue|md|pdf)$')
+CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -E '\\.(ts|tsx|js|jsx|py|go|rs|kt|swift|dart|vue|md|pdf)$')  # noqa: E501
 if [ -n "$CHANGED" ]; then
   pruvagraph . --update --no-viz 2>&1 | tail -5
 fi

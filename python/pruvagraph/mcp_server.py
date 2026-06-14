@@ -43,8 +43,12 @@ try:
     from mcp.server.models import InitializationOptions
     from mcp.server.stdio import stdio_server
     from mcp.types import (
-        Tool, TextContent, CallToolRequest, CallToolResult,
-        ListToolsRequest, ListToolsResult,
+        CallToolRequest,
+        CallToolResult,
+        ListToolsRequest,
+        ListToolsResult,
+        TextContent,
+        Tool,
     )
     _MCP_AVAILABLE = True
 except ImportError:
@@ -246,7 +250,10 @@ def _get_cost_report(root: str = ".") -> str:
 TOOLS: list[dict[str, Any]] = [
     {
         "name": "query_graph",
-        "description": "Query the PruvaGraph knowledge graph in natural language. Ask about connections, modules, classes, functions.",
+        "description": (
+            "Query the PruvaGraph knowledge graph in natural language. "
+            "Ask about connections, modules, classes, functions."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -475,8 +482,8 @@ Output: `pruvagraph-out/`
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import asyncio
     import argparse
+    import asyncio
 
     parser = argparse.ArgumentParser(description="PruvaGraph MCP Server")
     parser.add_argument("--http", action="store_true", help="Run HTTP server instead of stdio")

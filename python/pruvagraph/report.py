@@ -8,6 +8,7 @@ queries (much smaller than the raw graph.json).
 from __future__ import annotations
 
 from typing import Any
+
 import networkx as nx
 
 
@@ -23,8 +24,8 @@ def render_report(G: nx.MultiDiGraph, analysis: dict[str, Any]) -> str:
     # ── Overview ─────────────────────────────────────────────────────────────
     lines.append("## Overview")
     lines.append("")
-    lines.append(f"| Metric | Value |")
-    lines.append(f"|--------|-------|")
+    lines.append("| Metric | Value |")
+    lines.append("|--------|-------|")
     lines.append(f"| Total nodes | {analysis['total_nodes']:,} |")
     lines.append(f"| Total edges | {analysis['total_edges']:,} |")
     lines.append(f"| Communities | {len(analysis.get('communities', {}))} |")
@@ -36,7 +37,7 @@ def render_report(G: nx.MultiDiGraph, analysis: dict[str, Any]) -> str:
     by_lang = analysis.get("by_lang", {})
     if by_lang:
         top_langs = sorted(by_lang.items(), key=lambda x: -x[1])[:5]
-        lines.append(f"| Top languages | {', '.join(l for l, _ in top_langs)} |")
+        lines.append(f"| Top languages | {', '.join(lang for lang, _ in top_langs)} |")
 
     lines.append("")
 

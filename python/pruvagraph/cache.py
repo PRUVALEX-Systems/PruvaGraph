@@ -18,10 +18,9 @@ import hashlib
 import json
 import os
 import tempfile
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
-
 
 _OUT_DIR = os.environ.get("PRUVAGRAPH_OUT", "pruvagraph-out")
 
@@ -222,7 +221,7 @@ def compute_ast_hash(path: Path) -> str | None:
     produce a different one.
     """
     try:
-        from pruvagraph.extract.treesitter import get_parser, ast_fingerprint
+        from pruvagraph.extract.treesitter import ast_fingerprint, get_parser
         parser = get_parser(path.suffix)
         if parser is None:
             return None

@@ -16,7 +16,6 @@ from typing import Any
 
 import networkx as nx
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Main entry points
 # ──────────────────────────────────────────────────────────────────────────────
@@ -164,7 +163,7 @@ def _render_html(G: nx.MultiDiGraph) -> str:
     --green: #34D399; --cyan: #22D3EE; --yellow: #F59E0B;
   }}
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace; }}
+  body {{ background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace; }}  # noqa: E501
   #header {{ padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
              display: flex; align-items: center; gap: 12px; }}
   #header h1 {{ font-size: 16px; font-weight: 700; color: var(--accent); }}
@@ -214,7 +213,7 @@ def _render_html(G: nx.MultiDiGraph) -> str:
   </div>
 </div>
 <div id="legend">
-  {''.join(f'<div class="legend-item"><div class="dot" style="background:{c}"></div><span>{t}</span></div>' for t, c in _COLOR_MAP.items() if t != 'unknown')}
+  {''.join('<div class="legend-item"><div class="dot" style="background:' + c + '"></div><span>' + t + '</span></div>' for t, c in _COLOR_MAP.items() if t != 'unknown')}
 </div>
 <div id="canvas-wrap">
   <svg id="svg"><g id="root"></g></svg>
@@ -323,7 +322,6 @@ def _write_obsidian(G: nx.MultiDiGraph, out_folder: Path) -> None:
     cards: list[dict] = []
     edges_out: list[dict] = []
 
-    x, y = 0, 0
     grid = 300
 
     for i, (node_id, data) in enumerate(G.nodes(data=True)):

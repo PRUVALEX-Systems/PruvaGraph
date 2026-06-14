@@ -23,9 +23,7 @@ Usage:
 """
 from __future__ import annotations
 
-import hashlib
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -266,7 +264,7 @@ class BatchCachedExtractor:
     def summary(self) -> str:
         s = self.stats
         lines = [
-            f"Prompt cache stats:",
+            "Prompt cache stats:",
             f"  Cache writes: {s.cache_write_tokens:,} tokens  (${s.write_cost_usd:.5f})",
             f"  Cache reads:  {s.cache_read_tokens:,} tokens  (${s.read_cost_usd:.5f})",
             f"  Uncached:     {s.uncached_tokens:,} tokens  (${s.uncached_cost_usd:.5f})",

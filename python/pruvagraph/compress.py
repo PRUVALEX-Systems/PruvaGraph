@@ -32,7 +32,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Public API
 # ──────────────────────────────────────────────────────────────────────────────
@@ -334,7 +333,7 @@ def _strip_pdf_headers_footers(text: str) -> str:
     noise = {line for line, count in line_counts.items()
              if count >= 3 and len(line.strip()) < 80 and line.strip()}
 
-    filtered = [l for l in lines if l not in noise]
+    filtered = [line for line in lines if line not in noise]
     return "\n".join(filtered)
 
 

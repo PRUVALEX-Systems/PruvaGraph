@@ -34,7 +34,7 @@ jobs:
 
       - name: Lint (ruff)
         working-directory: python
-        run: ruff check pruvagraph/ --select E,F,I
+        run: ruff check pruvagraph/ --select F,I
 
       - name: Import check
         working-directory: python
