@@ -1,15 +1,23 @@
 """
-PruvaGraph main pipeline — orchestrates all cost-reduction layers.
+PruvaGraph main pipeline — 16-layer LLM cost reduction.
 
-Order of operations for each file:
-  1. Cache check (SHA-256 + stat) → if hit, skip entirely.
-  2. Semantic MinHash dedup → group similar files, extract only representative.
-  3. Route by file type:
-       code files   → tree-sitter local extraction (zero cost)
-       docs/images  → LLM extraction (batched, cascaded)
-  4. Build graph from all extractions.
-  5. Run Leiden community detection.
-  6. Generate report + cost analytics.
+Build-time layers (per file):
+  L1:  SHA-256 cache           → cache hit = 0 cost
+  L2:  MinHash semantic dedup  → 40 files → 1 call
+  L3:  Batch packing           → N files per call
+  L4:  LLM cascade             → Ollama → Gemini → Claude
+  L5:  Prompt compression      → -50-80% tokens
+  N4:  Generated file detector → skip lock files, minified, generated
+  N5:  Config parser           → package.json, docker-compose free
+  N1:  Free doc parser         → PDF/MD/DOCX free without LLM
+  N2:  Docstring extractor     → free summaries from comments
+
+Post-graph layers:
+  L6:  Leiden clustering       → community detection
+  N8:  Community meta-summary  → pre-computed query context
+  A3:  Hierarchy chain         → 4-level summary pyramid
+  A4:  Type harvester          → type signatures enrichment
+  A1:  Embedding index         → semantic search vector index
 """
 from __future__ import annotations
 
@@ -141,8 +149,16 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     cache = GraphCache(cfg.root)
     tracker = CostTracker(backend=cfg.backend, total_files=0)
 
-    # ── Stage 1: Discover files ──────────────────────────────────────────────
-    all_files = collect_files(cfg.root)
+    # ── Stage 1: Discover files (N4: skip generated) ──────────────────────────
+    from pruvagraph.generated_detector import filter_files
+    all_files_raw = collect_files(cfg.root)
+    all_paths     = [f for f, _ in all_files_raw]
+    kept_paths, skipped_gen = filter_files(all_paths)
+    kept_set   = set(str(p) for p in kept_paths)
+    all_files  = [(f, t) for f, t in all_files_raw if str(f) in kept_set]
+    if skipped_gen:
+        _rich_print(f"  [N4] Skipped {skipped_gen} generated files", "yellow")
+
     code_files = [f for f, t in all_files if t == FileType.CODE]
     doc_files  = [f for f, t in all_files if t in (FileType.DOCUMENT, FileType.PAPER, FileType.IMAGE)]
     tracker._total_files = len(all_files)
@@ -193,12 +209,15 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     _rich_print(f"  ✓ {len(code_files) - len(code_to_extract)} cached, "
                 f"{len(code_to_extract)} extracted", "green")
 
-    # ── Stage 3: Doc/image files via LLM (with dedup + batching) ────────────
-    _rich_print(f"[Stage 2/5] LLM extraction — {len(doc_files)} doc/image files...", "cyan")
+    # ── Stage 3: Doc/image files — N5 config parser + N1 free doc parser ─────
+    _rich_print(f"[Stage 2/5] Doc extraction — {len(doc_files)} files...", "cyan")
+    from pruvagraph.config_parser import is_parseable_config, parse_config_file
+    from pruvagraph.free_doc_parser import is_parseable_doc, parse_free
 
-    # Cache check for docs too
     docs_to_extract: list[Path] = []
+    free_parsed = 0
     for path in doc_files:
+        # Cache check first
         if not cfg.force:
             cached = cache.check(path)
             if cached:
@@ -206,7 +225,27 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                 all_extractions.append({"nodes": cached.nodes, "edges": cached.edges,
                                         "source_file": str(path)})
                 continue
+
+        # N5: Structural config parser (package.json, docker-compose, etc.)
+        if is_parseable_config(path):
+            result = parse_config_file(path)
+            if result and result.get("nodes"):
+                all_extractions.append(result)
+                free_parsed += 1
+                continue
+
+        # N1: Free document parser (PDF, DOCX, Markdown)
+        if is_parseable_doc(path):
+            result = parse_free(path)
+            if result and result.get("nodes"):
+                all_extractions.append(result)
+                free_parsed += 1
+                continue
+
         docs_to_extract.append(path)
+
+    if free_parsed:
+        _rich_print(f"  [N1/N5] {free_parsed} files parsed free (no LLM)", "green")
 
     if docs_to_extract:
         # Semantic dedup
@@ -301,15 +340,53 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     _rich_print("[Stage 3/5] Building graph...", "cyan")
     G = build_nx_graph(all_extractions)
 
+    # N2: Enrich node summaries from docstrings (free)
+    _enrich_with_docstrings(G, cfg.root)
+
     _rich_print("[Stage 4/5] Community detection (Leiden)...", "cyan")
     G = cluster_leiden(G)
 
-    _rich_print("[Stage 5/5] Analyzing + exporting...", "cyan")
+    _rich_print("[Stage 5/5] Analyzing + enriching + exporting...", "cyan")
     analysis = analyze(G)
     report_md = render_report(G, analysis)
-
     (out_dir / "GRAPH_REPORT.md").write_text(report_md, encoding="utf-8")
+
+    # N8: Community meta-summaries (pre-compute for faster queries)
+    try:
+        from pruvagraph.community_summary import generate_community_summaries
+        generate_community_summaries(G, out_dir, backend="none")
+        _rich_print("  [N8] Community summaries generated", "green")
+    except Exception:
+        pass
+
+    # A3: Hierarchical summary chain
+    try:
+        from pruvagraph.hierarchy import build_summary_hierarchy
+        build_summary_hierarchy(G, out_dir, backend="none")
+        _rich_print("  [A3] Hierarchy built (repo → community → module → symbol)", "green")
+    except Exception:
+        pass
+
+    # A4: Type system enrichment
+    try:
+        from pruvagraph.type_harvester import harvest_and_enrich
+        enriched = harvest_and_enrich(cfg.root, G)
+        if enriched:
+            _rich_print(f"  [A4] Type-enriched {enriched} nodes", "green")
+    except Exception:
+        pass
+
+    # Export graph AFTER enrichment
     graph_json_path, html_path = export_graph(G, out_dir, no_viz=cfg.no_viz)
+
+    # A1: Build embedding index (after export so graph.json is final)
+    try:
+        from pruvagraph.embedder import build_embedding_index, is_available
+        if is_available():
+            if build_embedding_index(graph_json_path, out_dir):
+                _rich_print("  [A1] Embedding index built for semantic search", "green")
+    except Exception:
+        pass
 
     # Cost report
     cost_report = tracker.finalize(out_dir)
@@ -347,6 +424,45 @@ def _empty_result(cfg: BuildConfig, cost_report: CostReport) -> BuildResult:
         node_count=0, edge_count=0, community_count=0,
         duration_seconds=0.0,
     )
+
+
+def _enrich_with_docstrings(G: "nx.MultiDiGraph", root: Path) -> None:  # noqa: F821
+    """
+    N2 — Enrich node summaries using docstring extraction (free).
+    Patches nodes that have empty/generic summaries with docstring text.
+    """
+    try:
+        from pruvagraph.docstring_extractor import extract_docstrings, get_lang
+    except ImportError:
+        return
+
+    # Build file → lang map for nodes in graph
+    file_langs: dict[str, str | None] = {}
+    for _, data in G.nodes(data=True):
+        f = data.get("file")
+        if f and f not in file_langs:
+            from pathlib import Path as _Path
+            file_langs[f] = get_lang(_Path(f))
+
+    enriched = 0
+    for filepath, lang in file_langs.items():
+        if not lang:
+            continue
+        try:
+            docstrings = extract_docstrings(Path(filepath), lang)
+        except Exception:
+            continue
+
+        for node_id, doc_summary in docstrings.items():
+            if node_id in G:
+                existing = G.nodes[node_id].get("summary", "")
+                # Only overwrite if existing summary is empty or generic
+                if not existing or len(existing) < 20:
+                    G.nodes[node_id]["summary"] = doc_summary
+                    enriched += 1
+
+    if enriched:
+        _rich_print(f"  [N2] Docstring-enriched {enriched} nodes (free)", "green")
 
 
 def _rich_print(msg: str, color: str = "white") -> None:

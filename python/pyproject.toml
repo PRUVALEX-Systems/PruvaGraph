@@ -42,11 +42,14 @@ tree-sitter = [
     "tree-sitter-rust>=0.23",
     "tree-sitter-java>=0.23",
 ]
-graph = ["leidenalg>=0.10", "igraph>=0.11"]
-office = ["python-docx>=1.1", "openpyxl>=3.1"]
-ollama = ["ollama>=0.3"]
-all = ["pruvagraph[tree-sitter,graph,office,ollama]"]
-dev = ["pytest>=8", "pytest-asyncio>=0.23", "ruff>=0.4", "mypy>=1.10"]
+graph   = ["leidenalg>=0.10", "igraph>=0.11"]
+office  = ["python-docx>=1.1", "openpyxl>=3.1"]
+ollama  = ["ollama>=0.3"]
+docs    = ["pypdf>=4.0", "python-docx>=1.1"]          # N1 free doc parser
+embed   = ["fastembed>=0.2", "numpy>=1.26"]            # A1 local embeddings
+yaml    = ["pyyaml>=6.0"]                              # N5 YAML config parser
+all     = ["pruvagraph[tree-sitter,graph,office,ollama,docs,embed,yaml]"]
+dev     = ["pytest>=8", "pytest-asyncio>=0.23", "ruff>=0.4", "mypy>=1.10"]
 
 [project.scripts]
 pruvagraph = "pruvagraph.cli:main"

@@ -1,16 +1,19 @@
 """
 Query engine — natural language search over the knowledge graph.
 
-Two modes:
-  1. LOCAL (default / free): keyword + BM25-style scoring over node labels
-     and summaries. Zero LLM cost, sub-millisecond latency.
-  2. LLM-assisted (opt-in): sends compressed graph context to an LLM for
-     richer answers. Costs tokens but gives prose explanations.
+5-tier cost reduction pipeline:
+  Tier 0: QueryCache          → instant answer if seen before  (free)
+  Tier 1: DeterministicRouter → 60–70% answered algorithmically (free)
+  Tier 2: LocalEmbeddings     → semantic seed finding           (free)
+  Tier 3: SubgraphExtractor   → 98% token reduction for LLM    (free)
+  Tier 4: HierarchyRouter     → right context level for LLM    (free)
+  Tier 5: LLM call            → last resort, tiny subgraph only (cost)
 """
 from __future__ import annotations
 
 import math
 import re
+from pathlib import Path
 from typing import Any
 
 import networkx as nx
@@ -25,30 +28,94 @@ def query(
     question: str,
     backend: str = "none",
     top_k: int = 10,
+    out_dir: Path | None = None,
 ) -> str:
     """
-    Answer *question* about the graph.
+    Answer *question* about the graph using a 5-tier cost pipeline.
 
-    Args:
-        G:        The knowledge graph.
-        question: Natural language question.
-        backend:  "none" (free keyword search) or any LLM backend name.
-        top_k:    Max number of nodes to include in the answer.
-
-    Returns:
-        A formatted string answer.
+    Tier 0: Cache            — free, instant
+    Tier 1: Deterministic    — free, algorithmic (callers, deps, stats…)
+    Tier 2: Keyword + Embed  — free, BM25 + vector seeds
+    Tier 3: Subgraph extract — free, 98% token reduction
+    Tier 4: Hierarchy level  — free, picks right context scope
+    Tier 5: LLM call         — only if all above fail, tiny context
     """
-    matches = _keyword_search(G, question, top_k=top_k)
+    # ── Tier 0: Query Cache ────────────────────────────────────────────────────
+    if out_dir:
+        try:
+            from pruvagraph.query_cache import QueryCache
+            cache = QueryCache(out_dir)
+            cached = cache.get(question)
+            if cached:
+                return f"💾 [cached]\n{cached}"
+        except Exception:
+            cache = None
+    else:
+        cache = None
 
-    if not matches:
-        return f"No nodes found matching: {question!r}"
+    # ── Tier 1: Deterministic Router ──────────────────────────────────────────
+    try:
+        from pruvagraph.deterministic_router import try_deterministic_answer
+        det_answer = try_deterministic_answer(question, G)
+        if det_answer:
+            if cache:
+                cache.save(question, det_answer)
+            return f"⚡ [free]\n{det_answer}"
+    except Exception:
+        pass
 
+    # ── Tier 2: Seed node finding (embedding > keyword fallback) ──────────────
+    seed_nodes: list[str] = []
+    if out_dir:
+        try:
+            from pruvagraph.embedder import semantic_search
+            seed_nodes = semantic_search(question, out_dir, top_k=15)
+        except Exception:
+            pass
+
+    if not seed_nodes:
+        # Keyword fallback
+        from pruvagraph.subgraph import extract_keywords, find_seed_nodes
+        kws        = extract_keywords(question)
+        seed_nodes = find_seed_nodes(G, kws)
+
+    # ── Local answer (backend=none) ────────────────────────────────────────────
     if backend == "none":
+        if seed_nodes:
+            from pruvagraph.subgraph import extract_query_subgraph
+            sub     = extract_query_subgraph(G, seed_nodes, k_hops=1, max_nodes=20)
+            matches = _score_subgraph(sub, question, top_k)
+        else:
+            matches = _keyword_search(G, question, top_k=top_k)
+
+        if not matches:
+            return f"No nodes found matching: {question!r}"
         return _format_local_answer(question, matches, G)
 
-    # LLM-assisted: build context from matches and call backend
-    context = _build_context(matches, G)
-    return _llm_answer(question, context, backend)
+    # ── Tier 3 + 4: Subgraph + Hierarchy context for LLM ─────────────────────
+    try:
+        from pruvagraph.hierarchy import get_level_context, load_hierarchy, route_query_to_level
+        from pruvagraph.subgraph import build_query_context
+
+        level = route_query_to_level(question)
+
+        if level in ("repo", "community") and out_dir:
+            hierarchy = load_hierarchy(out_dir)
+            context   = get_level_context(hierarchy, level)
+            if not context:
+                context = build_query_context(G, seed_nodes, k_hops=2)
+        else:
+            context = build_query_context(G, seed_nodes, k_hops=2)
+    except Exception:
+        # Pure fallback: BM25 matches
+        matches = _keyword_search(G, question, top_k=top_k)
+        context = _build_context(matches, G)
+
+    # ── Tier 5: LLM call ──────────────────────────────────────────────────────
+    answer = _llm_answer(question, context, backend)
+    if cache:
+        cache.save(question, answer)
+    return answer
 
 
 async def query_async(G: nx.MultiDiGraph, question: str, **kwargs: Any) -> str:
@@ -70,6 +137,15 @@ _STOPWORDS = {"the", "a", "an", "is", "are", "was", "were", "in", "on", "at",
 def _tokenise(text: str) -> list[str]:
     tokens = re.findall(r"[a-z0-9_]+", text.lower())
     return [t for t in tokens if t not in _STOPWORDS and len(t) > 1]
+
+
+def _score_subgraph(
+    sub: nx.MultiDiGraph,
+    question: str,
+    top_k: int,
+) -> list[tuple[float, str, dict]]:
+    """Run BM25 keyword search restricted to a subgraph."""
+    return _keyword_search(sub, question, top_k=top_k)
 
 
 def _keyword_search(
