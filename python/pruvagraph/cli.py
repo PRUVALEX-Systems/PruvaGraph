@@ -143,7 +143,7 @@ def query(question: str, root: str, backend: str) -> None:
     """Query the knowledge graph in natural language."""
     out_dir = Path(root) / "pruvagraph-out"
     try:
-        from pruvagraph.streaming import load_best_graph, get_build_status, partial_graph_note
+        from pruvagraph.streaming import get_build_status, load_best_graph, partial_graph_note
         G, is_partial = load_best_graph(out_dir)
     except ImportError:
         import networkx as nx

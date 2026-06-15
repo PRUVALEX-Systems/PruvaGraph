@@ -51,7 +51,6 @@ def predict_queries(changed_file: str) -> list[str]:
     Returns ordered list of predicted query strings, most likely first.
     """
     stem = Path(changed_file).stem.lower()
-    name = Path(changed_file).name.lower()
 
     predicted: list[str] = [
         f"what does {stem} do?",
@@ -121,7 +120,9 @@ def prewarm_cache(changed_files: list[str], root: Path) -> int:
 
     try:
         import json
+
         import networkx as nx
+
         from pruvagraph.query import query as _query
         from pruvagraph.query_cache import QueryCache
     except ImportError:

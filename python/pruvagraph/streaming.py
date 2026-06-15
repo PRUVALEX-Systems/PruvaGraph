@@ -27,7 +27,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-
 # ── Status writer ──────────────────────────────────────────────────────────────
 
 class StreamStatus:
@@ -87,8 +86,8 @@ def write_partial_graph(
 
     try:
         import networkx as nx
+
         from pruvagraph.build import build_nx_graph
-        from pruvagraph.export import export_graph
 
         G = build_nx_graph(extractions)
         if G.number_of_nodes() == 0:
