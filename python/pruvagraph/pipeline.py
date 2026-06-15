@@ -149,7 +149,7 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     cache = GraphCache(cfg.root)
     tracker = CostTracker(backend=cfg.backend, total_files=0)
 
-    # ── Stage 1: Discover files (N4: skip generated) ──────────────────────────
+    # ── Stage 1: Discover files (N4: skip generated, Arch2: reputation) ────────
     from pruvagraph.generated_detector import filter_files
     all_files_raw = collect_files(cfg.root)
     all_paths     = [f for f, _ in all_files_raw]
@@ -158,6 +158,25 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     all_files  = [(f, t) for f, t in all_files_raw if str(f) in kept_set]
     if skipped_gen:
         _rich_print(f"  [N4] Skipped {skipped_gen} generated files", "yellow")
+
+    # Arch2: Reputation cache — skip known low-value files
+    try:
+        from pruvagraph.reputation import ReputationCache
+        reputation = ReputationCache(out_dir)
+        reputation.purge_old_entries()
+        rep_skipped = 0
+        filtered_files = []
+        for f, t in all_files:
+            skip, reason = reputation.should_skip(f)
+            if skip:
+                rep_skipped += 1
+            else:
+                filtered_files.append((f, t))
+        all_files = filtered_files
+        if rep_skipped:
+            _rich_print(f"  [Arch2] Reputation skip: {rep_skipped} low-value files", "yellow")
+    except Exception:
+        reputation = None
 
     code_files = [f for f, t in all_files if t == FileType.CODE]
     doc_files  = [f for f, t in all_files if t in (FileType.DOCUMENT, FileType.PAPER, FileType.IMAGE)]
@@ -209,10 +228,18 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     _rich_print(f"  ✓ {len(code_files) - len(code_to_extract)} cached, "
                 f"{len(code_to_extract)} extracted", "green")
 
-    # ── Stage 3: Doc/image files — N5 config parser + N1 free doc parser ─────
+    # ── Stage 3: Doc/image files — N5+N1+A7 free parsers first ─────────────
     _rich_print(f"[Stage 2/5] Doc extraction — {len(doc_files)} files...", "cyan")
     from pruvagraph.config_parser import is_parseable_config, parse_config_file
     from pruvagraph.free_doc_parser import is_parseable_doc, parse_free
+    from pruvagraph.schema_parser import is_parseable_schema, parse_schema_file
+
+    # Arch4: Privacy Shield for LLM calls
+    try:
+        from pruvagraph.privacy import PrivacyShield
+        shield = PrivacyShield(audit_dir=out_dir)
+    except Exception:
+        shield = None
 
     docs_to_extract: list[Path] = []
     free_parsed = 0
@@ -226,12 +253,24 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                                         "source_file": str(path)})
                 continue
 
+        # A7: Schema parser (OpenAPI, Prisma, GraphQL, Proto)
+        if is_parseable_schema(path):
+            result = parse_schema_file(path)
+            if result and result.get("nodes"):
+                all_extractions.append(result)
+                free_parsed += 1
+                if reputation:
+                    reputation.record_extraction(path, result["nodes"], result.get("edges", []))
+                continue
+
         # N5: Structural config parser (package.json, docker-compose, etc.)
         if is_parseable_config(path):
             result = parse_config_file(path)
             if result and result.get("nodes"):
                 all_extractions.append(result)
                 free_parsed += 1
+                if reputation:
+                    reputation.record_extraction(path, result["nodes"], result.get("edges", []))
                 continue
 
         # N1: Free document parser (PDF, DOCX, Markdown)
@@ -240,12 +279,14 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
             if result and result.get("nodes"):
                 all_extractions.append(result)
                 free_parsed += 1
+                if reputation:
+                    reputation.record_extraction(path, result["nodes"], result.get("edges", []))
                 continue
 
         docs_to_extract.append(path)
 
     if free_parsed:
-        _rich_print(f"  [N1/N5] {free_parsed} files parsed free (no LLM)", "green")
+        _rich_print(f"  [N1/N5/A7] {free_parsed} files parsed free (no LLM)", "green")
 
     if docs_to_extract:
         # Semantic dedup
@@ -291,8 +332,23 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
         for i, batch in enumerate(plan.batches, 1):
             _rich_print(f"  Batch {i}/{plan.num_batches} ({len(batch)} files)...", "cyan")
             t0 = time.time()
+
+            # Arch4: Scrub secrets from content before LLM call
+            safe_paths = batch.paths
+            if shield is not None:
+                try:
+                    safe_paths = [p for p in batch.paths]  # preserve list
+                    _n_redacted = sum(
+                        shield.scrub(p.read_text(errors="replace"), str(p)).redaction_count
+                        for p in safe_paths if p.is_file()
+                    )
+                    if _n_redacted:
+                        _rich_print(f"  [Arch4] {_n_redacted} secrets redacted before LLM", "yellow")
+                except Exception:
+                    pass
+
             extractions = extract_doc_batch(
-                batch.paths,
+                safe_paths,
                 backend=cfg.backend,
                 cascade=cfg.cascade,
             )
@@ -373,6 +429,43 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
         enriched = harvest_and_enrich(cfg.root, G)
         if enriched:
             _rich_print(f"  [A4] Type-enriched {enriched} nodes", "green")
+    except Exception:
+        pass
+
+    # A8: Git history intelligence — enrich nodes + add co-change edges
+    try:
+        from pruvagraph.git_intel import enrich_graph_with_git, extract_git_intelligence
+        git_intel = extract_git_intelligence(cfg.root)
+        if git_intel.get("available"):
+            result = enrich_graph_with_git(G, git_intel, cfg.root, min_co_changes=3)
+            ne = result.get("nodes_enriched", 0)
+            ce = result.get("coupling_edges", 0)
+            _rich_print(f"  [A8] Git intel: {ne} nodes enriched, {ce} coupling edges added", "green")
+    except Exception:
+        pass
+
+    # A6: Importance scoring report (retrospective — for next-run ordering)
+    try:
+        from pruvagraph.importance_scorer import score_files, score_summary
+        all_scored_paths = [f for f, _ in all_files]
+        if all_scored_paths:
+            scores = score_files(all_scored_paths, G=G, root=cfg.root)
+            _rich_print(f"  [A6] {score_summary(scores)}", "green")
+            # Save scores for next-run ordering
+            import json as _json
+            scores_out = {k: round(v, 4) for k, v in scores.items()}
+            (out_dir / "importance_scores.json").write_text(
+                _json.dumps(scores_out, indent=2), encoding="utf-8"
+            )
+    except Exception:
+        pass
+
+    # Arch2: Auto-learn patterns from this run
+    try:
+        if reputation is not None:
+            new_pats = reputation.auto_learn_patterns()
+            if new_pats:
+                _rich_print(f"  [Arch2] Learned {len(new_pats)} new skip patterns", "yellow")
     except Exception:
         pass
 
