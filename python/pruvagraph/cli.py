@@ -45,7 +45,11 @@ LOGO = """
 # Root group
 # ──────────────────────────────────────────────────────────────────────────────
 
-@click.group(invoke_without_command=True)
+class _RootGroup(click.Group):
+    allow_interspersed_args = True
+    ignore_unknown_options = True
+
+@click.group(cls=_RootGroup, invoke_without_command=True)
 @click.argument("root", default=".", required=False)
 @click.option("--backend", "-b", default="none",
               type=click.Choice(["none", "claude", "gemini", "kimi", "openai", "ollama"]),
