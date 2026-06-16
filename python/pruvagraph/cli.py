@@ -45,11 +45,7 @@ LOGO = """
 # Root group
 # ──────────────────────────────────────────────────────────────────────────────
 
-class _RootGroup(click.Group):
-    allow_interspersed_args = True
-    ignore_unknown_options = True
-
-@click.group(cls=_RootGroup, invoke_without_command=True)
+@click.group(invoke_without_command=True)
 @click.argument("root", default=".", required=False)
 @click.option("--backend", "-b", default="none",
               type=click.Choice(["none", "claude", "gemini", "kimi", "openai", "ollama"]),
@@ -74,6 +70,8 @@ class _RootGroup(click.Group):
               help="Output directory name.")
 @click.option("--stream", is_flag=True,
               help="[Arch1] Write partial graph during build — enables querying before completion.")
+@click.option("--monorepo", is_flag=True,
+              help="[M1] Auto-detect monorepo layout and build per-package graphs.")
 @click.pass_context
 def main(
     ctx: click.Context,
@@ -89,6 +87,7 @@ def main(
     no_viz: bool,
     out_dir: str,
     stream: bool,
+    monorepo: bool,
 ) -> None:
     """PruvaGraph — codebase knowledge graphs with 95%+ LLM cost reduction.\n
     Build a graph:\n
@@ -128,7 +127,7 @@ def main(
             no_viz=no_viz,
             out_dir=out_dir,
             streaming=stream,
-            update=update,           # N9: incremental mode
+            monorepo=monorepo,
         )
     except BudgetExceededError as e:
         click.echo(f"\n⛔ {e}", err=True)
@@ -238,16 +237,24 @@ def export(root: str, fmt: str) -> None:
 @click.option("--cursor", is_flag=True, help="Write Cursor rules.")
 @click.option("--claude-code", "claude_code", is_flag=True,
               help="Register MCP server for Claude Code.")
-def install(root: str, vscode: bool, cursor: bool, claude_code: bool) -> None:
-    """Write IDE integration files (CLAUDE.md, .cursor/rules, MCP config)."""
+@click.option("--hooks", is_flag=True,
+              help="[Gap 1] Install Claude Code PreToolUse hooks — hard Read enforcement.")
+def install(root: str, vscode: bool, cursor: bool, claude_code: bool, hooks: bool) -> None:
+    """Write IDE integration files (CLAUDE.md, MCP config, optional hooks)."""
     from pruvagraph.installer import install_all
+    all_flags = not vscode and not cursor and not claude_code and not hooks
     install_all(
         Path(root),
-        vscode=vscode or (not vscode and not cursor and not claude_code),
-        cursor=cursor or (not vscode and not cursor and not claude_code),
-        claude_code=claude_code or (not vscode and not cursor and not claude_code),
+        vscode=vscode or all_flags,
+        cursor=cursor or all_flags,
+        claude_code=claude_code or all_flags,
+        hooks=hooks,   # Gap 1: opt-in, not on by default for --all
     )
     click.echo("✓ Integration files written.")
+    if hooks:
+        click.echo(
+            "  → Restart Claude Code to activate PreToolUse hook enforcement."
+        )
 
 
 @main.group()
@@ -274,6 +281,65 @@ fi
     hook_path.write_text(script)
     hook_path.chmod(0o755)
     click.echo(f"✓ Hook installed: {hook_path}")
+
+
+# ── Gap 1: Claude Code PreToolUse hooks subcommand ─────────────────────────
+
+@main.group("hooks")
+def hooks_group() -> None:
+    """[Gap 1] Manage Claude Code PreToolUse Read-enforcement hooks."""
+
+
+@hooks_group.command("install")
+@click.option("--root", default=".", show_default=True)
+@click.option("--dry-run", is_flag=True, help="Print what would be written, don't write.")
+def hooks_install(root: str, dry_run: bool) -> None:
+    """Install PreToolUse hook in .claude/settings.json.
+
+    This gives Claude Code HARD enforcement: every Read tool call fires the
+    pruvagraph.hooks handler.  If the file was already surfaced via MCP tools
+    this session, the Read is blocked with a redirect message.
+    """
+    from pruvagraph.hooks import install_hooks
+    path = install_hooks(Path(root), dry_run=dry_run)
+    if not dry_run:
+        click.echo(f"✓ Hooks installed: {path}")
+        click.echo("  Restart Claude Code to activate.")
+
+
+@hooks_group.command("remove")
+@click.option("--root", default=".", show_default=True)
+def hooks_remove(root: str) -> None:
+    """Remove PruvaGraph hook from .claude/settings.json."""
+    from pruvagraph.hooks import remove_hooks
+    removed = remove_hooks(Path(root))
+    if removed:
+        click.echo("✓ PruvaGraph hook removed from .claude/settings.json")
+    else:
+        click.echo("No PruvaGraph hook found in .claude/settings.json")
+
+
+@hooks_group.command("status")
+@click.option("--root", default=".", show_default=True)
+def hooks_status(root: str) -> None:
+    """Check whether the PreToolUse hook is installed."""
+    settings = Path(root) / ".claude" / "settings.json"
+    if not settings.exists():
+        click.echo("✗ .claude/settings.json not found — hooks not installed")
+        return
+    import json as _j
+    try:
+        data = _j.loads(settings.read_text(encoding="utf-8"))
+        hooks_list = data.get("hooks", {}).get("PreToolUse", [])
+        pg_hooks = [h for h in hooks_list if "pruvagraph" in str(h)]
+        if pg_hooks:
+            click.echo(click.style("✓ PruvaGraph PreToolUse hook is ACTIVE", fg="green"))
+            click.echo(f"  Settings: {settings}")
+        else:
+            click.echo("✗ PruvaGraph hook not found — run: pruvagraph hooks install")
+    except Exception as e:
+        click.echo(f"Error reading settings: {e}", err=True)
+
 
 
 @main.command()
@@ -354,6 +420,87 @@ def build_status_cmd(root: str) -> None:
     msg = status.get("message", "")
     icon = {"building": "🔨", "complete": "✅", "idle": "💤", "error": "❌"}.get(s, "❓")
     click.echo(f"{icon} Build {s}: {done}/{total} files ({pct}%) — {msg}")
+
+
+# ── D1: Graph Diff ─────────────────────────────────────────────────────────
+
+@main.command("diff")
+@click.option("--root", default=".", show_default=True,
+              help="Project root (where pruvagraph-out/ lives).")
+@click.option("--format", "fmt", default="table",
+              type=click.Choice(["table", "json"]), show_default=True,
+              help="Output format.")
+def diff_cmd(root: str, fmt: str) -> None:
+    """[D1] Show what changed between the last two graph builds."""
+    from pruvagraph.graph_diff import load_diff
+    out_dir = Path(root) / "pruvagraph-out"
+    diff = load_diff(out_dir)
+    if diff is None:
+        click.echo("No diff available. Run 'pruvagraph .' at least twice.", err=True)
+        sys.exit(1)
+
+    if fmt == "json":
+        import json as _json
+        click.echo(_json.dumps({
+            "added_nodes":   diff.added_nodes,
+            "removed_nodes": diff.removed_nodes,
+            "changed_nodes": diff.changed_nodes,
+            "added_edges":   diff.added_edges,
+            "removed_edges": diff.removed_edges,
+            "diff_summary":  diff.diff_summary,
+            "timestamp":     diff.timestamp,
+            "git_sha":       diff.git_sha,
+        }, indent=2))
+    else:
+        click.echo(diff.format())
+
+
+# ── D2: Impact Analyzer ────────────────────────────────────────────────────
+
+@main.command("impact")
+@click.argument("symbol")
+@click.option("--root", default=".", show_default=True)
+@click.option("--depth", default=3, show_default=True,
+              help="BFS depth limit (higher = more transitive dependents).")
+@click.option("--format", "fmt", default="table",
+              type=click.Choice(["table", "json"]), show_default=True,
+              help="Output format (json for CI gates).")
+def impact_cmd(symbol: str, root: str, depth: int, fmt: str) -> None:
+    """[D2] Analyse the blast radius of changing a symbol or file.
+
+    SYMBOL can be a function name, class name, file path, or node ID.
+    Uses fuzzy matching — partial names work.
+
+    \b
+    Examples:
+        pruvagraph impact SessionManager
+        pruvagraph impact "auth.py" --depth 4
+        pruvagraph impact build_graph --format json
+    """
+    import json as _json
+    import networkx as nx
+
+    out_dir   = Path(root) / "pruvagraph-out"
+    graph_path = out_dir / "graph.json"
+    if not graph_path.exists():
+        click.echo("No graph found. Run 'pruvagraph .' first.", err=True)
+        sys.exit(1)
+
+    G = nx.node_link_graph(_json.loads(graph_path.read_text(encoding="utf-8")))
+
+    # Try to load git intel for richer risk scoring
+    git_intel: dict | None = None
+    try:
+        from pruvagraph.git_intel import extract_git_intelligence
+        intel = extract_git_intelligence(Path(root))
+        if intel.get("available"):
+            git_intel = intel
+    except Exception:
+        pass
+
+    from pruvagraph.impact_analyzer import analyze_impact
+    report = analyze_impact(G, symbol, depth=depth, git_intel=git_intel)
+    click.echo(report.format(fmt))
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers

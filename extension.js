@@ -38,18 +38,22 @@ function activate(context) {
 
   // Register commands
   const cmds = [
-    ['pruvagraph.build',       () => runBuild(provider)],
-    ['pruvagraph.buildFast',   () => runBuildFast(provider)],
-    ['pruvagraph.query',       () => runQuery(provider)],
-    ['pruvagraph.costReport',  () => runCostReport(provider)],
-    ['pruvagraph.installMCP',  () => runInstallMCP(provider)],
-    ['pruvagraph.openViz',     () => openVisualizer()],
-    ['pruvagraph.clearCache',  () => clearCache(provider)],
-    ['pruvagraph.watchToggle', () => toggleWatch(provider)],
-    ['pruvagraph.findCallers', () => findCallers(provider)],
-    ['pruvagraph.getDeps',     () => getDependencies(provider)],
-    ['pruvagraph.installPkg',  () => runInstallPkg(provider)],
-    ['pruvagraph.dryRun',      () => runDryRun(provider)],
+    ['pruvagraph.build',         () => runBuild(provider)],
+    ['pruvagraph.buildFast',     () => runBuildFast(provider)],
+    ['pruvagraph.query',         () => runQuery(provider)],
+    ['pruvagraph.costReport',    () => runCostReport(provider)],
+    ['pruvagraph.installMCP',    () => runInstallMCP(provider)],
+    ['pruvagraph.openViz',       () => openVisualizer()],
+    ['pruvagraph.clearCache',    () => clearCache(provider)],
+    ['pruvagraph.watchToggle',   () => toggleWatch(provider)],
+    ['pruvagraph.findCallers',   () => findCallers(provider)],
+    ['pruvagraph.getDeps',       () => getDependencies(provider)],
+    ['pruvagraph.installPkg',    () => runInstallPkg(provider)],
+    ['pruvagraph.dryRun',        () => runDryRun(provider)],
+    // v1.3.0
+    ['pruvagraph.showDiff',      () => showDiff(provider)],
+    ['pruvagraph.analyzeImpact', () => analyzeImpact(provider)],
+    ['pruvagraph.buildMonorepo', () => buildMonorepo(provider)],
   ];
 
   cmds.forEach(([id, fn]) => {
@@ -95,18 +99,22 @@ class PruvaGraphViewProvider {
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage(msg => {
       switch (msg.command) {
-        case 'build':       return runBuild(this);
-        case 'buildFast':   return runBuildFast(this);
-        case 'query':       return runQuery(this, msg.text);
-        case 'costReport':  return runCostReport(this);
-        case 'installMCP':  return runInstallMCP(this);
-        case 'openViz':     return openVisualizer();
-        case 'clearCache':  return clearCache(this);
-        case 'watchToggle': return toggleWatch(this);
-        case 'showOutput':  return outputChannel.show();
-        case 'ready':       return sendStatus(this);
-        case 'installPkg':  return runInstallPkg(this);
-        case 'dryRun':      return runDryRun(this);
+        case 'build':         return runBuild(this);
+        case 'buildFast':     return runBuildFast(this);
+        case 'query':         return runQuery(this, msg.text);
+        case 'costReport':    return runCostReport(this);
+        case 'installMCP':    return runInstallMCP(this);
+        case 'openViz':       return openVisualizer();
+        case 'clearCache':    return clearCache(this);
+        case 'watchToggle':   return toggleWatch(this);
+        case 'showOutput':    return outputChannel.show();
+        case 'ready':         return sendStatus(this);
+        case 'installPkg':    return runInstallPkg(this);
+        case 'dryRun':        return runDryRun(this);
+        // v1.3.0
+        case 'showDiff':      return showDiff(this);
+        case 'analyzeImpact': return analyzeImpact(this);
+        case 'buildMonorepo': return buildMonorepo(this);
       }
     });
 
@@ -440,6 +448,175 @@ async function runDryRun(provider) {
   if (lines.length > 0) {
     provider.post('costReport', { text: lines.join('\n') });
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v1.3.0 — D1: Show Graph Diff
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function showDiff(provider) {
+  const root = getWorkspaceRoot();
+  if (!root) { return noWorkspace(); }
+
+  const diffPath = path.join(root, 'pruvagraph-out', 'last_diff.json');
+  if (!fs.existsSync(diffPath)) {
+    vscode.window.showInformationMessage(
+      'No diff available. Run PruvaGraph build at least twice to see what changed.',
+      'Build Now'
+    ).then(btn => { if (btn === 'Build Now') vscode.commands.executeCommand('pruvagraph.build'); });
+    return;
+  }
+
+  let diff;
+  try { diff = JSON.parse(fs.readFileSync(diffPath, 'utf8')); }
+  catch (e) { vscode.window.showErrorMessage(`Could not read diff: ${e.message}`); return; }
+
+  // Build webview panel
+  const diffPanel = vscode.window.createWebviewPanel(
+    'pruvagraphDiff',
+    'PruvaGraph — Graph Diff',
+    vscode.ViewColumn.Beside,
+    { enableScripts: false }
+  );
+
+  const sha     = diff.git_sha ? ` [${diff.git_sha}]` : '';
+  const ts      = diff.timestamp ? new Date(diff.timestamp * 1000).toLocaleString() : '';
+  const summary = diff.diff_summary || 'no changes';
+
+  const renderList = (items, icon, cls) =>
+    items.length === 0
+      ? `<span class="empty">none</span>`
+      : items.map(n => `<div class="item ${cls}">${icon} ${escapeHtml(String(n))}</div>`).join('');
+
+  diffPanel.webview.html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<style>
+  body { font-family: var(--vscode-font-family, monospace); font-size:12px;
+         background:var(--vscode-editor-background); color:var(--vscode-foreground); padding:16px; }
+  h2 { font-size:14px; margin-bottom:4px; }
+  .meta { color:var(--vscode-descriptionForeground); font-size:11px; margin-bottom:16px; }
+  h3 { font-size:12px; font-weight:600; margin:14px 0 6px; }
+  .item { padding:2px 6px; border-radius:3px; margin:2px 0; font-family:monospace; font-size:11px; }
+  .added   { background:rgba(166,227,161,0.12); color:#a6e3a1; }
+  .removed { background:rgba(243,139,168,0.12); color:#f38ba8; }
+  .changed { background:rgba(249,226,175,0.12); color:#f9e2af; }
+  .empty   { color:var(--vscode-descriptionForeground); font-style:italic; }
+  .badge   { display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px;
+             font-weight:700; margin-left:6px; background:#7C6EFA; color:#fff; }
+</style></head><body>
+<h2>📊 Graph Diff${sha} <span class="badge">D1</span></h2>
+<div class="meta">${ts ? `Built ${ts} · ` : ''}${summary}</div>
+<h3>➕ Added Nodes (${diff.added_nodes.length})</h3>${renderList(diff.added_nodes,'➕','added')}
+<h3>➖ Removed Nodes (${diff.removed_nodes.length})</h3>${renderList(diff.removed_nodes,'➖','removed')}
+<h3>✏️ Changed Nodes (${diff.changed_nodes.length})</h3>${renderList(diff.changed_nodes,'✏️','changed')}
+<h3>🔗 Added Edges (${diff.added_edges.length})</h3>${renderList(diff.added_edges.map(e=>e.join(' → ')),'🔗','added')}
+<h3>🗑 Removed Edges (${diff.removed_edges.length})</h3>${renderList(diff.removed_edges.map(e=>e.join(' → ')),'🗑','removed')}
+</body></html>`;
+
+  // Also update sidebar
+  provider.post('diffLoaded', {
+    summary,
+    added:   diff.added_nodes.length,
+    removed: diff.removed_nodes.length,
+    changed: diff.changed_nodes.length,
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v1.3.0 — D2: Analyze Change Impact
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function analyzeImpact(provider) {
+  const root = getWorkspaceRoot();
+  if (!root) { return noWorkspace(); }
+
+  // Prefer selected text as symbol name
+  const editor = vscode.window.activeTextEditor;
+  const selected = editor?.document.getText(editor.selection)?.trim() || '';
+
+  const symbol = selected || await vscode.window.showInputBox({
+    prompt: '[D2] Enter symbol, class, function or file to analyse',
+    placeHolder: 'SessionManager  or  auth.py  or  build_graph',
+  });
+  if (!symbol) return;
+
+  const depth = await vscode.window.showQuickPick(
+    ['3 (default)', '4', '5', '2 (fast)'],
+    { placeHolder: 'BFS depth — how many hops of dependents to include?' }
+  );
+  const depthNum = depth ? parseInt(depth[0]) : 3;
+
+  const impactPanel = vscode.window.createWebviewPanel(
+    'pruvagraphImpact',
+    `Impact: ${symbol}`,
+    vscode.ViewColumn.Beside,
+    { enableScripts: false }
+  );
+
+  impactPanel.webview.html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:16px;background:var(--vscode-editor-background);color:var(--vscode-foreground)">
+<h2 style="font-size:14px">⚠️ Analyzing impact of <code>${escapeHtml(symbol)}</code>…</h2>
+<p style="color:var(--vscode-descriptionForeground);font-size:11px">Running impact analysis (BFS depth ${depthNum})…</p>
+</body></html>`;
+
+  const lines = [];
+  await runCLI(
+    'pruvagraph',
+    ['impact', symbol, '--depth', String(depthNum), '--format', 'table'],
+    root, provider,
+    (line) => { lines.push(line); }
+  );
+
+  const output = lines.join('\n');
+  const escaped = escapeHtml(output);
+
+  impactPanel.webview.html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<style>
+  body { font-family:var(--vscode-font-family,monospace); font-size:12px;
+         background:var(--vscode-editor-background); color:var(--vscode-foreground); padding:16px; }
+  pre  { font-family:monospace; font-size:11px; line-height:1.6;
+         white-space:pre-wrap; word-break:break-word; }
+  .badge { display:inline-block; padding:1px 6px; border-radius:3px;
+           font-size:10px; font-weight:700; background:#f9e2af; color:#1e1e2e; margin-left:6px; }
+</style></head><body>
+<h2 style="font-size:14px">⚠️ Impact: <code>${escapeHtml(symbol)}</code> <span class="badge">D2</span></h2>
+<pre>${escaped || 'No output received — is graph built?'}</pre>
+</body></html>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v1.3.0 — M1: Build Monorepo Graph
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function buildMonorepo(provider) {
+  const root = getWorkspaceRoot();
+  if (!root) { return noWorkspace(); }
+
+  const cfg     = vscode.workspace.getConfiguration('pruvagraph');
+  const backend = cfg.get('llmBackend', 'none');
+
+  const confirm = await vscode.window.showInformationMessage(
+    '[M1] Build per-package graphs for the entire monorepo?',
+    'Build Monorepo', 'Cancel'
+  );
+  if (confirm !== 'Build Monorepo') return;
+
+  provider.post('buildStart', { root });
+  log('[M1] Building monorepo graph…');
+
+  await runCLI(
+    'pruvagraph',
+    ['.', '--monorepo', '--no-viz', '--backend', backend],
+    root, provider,
+    (line) => { provider.post('buildLog', { line }); }
+  );
+
+  await sendStatus(provider);
+  vscode.window.showInformationMessage('✓ Monorepo graph built. See pruvagraph-out/cross_graph.json');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -786,6 +963,35 @@ body { background: var(--bg); color: var(--text);
     <span class="btn-label">Dry Run — Estimate Savings</span>
     <span class="btn-badge">FREE</span>
   </button>
+</div>
+
+<hr class="divider">
+
+<!-- v1.3.0: Diff & Impact -->
+<div class="section-title">Diff &amp; Impact <span style="font-size:9px;background:#7C6EFA;color:#fff;padding:1px 5px;border-radius:3px;margin-left:4px">v1.3.0</span></div>
+<div class="btn-group">
+  <button class="btn" onclick="send('showDiff')">
+    <span class="btn-icon">📊</span>
+    <span class="btn-label">Show Graph Diff</span>
+    <span class="btn-badge" style="background:var(--cyan);color:#000">D1</span>
+  </button>
+  <button class="btn" onclick="send('analyzeImpact')">
+    <span class="btn-icon">⚠️</span>
+    <span class="btn-label">Analyze Change Impact</span>
+    <span class="btn-badge" style="background:var(--yellow);color:#000">D2</span>
+  </button>
+  <button class="btn" onclick="send('buildMonorepo')">
+    <span class="btn-icon">🗂</span>
+    <span class="btn-label">Build Monorepo Graph</span>
+    <span class="btn-badge" style="background:var(--green);color:#000">M1</span>
+  </button>
+</div>
+
+<!-- Last Diff Summary (shown after showDiff) -->
+<div id="lastDiffSummary" style="display:none;margin:0 10px 8px;padding:8px 10px;
+     background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:11px">
+  <div style="font-weight:600;margin-bottom:4px">Last Diff</div>
+  <div id="diffText" style="color:var(--muted);font-family:monospace"></div>
 </div>
 
 <hr class="divider">

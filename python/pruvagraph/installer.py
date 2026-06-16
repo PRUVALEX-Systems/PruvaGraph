@@ -21,11 +21,20 @@ def install_all(
     vscode: bool = True,
     cursor: bool = True,
     claude_code: bool = True,
+    hooks: bool = False,   # Gap 1: install Claude Code PreToolUse hooks
 ) -> dict[str, Path]:
     """
     Write IDE integration files.
 
     Returns dict of {name: path} for everything written.
+
+    Args:
+        root:         Project root directory.
+        vscode:       Write .vscode/mcp.json.
+        cursor:       Write .cursor/mcp.json.
+        claude_code:  Write ~/.claude/mcp_config.json.
+        hooks:        Write .claude/settings.json with PreToolUse hook
+                      (Gap 1 — hard enforcement, Claude Code only).
     """
     written: dict[str, Path] = {}
 
@@ -47,6 +56,12 @@ def install_all(
         if p:
             written["Claude Code MCP"] = p
 
+    # Gap 1: install PreToolUse hook for hard Read enforcement
+    if hooks:
+        p = _write_claude_hooks(root)
+        if p:
+            written["Claude Code Hooks"] = p
+
     # Always write CLAUDE.md if it doesn't exist
     claude_md = _write_claude_md(root)
     written["CLAUDE.md"] = claude_md
@@ -55,6 +70,7 @@ def install_all(
     _ensure_gitignore(root)
 
     return written
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -88,6 +104,27 @@ def _write_claude_code(mcp_config: dict) -> Path | None:
     _merge_json(path, mcp_config)
     print(f"  ✓ Claude Code MCP: {path}")
     return path
+
+
+def _write_claude_hooks(root: Path) -> Path | None:
+    """
+    Gap 1 — Write .claude/settings.json with the PreToolUse Read-interception hook.
+
+    This gives Claude Code hard enforcement: every Read tool call fires the
+    pruvagraph.hooks handler, which can block it with a redirect if the node
+    was already surfaced via MCP tools in this session.
+    """
+    try:
+        from pruvagraph.hooks import install_hooks
+        path = install_hooks(root)
+        print(
+            f"  ✓ Claude Code Hooks (Gap 1 — PreToolUse Read enforcement): {path}\n"
+            f"    Restart Claude Code to activate."
+        )
+        return path
+    except Exception as e:
+        print(f"  ⚠ Could not install hooks: {e}", file=__import__("sys").stderr)
+        return None
 
 
 def _write_claude_md(root: Path) -> Path:

@@ -35,6 +35,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# Gap 2 — session-level read tracker (in-process, lives for MCP server lifetime)
+try:
+    from pruvagraph import session_tracker as _st
+    _SESSION_TRACKING = True
+except ImportError:
+    _SESSION_TRACKING = False
+
 # ---------------------------------------------------------------------------
 # MCP SDK (pip install mcp)
 # ---------------------------------------------------------------------------
@@ -132,6 +139,13 @@ def _query_graph(question: str, root: str = ".") -> str:
 
 def _get_dependencies(node_id: str, root: str = ".") -> str:
     """Return all nodes that node_id imports/uses/calls."""
+    # Gap 2: return terse back-reference if already served this session
+    cache_key = f"deps::{node_id}"
+    if _SESSION_TRACKING:
+        ref = _st.already_seen(cache_key, tool="get_dependencies")
+        if ref:
+            return ref
+
     G, is_partial = _load_graph(root)
     if G is None:
         return "No graph found."
@@ -158,11 +172,21 @@ def _get_dependencies(node_id: str, root: str = ".") -> str:
     ans = "\n".join(lines)
     if is_partial:
         ans = "[PARTIAL GRAPH - Build still running]\n" + ans
+
+    if _SESSION_TRACKING:
+        _st.record_seen(cache_key, tool="get_dependencies")
     return ans
 
 
 def _find_callers(node_id: str, root: str = ".") -> str:
     """Return all nodes that call/import node_id."""
+    # Gap 2: return terse back-reference if already served this session
+    cache_key = f"callers::{node_id}"
+    if _SESSION_TRACKING:
+        ref = _st.already_seen(cache_key, tool="find_callers")
+        if ref:
+            return ref
+
     G, is_partial = _load_graph(root)
     if G is None:
         return "No graph found."
@@ -189,11 +213,20 @@ def _find_callers(node_id: str, root: str = ".") -> str:
     ans = "\n".join(lines)
     if is_partial:
         ans = "[PARTIAL GRAPH - Build still running]\n" + ans
+
+    if _SESSION_TRACKING:
+        _st.record_seen(cache_key, tool="find_callers")
     return ans
 
 
 def _get_summary(node_id: str, root: str = ".") -> str:
     """Get one-sentence summary and metadata for a node."""
+    # Gap 2: return terse back-reference if already served this session
+    if _SESSION_TRACKING:
+        ref = _st.already_seen(node_id, tool="get_summary")
+        if ref:
+            return ref
+
     G, is_partial = _load_graph(root)
     if G is None:
         return "No graph found."
@@ -221,6 +254,10 @@ def _get_summary(node_id: str, root: str = ".") -> str:
     )
     if is_partial:
         ans = "[PARTIAL GRAPH - Build still running]\n" + ans
+
+    # Gap 2: record this node as served
+    if _SESSION_TRACKING:
+        _st.record_seen(node_id, tool="get_summary")
     return ans
 
 
@@ -270,6 +307,87 @@ def _get_cost_report(root: str = ".") -> str:
         f"Cost saved:      ${data.get('cost_saved_usd', 0):.4f} ({data.get('savings_pct', 0):.1f}%)\n"
         f"Run time:        {data.get('run_duration_seconds', 0):.1f}s"
     )
+
+
+# ---------------------------------------------------------------------------
+# D1: Graph Diff tool
+# ---------------------------------------------------------------------------
+
+def _get_graph_diff(root: str = ".") -> str:
+    """Return last_diff.json contents as a formatted string."""
+    from pruvagraph.graph_diff import load_diff
+    out_dir = Path(root) / "pruvagraph-out"
+    diff = load_diff(out_dir)
+    if diff is None:
+        return (
+            "No diff available. The graph diff is generated automatically after each build.\n"
+            "Run 'pruvagraph .' at least twice to see changes."
+        )
+    return diff.format()
+
+
+# ---------------------------------------------------------------------------
+# D2: Impact Analyzer tool
+# ---------------------------------------------------------------------------
+
+def _analyze_impact(node_id: str, root: str = ".", depth: int = 3) -> str:
+    """Run impact analysis for a symbol — what breaks if it changes?"""
+    out_dir    = Path(root) / "pruvagraph-out"
+    graph_path = out_dir / "graph.json"
+    if not graph_path.exists():
+        return "No graph found. Run 'pruvagraph .' first."
+
+    try:
+        import networkx as nx
+        G = nx.node_link_graph(json.loads(graph_path.read_text(encoding="utf-8")))
+    except Exception as e:
+        return f"Failed to load graph: {e}"
+
+    # Load git intel if available
+    git_intel = None
+    try:
+        from pruvagraph.git_intel import extract_git_intelligence
+        intel = extract_git_intelligence(Path(root))
+        if intel.get("available"):
+            git_intel = intel
+    except Exception:
+        pass
+
+    from pruvagraph.impact_analyzer import analyze_impact
+    report = analyze_impact(G, node_id, depth=depth, git_intel=git_intel)
+    return report.format("table")
+
+
+# ---------------------------------------------------------------------------
+# M1: List Packages tool
+# ---------------------------------------------------------------------------
+
+def _list_packages(root: str = ".") -> str:
+    """Detect monorepo layout and list packages + cross-package edges."""
+    from pruvagraph.monorepo import detect_monorepo, find_cross_package_edges
+    layout = detect_monorepo(Path(root))
+    if layout is None:
+        return (
+            f"'{root}' is not a detected monorepo.\n"
+            "Supported: pnpm, Nx, Lerna, Turborepo, Rush, npm workspaces, Python, generic."
+        )
+
+    lines = [layout.summary(), ""]
+    for pkg in layout.packages:
+        lines.append(f"  • {pkg.name:<30}  {pkg.language:<12}  {pkg.root}")
+
+    # Cross-package edges
+    cross = find_cross_package_edges(layout.packages)
+    if cross:
+        lines.append(f"\nCross-package imports ({len(cross)}):")
+        for src, tgt, rel in cross[:20]:
+            lines.append(f"  {src} → {tgt}")
+        if len(cross) > 20:
+            lines.append(f"  ... and {len(cross) - 20} more")
+    else:
+        lines.append("\nNo cross-package imports detected.")
+
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -348,6 +466,57 @@ TOOLS: list[dict[str, Any]] = [
             },
         },
     },
+    # ── v1.3.0 new tools ───────────────────────────────────────────────────
+    {
+        "name": "get_graph_diff",
+        "description": (
+            "[D1] Show what changed between the last two graph builds. "
+            "Returns added/removed/changed nodes and edges since last 'pruvagraph .' run."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    {
+        "name": "analyze_impact",
+        "description": (
+            "[D2] Analyse the blast radius of changing a symbol, function, class, or file. "
+            "Returns a risk-sorted list of all dependent nodes. "
+            "Use this before making changes to understand what might break."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "node_id": {
+                    "type": "string",
+                    "description": "Symbol name, class, file, or node ID. Fuzzy matching — partial names work.",
+                },
+                "root":  {"type": "string", "description": "Project root directory (default: .)"},
+                "depth": {
+                    "type": "integer",
+                    "description": "BFS depth limit (default 3). Higher = more transitive dependents.",
+                    "default": 3,
+                },
+            },
+            "required": ["node_id"],
+        },
+    },
+    {
+        "name": "list_packages",
+        "description": (
+            "[M1] Detect monorepo layout and list all sub-packages with cross-package import edges. "
+            "Supports pnpm, Nx, Lerna, Turborepo, Rush, npm workspaces, Python, and generic layouts."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Monorepo root directory (default: .)"},
+            },
+        },
+    },
 ]
 
 TOOL_HANDLERS = {
@@ -357,6 +526,14 @@ TOOL_HANDLERS = {
     "get_summary":      lambda args: _get_summary(args["node_id"], args.get("root", ".")),
     "list_communities": lambda args: _list_communities(args.get("root", ".")),
     "cost_report":      lambda args: _get_cost_report(args.get("root", ".")),
+    # v1.3.0
+    "get_graph_diff":   lambda args: _get_graph_diff(args.get("root", ".")),
+    "analyze_impact":   lambda args: _analyze_impact(
+                            args["node_id"],
+                            args.get("root", "."),
+                            int(args.get("depth", 3)),
+                        ),
+    "list_packages":    lambda args: _list_packages(args.get("root", ".")),
 }
 
 
@@ -379,6 +556,9 @@ async def run_stdio_server() -> None:
             return CallToolResult(
                 content=[TextContent(type="text", text=f"Unknown tool: {req.params.name}")]
             )
+        # Gap 2: tick the session turn counter on every MCP tool invocation
+        if _SESSION_TRACKING:
+            _st.tick()
         try:
             args = req.params.arguments or {}
             result = handler(args)
@@ -393,7 +573,7 @@ async def run_stdio_server() -> None:
             read_stream, write_stream,
             InitializationOptions(
                 server_name="pruvagraph",
-                server_version="1.0.0",
+                server_version="1.3.0",
                 capabilities=server.get_capabilities(
                     notification_options=None,
                     experimental_capabilities={},
@@ -476,7 +656,7 @@ def _write_claude_md(path: Path) -> None:
 
 This project uses PruvaGraph to maintain a knowledge graph of the codebase.
 
-## Available MCP Tools
+## Available MCP Tools (v1.3.0 — 9 tools)
 
 | Tool              | Usage                                              |
 |-------------------|----------------------------------------------------|
@@ -486,6 +666,9 @@ This project uses PruvaGraph to maintain a knowledge graph of the codebase.
 | `get_summary`     | Get a one-sentence summary of any node              |
 | `list_communities`| See architectural module groupings                  |
 | `cost_report`     | View LLM cost savings from last build               |
+| `get_graph_diff`  | What changed since last build? (D1)                 |
+| `analyze_impact`  | What breaks if X changes? Risk-sorted list (D2)     |
+| `list_packages`   | Monorepo: list packages + cross-package edges (M1)  |
 
 ## Rebuilding the Graph
 
@@ -493,14 +676,24 @@ This project uses PruvaGraph to maintain a knowledge graph of the codebase.
 pruvagraph .              # full rebuild
 pruvagraph . --update     # incremental (changed files only)
 pruvagraph . --dry-run    # estimate cost first
+pruvagraph . --monorepo   # monorepo: build per-package graphs
+```
+
+## Diff & Impact
+
+```bash
+pruvagraph diff                     # what changed since last build?
+pruvagraph impact SessionManager   # what breaks if SessionManager changes?
+pruvagraph impact auth.py --depth 4
 ```
 
 ## Graph Location
 Output: `pruvagraph-out/`
-  - `graph.json`       — full knowledge graph
-  - `cost_report.json` — cost analytics
-  - `GRAPH_REPORT.md`  — architectural summary
-  - `graph.html`       — interactive visualisation
+  - `graph.json`        — full knowledge graph
+  - `last_diff.json`    — delta from last build (D1)
+  - `cost_report.json`  — cost analytics
+  - `GRAPH_REPORT.md`   — architectural summary
+  - `graph.html`        — interactive visualisation
 """
     if not path.exists():
         path.write_text(content)

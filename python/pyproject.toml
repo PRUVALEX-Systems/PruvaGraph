@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pruvagraph"
-version = "1.2.0"
+version = "1.3.0"
 description = "Codebase knowledge graphs with 99%+ LLM cost reduction — by PRUVALEX"
 readme = "README.md"
 license = { text = "MIT" }

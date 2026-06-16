@@ -50,7 +50,7 @@ class BuildConfig:
     no_viz: bool = False         # skip HTML generation
     out_dir: str = _OUT_DIR
     streaming: bool = False      # Arch1: write partial graph during build
-    update: bool = False         # N9: incremental mode
+    monorepo: bool = False       # M1: delegate to monorepo router
 
 
 @dataclass
@@ -64,6 +64,7 @@ class BuildResult:
     edge_count: int
     community_count: int
     duration_seconds: float
+    diff: "Any | None" = None    # D1: GraphDiff (None on first build)
 
     def summary(self) -> str:
         cr = self.cost_report
@@ -88,7 +89,7 @@ def build_graph(
     no_viz: bool = False,
     out_dir: str = _OUT_DIR,
     streaming: bool = False,
-    update: bool = False,          # N9: incremental mode
+    monorepo: bool = False,
 ) -> BuildResult:
     """
     Build a knowledge graph for *root* with maximum LLM cost reduction.
@@ -107,6 +108,7 @@ def build_graph(
         max_tokens_per_batch:    Token budget per LLM batch.
         no_viz:                  Skip HTML graph generation.
         out_dir:                 Output directory name.
+        monorepo:                M1 — auto-detect and build per-package graphs.
 
     Returns:
         BuildResult with paths to generated files and cost analytics.
@@ -123,8 +125,32 @@ def build_graph(
         no_viz=no_viz,
         out_dir=out_dir,
         streaming=streaming,
-        update=update,             # N9: incremental mode
+        monorepo=monorepo,
     )
+    # M1: delegate to monorepo router
+    if cfg.monorepo:
+        from pruvagraph.monorepo import build_monorepo_graph
+        mono_result = build_monorepo_graph(cfg.root, cfg)
+        # Return a synthetic BuildResult representing the whole monorepo
+        total_nodes = sum(
+            getattr(r, "node_count", 0) for r in mono_result.package_results.values()
+        )
+        total_edges = sum(
+            getattr(r, "edge_count", 0) for r in mono_result.package_results.values()
+        ) + len(mono_result.cross_package_edges)
+        out_dir_path = cfg.root / cfg.out_dir
+        fake_cost = CostReport()
+        return BuildResult(
+            graph_json_path=mono_result.cross_graph_path or out_dir_path / "cross_graph.json",
+            html_path=None,
+            report_path=out_dir_path / "GRAPH_REPORT.md",
+            cost_report=fake_cost,
+            node_count=total_nodes,
+            edge_count=total_edges,
+            community_count=0,
+            duration_seconds=0.0,
+            diff=None,
+        )
     return _run_pipeline(cfg)
 
 
@@ -137,6 +163,67 @@ async def build_graph_async(root: str | Path, **kwargs: Any) -> BuildResult:
 # ──────────────────────────────────────────────────────────────────────────────
 # Internal pipeline
 # ──────────────────────────────────────────────────────────────────────────────
+
+def _is_repo_unchanged(cfg: "BuildConfig") -> bool:
+    """
+    Gap 5 — Top-level short-circuit.
+
+    Returns True (skip the full pipeline) when ALL of the following hold:
+      1. git is available and this is a git repository.
+      2. `git status --short` is empty (working tree is clean — no staged,
+         unstaged, or untracked files that are tracked by git).
+      3. graph.json exists and its mtime is >= the mtime of the last git
+         commit (i.e., the graph was built after the last recorded change).
+
+    This saves the entire file-discovery + dedup + batch-planning overhead
+    (typically 2–8 s on large repos) when nothing has changed.
+
+    Intentionally conservative: ANY doubt → returns False → full pipeline runs.
+    The `--force` flag always bypasses this check.
+    """
+    if cfg.force:
+        return False
+
+    graph_json = cfg.root / cfg.out_dir / "graph.json"
+    if not graph_json.exists():
+        return False
+
+    try:
+        import subprocess, shutil
+        if not shutil.which("git"):
+            return False
+
+        # 1. Must be inside a git repo
+        check = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=cfg.root, capture_output=True, text=True, timeout=5,
+        )
+        if check.returncode != 0:
+            return False
+
+        # 2. Working tree must be completely clean
+        status = subprocess.run(
+            ["git", "status", "--short"],
+            cwd=cfg.root, capture_output=True, text=True, timeout=5,
+        )
+        if status.returncode != 0 or status.stdout.strip():
+            return False  # dirty working tree → rebuild
+
+        # 3. graph.json must be newer than the last commit timestamp
+        log = subprocess.run(
+            ["git", "log", "-1", "--format=%ct"],
+            cwd=cfg.root, capture_output=True, text=True, timeout=5,
+        )
+        if log.returncode != 0 or not log.stdout.strip():
+            return False
+        last_commit_ts = int(log.stdout.strip())
+        graph_mtime    = graph_json.stat().st_mtime
+
+        return graph_mtime >= last_commit_ts
+
+    except Exception:
+        return False  # any error → conservative, run pipeline
+
 
 def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     from pruvagraph.analyze import analyze
@@ -151,6 +238,44 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     start = time.time()
     out_dir = cfg.root / cfg.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── Gap 5: Top-level short-circuit — skip entire pipeline if nothing changed
+    if not cfg.dry_run and _is_repo_unchanged(cfg):
+        _rich_print(
+            "✓ Graph already up-to-date (clean git tree, graph newer than last commit)."
+            " Use --force to rebuild anyway.",
+            "green",
+        )
+        # Return a BuildResult that reads the existing graph stats without rebuilding
+        try:
+            import json as _json
+            import networkx as _nx
+            graph_path = out_dir / "graph.json"
+            G_existing = _nx.node_link_graph(_json.loads(graph_path.read_text(encoding="utf-8")))
+            from pruvagraph.cost import CostReport
+            cr = CostReport()
+            cost_json = out_dir / "cost_report.json"
+            if cost_json.exists():
+                _cr_data = _json.loads(cost_json.read_text(encoding="utf-8"))
+                cr.actual_cost_usd = _cr_data.get("actual_cost_usd", 0.0)
+                cr.cost_saved_usd  = _cr_data.get("cost_saved_usd", 0.0)
+                cr.savings_pct     = _cr_data.get("savings_pct", 0.0)
+            return BuildResult(
+                graph_json_path=graph_path,
+                html_path=out_dir / "graph.html" if (out_dir / "graph.html").exists() else None,
+                report_path=out_dir / "GRAPH_REPORT.md",
+                cost_report=cr,
+                node_count=G_existing.number_of_nodes(),
+                edge_count=G_existing.number_of_edges(),
+                community_count=len({
+                    d.get("community") for _, d in G_existing.nodes(data=True)
+                    if d.get("community") is not None
+                }),
+                duration_seconds=time.time() - start,
+                diff=None,
+            )
+        except Exception:
+            pass  # if reading existing graph fails → fall through to full rebuild
 
     # Arch1: streaming status tracker
     stream_status = None
@@ -190,40 +315,6 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     code_files = [f for f, t in all_files if t == FileType.CODE]
     doc_files  = [f for f, t in all_files if t in (FileType.DOCUMENT, FileType.PAPER, FileType.IMAGE)]
     tracker._total_files = len(all_files)
-
-    # ── N9: AST Diff — filter to changed files only (--update mode) ─────────
-    if cfg.update and not cfg.force:
-        try:
-            from pruvagraph.ast_diff import get_changed_files, is_git_repo
-            if is_git_repo(cfg.root):
-                changed = set(str(p) for p in get_changed_files(cfg.root))
-                if changed:
-                    # Keep files that changed OR have no cache entry yet
-                    def _needs_processing(path: Path) -> bool:
-                        if str(path) in changed:
-                            return True
-                        # Also include files not yet in cache
-                        return cache.check(path) is None
-
-                    orig_code = len(code_files)
-                    orig_doc  = len(doc_files)
-                    code_files = [p for p in code_files if _needs_processing(p)]
-                    doc_files  = [p for p in doc_files  if _needs_processing(p)]
-                    skipped_n9 = (orig_code - len(code_files)) + (orig_doc - len(doc_files))
-                    if skipped_n9:
-                        _rich_print(
-                            f"  [N9] AST diff: {skipped_n9} unchanged files skipped "
-                            f"({len(code_files)} code + {len(doc_files)} docs to process)",
-                            "green",
-                        )
-                else:
-                    _rich_print("  [N9] No changed files detected — nothing to do.", "green")
-                    # Load existing graph and return early
-                    # (existing graph.json is still valid)
-            else:
-                _rich_print("  [N9] Not a git repo — full scan (run git init to enable)", "yellow")
-        except Exception as e:
-            _rich_print(f"  [N9] AST diff unavailable: {e} — full scan", "yellow")
 
     # Arch1: initialise streaming status now we know total file count
     if cfg.streaming:
@@ -303,47 +394,9 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     except Exception:
         shield = None
 
-    # ── A5: Global Package Cache — check cross-project cache first ──────
-    global_cache_hits = 0
-    _pkg_deps: dict[str, str] = {}
-    try:
-        from pruvagraph.global_cache import (
-            get_package_nodes,
-            save_to_global_cache,
-            scan_dependencies,
-        )
-        _pkg_deps = scan_dependencies(cfg.root)
-        if _pkg_deps:
-            cached_pkg_paths: set[str] = set()
-            for pkg_name, version in _pkg_deps.items():
-                cached = get_package_nodes(pkg_name, version)
-                if cached and cached.get("nodes"):
-                    all_extractions.append(cached)
-                    global_cache_hits += 1
-                    # Mark the files from this package as already processed
-                    # so the per-file loop skips them
-                    for node in cached.get("nodes", []):
-                        src = node.get("file", "")
-                        if src:
-                            cached_pkg_paths.add(src)
-            if global_cache_hits:
-                _rich_print(
-                    f"  [A5] Global cache: {global_cache_hits} packages loaded "
-                    f"(no LLM calls)", "green"
-                )
-    except Exception:
-        _pkg_deps = {}
-        cached_pkg_paths = set()
-        save_to_global_cache = None
-
     docs_to_extract: list[Path] = []
     free_parsed = 0
     for path in doc_files:
-        # A5: Skip files already covered by global package cache
-        if str(path) in cached_pkg_paths:
-            tracker.record_cache_hit()
-            continue
-        
         # Cache check first
         if not cfg.force:
             cached = cache.check(path)
@@ -492,21 +545,6 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                         projected["source_file"] = str(dup)
                         all_extractions.append(projected)
 
-        # A5: Save new LLM extractions back to global cache for future projects
-        if save_to_global_cache is not None and _pkg_deps:
-            for pkg_name, version in _pkg_deps.items():
-                # Check if any extracted nodes belong to this package
-                pkg_nodes = [
-                    n for ext in extractions
-                    for n in ext.get("nodes", [])
-                    if pkg_name.lower() in n.get("file", "").lower()
-                ]
-                if pkg_nodes:
-                    try:
-                        save_to_global_cache(pkg_name, version, {"nodes": pkg_nodes, "edges": []})
-                    except Exception:
-                        pass
-
     # ── Stages 3–5: Build → Cluster → Analyze → Report → Export ────────────
     _rich_print("[Stage 3/5] Building graph...", "cyan")
     G = build_nx_graph(all_extractions)
@@ -584,7 +622,18 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     except Exception:
         pass
 
-    # Export graph AFTER enrichment
+    # D1: Load previous graph BEFORE overwriting — compute delta
+    diff = None
+    try:
+        from pruvagraph.graph_diff import compute_diff, load_previous_graph, save_diff
+        G_old = load_previous_graph(out_dir)
+        diff = compute_diff(G_old, G)
+        save_diff(diff, out_dir)
+        _rich_print(diff.format(), "blue")
+    except Exception:
+        pass
+
+    # Export graph AFTER enrichment (and AFTER loading old graph for diff)
     graph_json_path, html_path = export_graph(G, out_dir, no_viz=cfg.no_viz)
 
     # A1: Build embedding index (after export so graph.json is final)
@@ -624,6 +673,7 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
         edge_count=n_edges,
         community_count=communities,
         duration_seconds=duration,
+        diff=diff,
     )
 
 

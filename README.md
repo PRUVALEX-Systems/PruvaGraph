@@ -17,7 +17,7 @@ Built for developers who love Claude Code — but not the bill.
 [![License: MIT](https://img.shields.io/badge/License-MIT-00E57A?style=flat-square)](./LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/PRUVALEX-Systems/pruvagraph/ci.yml?style=flat-square&label=CI)](https://github.com/PRUVALEX-Systems/pruvagraph/actions)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-5B5BFF?style=flat-square)](https://pypi.org/project/pruvagraph)
-[![Version](https://img.shields.io/badge/Version-1.2.0-00E57A?style=flat-square)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.0-00E57A?style=flat-square)](./CHANGELOG.md)
 
 </div>
 
@@ -25,9 +25,9 @@ Built for developers who love Claude Code — but not the bill.
 
 ## Why PruvaGraph?
 
-Standard tools send every file to an LLM on every run. PruvaGraph has 28 layers that make sure almost nothing ever reaches an LLM at all.
+Standard tools send every file to an LLM on every run. PruvaGraph has 31 layers that make sure almost nothing ever reaches an LLM at all.
 
-| | Other tools | PruvaGraph v1.2.0 |
+| | Other tools | PruvaGraph v1.3.0 |
 |---|---|---|
 | 10,000-file repo, daily CI | LLM extraction for everything | **0 LLM calls for code/configs** |
 | Re-run (unchanged files) | Full LLM scan again | **Instant cache — $0.00** |

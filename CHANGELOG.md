@@ -1,8 +1,85 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to PRUVALEX PruvaGraph are documented here.
 
-### [1.2.1](https://github.com/pruvalex/pruvagraph/compare/v1.2.0...v1.2.1) (2026-06-16)
+## [1.3.0] — 2026-06-17
+
+### Added — 3 New Cost-Reduction Layers + 4 Gap Fixes (total: 31 layers)
+
+**D1 — Graph Diff Engine** (`graph_diff.py`)
+- Delta-only diff between consecutive builds: added/removed/changed nodes + edges
+- Storage: `last_diff.json` only — O(changes), not O(graph size). Clean run = ~200 bytes
+- New CLI: `pruvagraph diff` and `pruvagraph diff --format json`
+- New MCP tool: `get_graph_diff` — returns structured diff to Claude/Cursor
+
+**D2 — Impact Analyzer** (`impact_analyzer.py`)
+- Forward BFS reachability: "what breaks if X changes?"
+- 4-signal risk score: hop proximity × in-degree × git frequency × cross-community coupling
+- Zero LLM calls — pure graph traversal
+- New CLI: `pruvagraph impact <symbol>` with `--depth` and `--format json` flags
+- New MCP tool: `analyze_impact` — returns risk-sorted impact list
+
+**M1 — Monorepo Router** (`monorepo.py`)
+- Auto-detects 8 monorepo layouts: pnpm · nx · lerna · turborepo · rush · npm-workspaces · python · generic
+- Builds per-package graphs in parallel + detects cross-package import edges
+- Writes `pruvagraph-out/cross_graph.json` with cross-package dependency map
+- New CLI flag: `pruvagraph . --monorepo`
+- New MCP tool: `list_packages` — lists detected sub-packages
+
+**Gap 1 — Claude Code PreToolUse Hooks** (`hooks.py`) ← Industry first
+- Hard enforcement on Read tool calls — not just advisory guidance
+- Hooks intercept `Read("file.py")` and redirect to `get_summary()` when node already surfaced
+- Writes `.claude/settings.json` with `PreToolUse` hook registration
+- New CLI: `pruvagraph hooks install / remove / status`
+- New install flag: `pruvagraph install --hooks`
+
+**Gap 2 — Session-Level Read Tracking** (`session_tracker.py`)
+- In-process singleton tracking which nodes were served per MCP session
+- Repeated `get_summary("X")` → terse back-reference (~10 tokens vs ~80 tokens)
+- Wired into `get_summary`, `get_dependencies`, `find_callers` + turn counter tick
+
+**Gap 3 — Idempotent `write_injection()`** (`preinjection.py`)
+- Fixed unconditional `CLAUDE.md` write that triggered spurious file-watcher reloads
+- Now compares existing block vs computed block; skips write if identical
+- Prevents VS Code / Cursor / Claude Code context reloaders from re-burning tokens
+
+**Gap 5 — Pipeline Top-Level Short-Circuit** (`pipeline.py`)
+- New `_is_repo_unchanged()`: checks `git status --short` + `graph.json` mtime before any file discovery
+- Clean git tree + fresh graph → entire pipeline skipped in <100ms
+- `--force` flag always bypasses
+
+### New CLI Commands (total: 14)
+```bash
+pruvagraph diff                           # D1: show last build diff
+pruvagraph diff --format json             # D1: JSON output for CI
+pruvagraph impact <symbol>                # D2: blast-radius analysis
+pruvagraph impact <symbol> --depth 4      # D2: deeper BFS
+pruvagraph impact <symbol> --format json  # D2: JSON for CI gates
+pruvagraph hooks install                  # Gap 1: register PreToolUse hook
+pruvagraph hooks remove                   # Gap 1: remove hook
+pruvagraph hooks status                   # Gap 1: check hook status
+pruvagraph install --hooks                # Gap 1: combined install
+```
+
+### New MCP Tools (total: 9)
+| Tool | Layer | Description |
+|------|-------|-------------|
+| `get_graph_diff` | D1 | What changed between last two builds? |
+| `analyze_impact` | D2 | What breaks if `<symbol>` changes? |
+| `list_packages` | M1 | (Monorepo) list sub-packages + cross-edges |
+
+### Tests
+- `test_graph_diff.py` — 22 tests covering D1: first build, clean diff, node/edge changes, persistence, storage guarantee, format output
+- `test_impact_analyzer.py` — 22 tests covering D2: resolution, error cases, BFS depth, risk scoring, git intel, JSON/table output
+- `test_monorepo.py` — 22 tests covering M1: all 8 detectors, cross-package edges, PackageInfo language/name extraction
+- **Total test count: 10 files → 13 files (35+ tests)**
+
+### Versions
+- `python/pruvagraph/__version__` → `1.3.0`
+- `python/pyproject.toml` version → `1.3.0`
+- `package.json` version → `1.3.0`
+
+---
 
 ## [1.2.0] — 2026-06-15
 

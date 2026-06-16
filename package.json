@@ -2,7 +2,7 @@
   "name": "pruvalex-pruvagraph",
   "displayName": "PRUVALEX PruvaGraph",
   "description": "🧠 Codebase knowledge graphs. 99%+ LLM cost reduction. Free local analysis — zero API cost for code.",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "publisher": "pruvalex",
   "license": "MIT",
   "icon": "icon.png",
@@ -118,6 +118,24 @@
         "title": "Dry Run — Estimate Cost Savings",
         "category": "PruvaGraph",
         "icon": "$(beaker)"
+      },
+      {
+        "command": "pruvagraph.showDiff",
+        "title": "Show Graph Diff",
+        "category": "PruvaGraph",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "pruvagraph.analyzeImpact",
+        "title": "Analyze Change Impact",
+        "category": "PruvaGraph",
+        "icon": "$(warning)"
+      },
+      {
+        "command": "pruvagraph.buildMonorepo",
+        "title": "Build Monorepo Graph",
+        "category": "PruvaGraph",
+        "icon": "$(repo)"
       }
     ],
     "viewsContainers": {
@@ -149,6 +167,11 @@
           "command": "pruvagraph.getDeps",
           "group": "pruvagraph@2",
           "when": "editorHasSelection"
+        },
+        {
+          "command": "pruvagraph.analyzeImpact",
+          "group": "pruvagraph@3",
+          "when": "editorHasSelection"
         }
       ],
       "view/title": [
@@ -166,6 +189,11 @@
           "command": "pruvagraph.openViz",
           "when": "view == pruvagraphPanel",
           "group": "navigation@3"
+        },
+        {
+          "command": "pruvagraph.showDiff",
+          "when": "view == pruvagraphPanel",
+          "group": "navigation@4"
         }
       ],
       "commandPalette": [
@@ -195,6 +223,15 @@
         },
         {
           "command": "pruvagraph.dryRun"
+        },
+        {
+          "command": "pruvagraph.showDiff"
+        },
+        {
+          "command": "pruvagraph.analyzeImpact"
+        },
+        {
+          "command": "pruvagraph.buildMonorepo"
         }
       ]
     },
@@ -260,6 +297,11 @@
           "type": "number",
           "default": 50,
           "description": "Max files to process in one batch (for progress reporting)."
+        },
+        "pruvagraph.monorepoMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "[M1] Auto-detect monorepo layout and build per-package graphs on every build."
         }
       }
     }
