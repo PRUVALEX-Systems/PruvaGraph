@@ -169,15 +169,33 @@
         }
       ],
       "commandPalette": [
-        { "command": "pruvagraph.build" },
-        { "command": "pruvagraph.query" },
-        { "command": "pruvagraph.costReport" },
-        { "command": "pruvagraph.installMCP" },
-        { "command": "pruvagraph.openViz" },
-        { "command": "pruvagraph.clearCache" },
-        { "command": "pruvagraph.watchToggle" },
-        { "command": "pruvagraph.installPkg" },
-        { "command": "pruvagraph.dryRun" }
+        {
+          "command": "pruvagraph.build"
+        },
+        {
+          "command": "pruvagraph.query"
+        },
+        {
+          "command": "pruvagraph.costReport"
+        },
+        {
+          "command": "pruvagraph.installMCP"
+        },
+        {
+          "command": "pruvagraph.openViz"
+        },
+        {
+          "command": "pruvagraph.clearCache"
+        },
+        {
+          "command": "pruvagraph.watchToggle"
+        },
+        {
+          "command": "pruvagraph.installPkg"
+        },
+        {
+          "command": "pruvagraph.dryRun"
+        }
       ]
     },
     "keybindings": [
@@ -204,13 +222,19 @@
           "type": "number",
           "default": 0.82,
           "minimum": 0.5,
-          "maximum": 1.0,
+          "maximum": 1,
           "description": "Jaccard similarity threshold for semantic dedup (0.5–1.0). Lower = more aggressive grouping."
         },
         "pruvagraph.llmBackend": {
           "type": "string",
           "default": "none",
-          "enum": ["none", "claude", "gemini", "openai", "ollama"],
+          "enum": [
+            "none",
+            "claude",
+            "gemini",
+            "openai",
+            "ollama"
+          ],
           "enumDescriptions": [
             "Free — code only (tree-sitter + regex). No API key needed.",
             "Claude Haiku for docs/PDFs. Needs ANTHROPIC_API_KEY.",
@@ -222,7 +246,14 @@
         },
         "pruvagraph.excludePatterns": {
           "type": "array",
-          "default": ["node_modules", ".git", "dist", "build", "__pycache__", "pruvagraph-out"],
+          "default": [
+            "node_modules",
+            ".git",
+            "dist",
+            "build",
+            "__pycache__",
+            "pruvagraph-out"
+          ],
           "description": "Directories/patterns to exclude from analysis."
         },
         "pruvagraph.maxFilesPerBatch": {
@@ -239,7 +270,10 @@
     "publish-ovsx": "ovsx publish"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
     "@vscode/vsce": "^2.24.0",
+    "husky": "^9.1.7",
     "ovsx": "^0.9.0"
   }
 }
