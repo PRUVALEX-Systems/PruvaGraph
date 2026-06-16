@@ -2,7 +2,7 @@
   "name": "pruvalex-pruvagraph",
   "displayName": "PRUVALEX PruvaGraph",
   "description": "🧠 Codebase knowledge graphs. 99%+ LLM cost reduction. Free local analysis — zero API cost for code.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "publisher": "pruvalex",
   "license": "MIT",
   "icon": "icon.png",

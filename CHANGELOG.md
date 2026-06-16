@@ -1,6 +1,8 @@
 # Changelog
 
-All notable changes to PRUVALEX PruvaGraph are documented here.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.2.1](https://github.com/pruvalex/pruvagraph/compare/v1.2.0...v1.2.1) (2026-06-16)
 
 ## [1.2.0] — 2026-06-15
 
@@ -11,18 +13,11 @@ All notable changes to PRUVALEX PruvaGraph are documented here.
 - **N3 (VS Code LSP Integration)**: Lightning fast graph building via `build-from-lsp`. Extracts symbols using VS Code's internal language server (bypassing tree-sitter completely) to build a fast structural graph in seconds.
 
 ### Fixed
-- Wire L5 (Token Compression): `compress()` now called in `llm_extract.py` before every LLM batch — 50–80% token reduction
-- Wire N9 (AST Diff): `--update` flag now uses `get_changed_files()` to skip unchanged files at function level
-- Wire A5 (Global Pkg Cache): `scan_dependencies()` + `get_package_nodes()` now called in pipeline — common packages loaded from cross-project cache
 - **Graph build crash**: stub external nodes no longer pass duplicate `label` kwargs to NetworkX.
 - **Windows CLI**: logo rendering falls back to ASCII when the console cannot encode box-drawing characters.
 - **Streaming status**: `complete()` now sets progress to 100%.
 - **CLI backend**: added `none` (free code-only) to `--backend` choices; default is now `none`.
 - **Export CLI**: removed unimplemented `pdf` format option.
-
-### Layer count
-- Before this fix: 21 real layers wired (3 dead code)
-- After this fix: 24 real layers wired (0 dead code)
 
 ### Added
 - **Test suite**: 17 unit tests covering build, detect, dedup, export, streaming, prewarm, and deterministic query routing.
