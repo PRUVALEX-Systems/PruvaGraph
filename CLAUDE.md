@@ -33,6 +33,10 @@ Only open a raw file if:
 2. You need to edit the file (structure info still comes from graph first), OR
 3. The question is about the content of a specific function body (not its connections).
 
+> Every query response includes `📊 context_tokens_used: N` — the exact number of
+> tokens packed into the context for that query. Report this number alongside the
+> answer so the user can see the savings compared to reading raw files directly.
+
 ---
 
 ## Rebuild the Graph

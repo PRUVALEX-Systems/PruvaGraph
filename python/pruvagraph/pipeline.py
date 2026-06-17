@@ -351,11 +351,41 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                 continue
         code_to_extract.append(path)
 
-    # Parallel tree-sitter extraction — sized to physical CPU cores (no +4 margin)
+    # ── N9: Incremental update — only re-extract files that changed ────────────
+    if cfg.update and not cfg.force:
+        try:
+            from pruvagraph.ast_diff import (
+                get_changed_files, get_untracked_files, is_git_repo
+            )
+            if is_git_repo(cfg.root):
+                _changed  = set(str(p) for p in get_changed_files(cfg.root))
+                _untracked = set(str(p) for p in get_untracked_files(cfg.root))
+                _update_targets = _changed | _untracked
+                if _update_targets:
+                    code_files = [f for f in code_files if str(f) in _update_targets]
+                    doc_files  = [f for f in doc_files  if str(f) in _update_targets]
+                    _rich_print(
+                        f"  [N9] --update: {len(code_files)+len(doc_files)} changed files "
+                        f"({len(_changed)} modified, {len(_untracked)} untracked)",
+                        "yellow",
+                    )
+                else:
+                    _rich_print(
+                        "  [N9] --update: no changed files detected. Graph is current.",
+                        "green",
+                    )
+        except Exception:
+            pass  # fallback: full extraction
+
+    def _worker_init() -> None:
+        """Pre-warm imports once per worker process to amortise spawn overhead."""
+        from pruvagraph import extract  # noqa: F401
+
+    # Parallel extraction — sized to physical CPU cores (no +4 margin)
     if code_to_extract:
         import os as _os
         _workers = _os.cpu_count() or 4
-        with ProcessPoolExecutor(max_workers=_workers) as pool:
+        with ProcessPoolExecutor(max_workers=_workers, initializer=_worker_init) as pool:
             futures = {pool.submit(extract_code_file, p): p for p in code_to_extract}
             for future in as_completed(futures):
                 path = futures[future]
@@ -363,13 +393,14 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                     result = future.result()
                     all_extractions.append(result)
                     tracker.record_tree_sitter()
-                    # Cache the result
+                    # Cache the result — single stat() call (A2 fix)
                     from pruvagraph.cache import CacheEntry, _sha256
-                    content = path.read_bytes()
+                    content  = path.read_bytes()
+                    _st      = path.stat()
                     cache.save(path, CacheEntry(
                         path=str(path),
-                        stat_size=path.stat().st_size,
-                        stat_mtime_ns=int(path.stat().st_mtime_ns),
+                        stat_size=_st.st_size,
+                        stat_mtime_ns=int(_st.st_mtime_ns),
                         content_hash=_sha256(content),
                         ast_hash=None,
                         nodes=result.get("nodes", []),
@@ -534,10 +565,11 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
                 # Cache doc result
                 from pruvagraph.cache import CacheEntry, _sha256
                 content = path.read_bytes()
+                _st_doc = path.stat()
                 cache.save(path, CacheEntry(
                     path=str(path),
-                    stat_size=path.stat().st_size,
-                    stat_mtime_ns=int(path.stat().st_mtime_ns),
+                    stat_size=_st_doc.st_size,
+                    stat_mtime_ns=int(_st_doc.st_mtime_ns),
                     content_hash=_sha256(content),
                     ast_hash=None,
                     nodes=result.get("nodes", []),

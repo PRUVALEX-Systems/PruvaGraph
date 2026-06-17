@@ -528,6 +528,31 @@ def impact_cmd(symbol: str, root: str, depth: int, fmt: str) -> None:
     report = analyze_impact(G, symbol, depth=depth, git_intel=git_intel)
     click.echo(report.format(fmt))
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# serve — start MCP server over stdio (used by Claude Code / Cursor)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@cli.command("serve")
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory the MCP server will read graphs from.")
+def serve_cmd(root: str) -> None:
+    """
+    Start the PruvaGraph MCP server over stdio.
+
+    This is the command registered by ``pruvagraph install --claude-code``.
+    Claude Code, Cursor, and any other MCP-compatible tool will call this
+    automatically when the server is configured.
+
+    You do not normally need to run this manually.
+    """
+    import asyncio
+    import os
+    from pruvagraph.mcp_server import run_stdio_server
+    os.environ.setdefault("PRUVAGRAPH_ROOT", str(Path(root).resolve()))
+    asyncio.run(run_stdio_server())
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────────────────────────────────────

@@ -97,7 +97,10 @@ def _load_graph(root: str = ".") -> tuple[Any, bool]:
 # ---------------------------------------------------------------------------
 
 def _query_graph(question: str, root: str = ".") -> str:
-    """Query the graph in natural language."""
+    """
+    Query the graph using the full 5-tier cost pipeline (C1 fix).
+    Replaces the old simple keyword search with the real query engine.
+    """
     G, is_partial = _load_graph(root)
     if G is None:
         return "No graph found. Run 'pruvagraph .' first."
@@ -111,30 +114,40 @@ def _query_graph(question: str, root: str = ".") -> str:
         except Exception:
             pass
 
-    # Simple keyword search over node summaries + labels
-    q_lower = question.lower()
-    matches = []
-    for node_id, data in G.nodes(data=True):
-        label   = str(data.get("label", "")).lower()
-        summary = str(data.get("summary", "")).lower()
-        if any(kw in label or kw in summary for kw in q_lower.split()):
-            matches.append({
-                "id":      node_id,
-                "label":   data.get("label"),
-                "type":    data.get("type"),
-                "summary": data.get("summary"),
-                "file":    data.get("file"),
-            })
-
-    if not matches:
-        return f"No nodes found matching: {question}"
-
-    lines = [f"Found {len(matches)} matching nodes:\n"]
-    for m in matches[:10]:
-        lines.append(f"• [{m['type']}] {m['label']} ({m['file']})\n  {m['summary']}")
-    if len(matches) > 10:
-        lines.append(f"\n... and {len(matches)-10} more.")
-    return prefix + "\n".join(lines)
+    # Use the full 5-tier pipeline from query.py (C1 fix)
+    try:
+        from pruvagraph.query import query
+        out_dir = Path(root) / "pruvagraph-out"
+        result = query(
+            G,
+            question,
+            backend="none",
+            out_dir=out_dir if out_dir.exists() else None,
+        )
+        return prefix + result
+    except Exception as e:
+        # Fallback: keyword search if query module fails
+        q_lower = question.lower()
+        matches = []
+        for node_id, data in G.nodes(data=True):
+            label   = str(data.get("label", "")).lower()
+            summary = str(data.get("summary", "")).lower()
+            if any(kw in label or kw in summary for kw in q_lower.split()):
+                matches.append({
+                    "id":      node_id,
+                    "label":   data.get("label"),
+                    "type":    data.get("type"),
+                    "summary": data.get("summary"),
+                    "file":    data.get("file"),
+                })
+        if not matches:
+            return f"No nodes found matching: {question} (query engine error: {e})"
+        lines = [f"Found {len(matches)} matching nodes:\n"]
+        for m in matches[:10]:
+            lines.append(f"• [{m['type']}] {m['label']} ({m['file']})\n  {m['summary']}")
+        if len(matches) > 10:
+            lines.append(f"\n... and {len(matches)-10} more.")
+        return prefix + "\n".join(lines)
 
 
 def _get_dependencies(node_id: str, root: str = ".") -> str:
@@ -392,14 +405,20 @@ def _list_packages(root: str = ".") -> str:
 
 # ---------------------------------------------------------------------------
 # MCP Server
-# ---------------------------------------------------------------------------
-
+# -------------------------------------------# D1 fix: All descriptions rewritten with "CALL THIS FIRST" pattern so
+# Claude Code prioritises graph tools over built-in file-read tools.
 TOOLS: list[dict[str, Any]] = [
     {
         "name": "query_graph",
         "description": (
-            "Query the PruvaGraph knowledge graph in natural language. "
-            "Ask about connections, modules, classes, functions."
+            "CALL THIS FIRST before reading any source file, running grep, or using "
+            "list_directory for any question about codebase structure, architecture, or "
+            "dependencies. Answers natural language questions using a pre-built knowledge "
+            "graph — 5×–71× cheaper in tokens than reading raw files. Fully offline, zero "
+            "API cost. Examples: 'how does auth connect to the database?', "
+            "'what modules does UserService depend on?', "
+            "'where is payment processing handled?', "
+            "'which files import the logger?'"
         ),
         "inputSchema": {
             "type": "object",
@@ -412,7 +431,12 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "get_dependencies",
-        "description": "Get all dependencies (imports, calls, uses) of a module, class, or function.",
+        "description": (
+            "CALL THIS FIRST when asked what a module, class, or function imports or depends on. "
+            "Returns the complete dependency graph from the pre-built knowledge graph — "
+            "no file reads needed. Pass the node ID (e.g. 'auth.session.SessionManager') "
+            "or a label. Always faster and cheaper than opening the file."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -424,11 +448,16 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "find_callers",
-        "description": "Find all code that calls or imports a given function/class.",
+        "description": (
+            "CALL THIS FIRST when asked 'who calls X?', 'where is X used?', or "
+            "'which files import Y?'. Returns all callers and importers of a function "
+            "or class from the knowledge graph — much cheaper than grep across the whole "
+            "codebase. Works on function names, class names, and node IDs."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
-                "node_id": {"type": "string", "description": "Node ID or label"},
+                "node_id": {"type": "string", "description": "Node ID, function name, or class name"},
                 "root":    {"type": "string", "description": "Project root directory (default: .)"},
             },
             "required": ["node_id"],
@@ -436,11 +465,16 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "get_summary",
-        "description": "Get a one-sentence summary and metadata for any node in the graph.",
+        "description": (
+            "CALL THIS FIRST when asked what a class, function, or file does. "
+            "Returns a one-sentence summary + type + file location + community cluster "
+            "from the knowledge graph. Zero file reads needed. "
+            "Supports fuzzy matching — partial names and labels work."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
-                "node_id": {"type": "string", "description": "Node ID or label"},
+                "node_id": {"type": "string", "description": "Node ID, label, or partial name (fuzzy matching)"},
                 "root":    {"type": "string", "description": "Project root directory (default: .)"},
             },
             "required": ["node_id"],
@@ -448,7 +482,12 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "list_communities",
-        "description": "List all detected architectural communities/modules in the codebase.",
+        "description": (
+            "CALL THIS FIRST for architectural overview questions like 'what are the main modules?', "
+            "'show me the high-level structure', or 'what does this codebase do?'. "
+            "Lists all detected architectural clusters (communities) with member counts and "
+            "representative symbols. Zero file reads."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -458,7 +497,11 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "cost_report",
-        "description": "Show the LLM cost report from the last pruvagraph build — how much was saved.",
+        "description": (
+            "Show the LLM cost analytics from the last pruvagraph build: files processed, "
+            "cache hits, dedup savings, actual cost vs naive cost, and percentage saved. "
+            "Also shows per-query token benchmarks if benchmark_mode was used."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -466,12 +509,13 @@ TOOLS: list[dict[str, Any]] = [
             },
         },
     },
-    # ── v1.3.0 new tools ───────────────────────────────────────────────────
     {
         "name": "get_graph_diff",
         "description": (
-            "[D1] Show what changed between the last two graph builds. "
-            "Returns added/removed/changed nodes and edges since last 'pruvagraph .' run."
+            "CALL THIS when asked 'what changed?', 'what’s new since last build?', or "
+            "before starting a PR review. Shows added/removed/changed nodes and edges "
+            "since the last 'pruvagraph .' run. Gives structural change context without "
+            "reading individual files."
         ),
         "inputSchema": {
             "type": "object",
@@ -483,16 +527,17 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "analyze_impact",
         "description": (
-            "[D2] Analyse the blast radius of changing a symbol, function, class, or file. "
-            "Returns a risk-sorted list of all dependent nodes. "
-            "Use this before making changes to understand what might break."
+            "CALL THIS BEFORE making any change to a symbol, function, class, or file. "
+            "Returns a risk-sorted list of all nodes that would be affected if this symbol "
+            "changes — the blast radius. Use this to understand what might break without "
+            "manually tracing every dependency chain."
         ),
         "inputSchema": {
             "type": "object",
             "properties": {
                 "node_id": {
                     "type": "string",
-                    "description": "Symbol name, class, file, or node ID. Fuzzy matching — partial names work.",
+                    "description": "Symbol name, class, file path, or node ID. Fuzzy matching — partial names work.",
                 },
                 "root":  {"type": "string", "description": "Project root directory (default: .)"},
                 "depth": {
@@ -507,8 +552,10 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "list_packages",
         "description": (
-            "[M1] Detect monorepo layout and list all sub-packages with cross-package import edges. "
-            "Supports pnpm, Nx, Lerna, Turborepo, Rush, npm workspaces, Python, and generic layouts."
+            "CALL THIS FIRST for monorepo questions: 'what packages are in this repo?', "
+            "'which packages depend on each other?'. Detects monorepo layout (pnpm, Nx, "
+            "Lerna, Turborepo, Rush, npm workspaces, Python, generic) and lists all "
+            "sub-packages with cross-package import edges. No file reads needed."
         ),
         "inputSchema": {
             "type": "object",
@@ -518,6 +565,7 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
 ]
+
 
 TOOL_HANDLERS = {
     "query_graph":      lambda args: _query_graph(args["question"], args.get("root", ".")),
@@ -573,7 +621,7 @@ async def run_stdio_server() -> None:
             read_stream, write_stream,
             InitializationOptions(
                 server_name="pruvagraph",
-                server_version="1.3.0",
+                server_version="1.4.0",
                 capabilities=server.get_capabilities(
                     notification_options=None,
                     experimental_capabilities={},

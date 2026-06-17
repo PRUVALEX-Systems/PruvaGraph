@@ -101,7 +101,7 @@ def query(
 
         # Token count is a free byproduct of the packing pass — include on every call.
         result_str = _format_local_answer(question, matches, G)
-        context_tokens_used = len(result_str.split()) * 4 // 3  # ~1.33 words/token
+        context_tokens_used = len(result_str) // 4  # chars / 4 — standard approximation
         answer = f"{result_str}\n\n📊 context_tokens_used: {context_tokens_used:,}"
 
         if benchmark_mode and out_dir:
@@ -120,7 +120,7 @@ def query(
         if level in ("repo", "community") and out_dir:
             hierarchy = load_hierarchy(out_dir)
             context   = get_level_context(hierarchy, level)
-            context_tokens = len(context.split()) * 4 // 3 if context else 0
+            context_tokens = len(context) // 4 if context else 0
             if not context:
                 context, context_tokens = build_query_context(
                     G, seed_nodes, k_hops=2, max_tokens=token_budget
@@ -133,7 +133,7 @@ def query(
         # Pure fallback: BM25 matches
         matches = _keyword_search(G, question, top_k=top_k)
         context = _build_context(matches, G)
-        context_tokens = len(context.split()) * 4 // 3
+        context_tokens = len(context) // 4  # chars / 4 — standard approximation (C2 fix)
 
     # ── Tier 5: LLM call ──────────────────────────────────────────────────────
     answer = _llm_answer(question, context, backend)

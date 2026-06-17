@@ -136,7 +136,7 @@ def _install_claude_code(
     claude_cli = shutil.which("claude")
 
     if claude_cli:
-        return _register_via_claude_cli(claude_cli, scope, mcp_config)
+        return _register_via_claude_cli(claude_cli, scope, mcp_config, root=root)
     else:
         return _fallback_write_mcp_json(root, mcp_config)
 
@@ -145,9 +145,13 @@ def _register_via_claude_cli(
     claude_cli: str,
     scope: str,
     mcp_config: dict,
+    root: Path = Path("."),  # E3 fix: receive project root for fallback
 ) -> Path | None:
     """
     Strategy 1: use ``claude mcp add --transport stdio --scope <scope>``.
+
+    Scope flag placed before server name per current Claude Code CLI spec:
+      claude mcp add --transport stdio --scope <scope> <name> -- <cmd> [args]
 
     This stays correct automatically if Claude Code's internal config
     format changes in future versions, because config management is
@@ -156,11 +160,12 @@ def _register_via_claude_cli(
     server_cfg = mcp_config["mcpServers"]["pruvagraph"]
     serve_cmd: list[str] = [server_cfg["command"]] + server_cfg.get("args", [])
 
+    # E1 fix: scope flag before server name (current Claude CLI spec)
     cmd = [
         claude_cli, "mcp", "add",
         "--transport", "stdio",
-        "pruvagraph",
         "--scope", scope,
+        "pruvagraph",
         "--",
     ] + serve_cmd
 
@@ -192,10 +197,8 @@ def _register_via_claude_cli(
     except Exception as e:
         print(f"  ⚠ `claude mcp add` error: {e} — falling back to .mcp.json", file=sys.stderr)
 
-    # CLI failed unexpectedly: fall back
-    # (root is unknown here; caller should have passed it, but we need it for fallback)
-    # This path is rare — use CWD as a safe default
-    return _fallback_write_mcp_json(Path.cwd(), mcp_config)
+    # E3 fix: use project root passed from caller, not Path.cwd()
+    return _fallback_write_mcp_json(root, mcp_config)
 
 
 def _fallback_write_mcp_json(root: Path, mcp_config: dict) -> Path:

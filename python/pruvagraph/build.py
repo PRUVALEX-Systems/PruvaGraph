@@ -43,13 +43,15 @@ def build_nx_graph(extractions: list[dict[str, Any]]) -> nx.MultiDiGraph:
     """
     G = nx.MultiDiGraph()
 
+    # Single-pass loop (B1 fix — avoids iterating extractions twice)
+    all_edges: list[dict[str, Any]] = []
     for extraction in extractions:
         for node in extraction.get("nodes", []) or []:
             _add_or_merge_node(G, node)
+        all_edges.extend(extraction.get("edges", []) or [])
 
-    for extraction in extractions:
-        for edge in extraction.get("edges", []) or []:
-            _add_edge(G, edge)
+    for edge in all_edges:
+        _add_edge(G, edge)
 
     _dedupe_parallel_edges(G)
     return G
