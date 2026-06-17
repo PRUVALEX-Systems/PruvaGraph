@@ -32,6 +32,7 @@ from pruvagraph.batch import BatchPlan, pack_batches
 from pruvagraph.cache import GraphCache
 from pruvagraph.cost import CostReport, CostTracker
 from pruvagraph.dedup import deduplicate, project_extraction
+from pruvagraph import global_cache  # noqa: F401 — A5: wired into pipeline
 
 _OUT_DIR = "pruvagraph-out"
 
@@ -51,6 +52,7 @@ class BuildConfig:
     out_dir: str = _OUT_DIR
     streaming: bool = False      # Arch1: write partial graph during build
     monorepo: bool = False       # M1: delegate to monorepo router
+    update: bool = False         # N9: incremental update — only re-extract changed files
 
 
 @dataclass
@@ -90,6 +92,7 @@ def build_graph(
     out_dir: str = _OUT_DIR,
     streaming: bool = False,
     monorepo: bool = False,
+    update: bool = False,
 ) -> BuildResult:
     """
     Build a knowledge graph for *root* with maximum LLM cost reduction.
@@ -126,6 +129,7 @@ def build_graph(
         out_dir=out_dir,
         streaming=streaming,
         monorepo=monorepo,
+        update=update,
     )
     # M1: delegate to monorepo router
     if cfg.monorepo:
