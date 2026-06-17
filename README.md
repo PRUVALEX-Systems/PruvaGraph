@@ -4,8 +4,8 @@
 
 **Codebase knowledge graphs with 100% local parsing for code & configs.**
 
-Turn any repository into a queryable knowledge graph. One command, any language, any size.  
-Built for developers who love Claude Code — but not the bill.
+Turn any repository into a queryable knowledge graph — one command, any language, any size.
+Built for developers who love Claude Code, but not the bill.
 
 > Made by [PRUVALEX](https://pruvalex.eu) — open source, MIT licensed.
 
@@ -13,442 +13,177 @@ Built for developers who love Claude Code — but not the bill.
 [![PyPI](https://img.shields.io/badge/PyPI-pruvagraph-blue?style=flat-square&logo=pypi)](https://pypi.org/project/pruvagraph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-00E57A?style=flat-square)](./LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/PRUVALEX-Systems/pruvagraph/ci.yml?style=flat-square&label=CI)](https://github.com/PRUVALEX-Systems/pruvagraph/actions)
-[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-5B5BFF?style=flat-square)](https://pypi.org/project/pruvagraph)
 [![Version](https://img.shields.io/badge/Version-1.4.0-00E57A?style=flat-square)](./CHANGELOG.md)
 
 </div>
 
 ---
 
-## Why PruvaGraph?
+## Why PruvaGraph
 
-Standard tools send every file to an LLM on every run. PruvaGraph has 31 layers that make sure almost nothing ever reaches an LLM at all.
+Most code-to-graph tools send every file to an LLM, every run. PruvaGraph routes around that with 31 layers across build, graph-enrichment, and query stages — so almost nothing ever reaches an LLM at all.
 
-| | Other tools | PruvaGraph v1.4.0 |
+| | Other tools | PruvaGraph |
 |---|---|---|
-| 10,000-file repo, daily CI | LLM extraction for everything | **0 LLM calls for code/configs** |
-| Re-run (unchanged files) | Full LLM scan again | **Instant cache — $0.00** |
-| Code file analysis | API cost per file | **$0.00 — local tree-sitter, always free** |
-| Config files (JSON/YAML/TOML) | LLM extraction | **$0.00 — structural parser** |
-| Schema files (OpenAPI/Prisma/GraphQL/Proto) | LLM extraction | **$0.00 — schema parser** |
-| Duplicate/similar files (40 React components) | 40 LLM calls | **1 LLM call — MinHash dedup** |
-| Repeat queries | LLM every time | **$0.00 — fuzzy query cache** |
-| 60–70% of queries | LLM | **$0.00 — deterministic router** |
-| Secrets in code | Sent to LLM | **Redacted — privacy shield** |
-| Data sovereignty | Cloud-dependent | **100% local, no server** |
+| Code & config extraction | LLM, per file | **$0.00 — local tree-sitter + structural parsers** |
+| Re-runs (unchanged files) | Full scan again | **Instant cache hit** |
+| Similar files (e.g. 40 React components) | 40 LLM calls | **1 call — MinHash dedup** |
+| Repeat / common queries | LLM every time | **$0.00 — cache + deterministic router** |
+| Secrets in code | Sent to LLM | **Redacted before any call** |
+| Data | Cloud-dependent | **100% local, no server** |
 
-**Result:** After 31 layers, the only files that cost money are image-only PDFs (no text layer) and genuinely novel creative queries. Everything else is handled locally for free.
+The only things that still cost money: image-only PDFs (no text layer) and genuinely novel queries the router can't answer structurally.
 
 ---
 
 ## Quick Start
 
 ```bash
-# Install
-pip install pruvagraph
+pip install pruvagraph          # or: uvx pruvagraph .
 
-# Or with uv (faster)
-uvx pruvagraph .
-
-# Build graph (FREE for code — no API key needed)
-pruvagraph .
-
-# Query your codebase
+pruvagraph .                     # build the graph — free for code, no API key needed
 pruvagraph query "how does authentication connect to the database?"
-pruvagraph query "which modules have the most dependencies?"
-pruvagraph query "what would break if I deleted AuthMiddleware?"
-
-# Watch mode — auto-update on every file save
-pruvagraph watch .
+pruvagraph watch .               # auto-rebuild on every save
 ```
 
 > [!IMPORTANT]
-> `pruvagraph` requires a **root path argument** before subcommands.
-> `pruvagraph . install --claude-code` ✅ — not `pruvagraph install --claude-code` ❌
+> A root path is required before subcommands: `pruvagraph . install --claude-code` ✅, not `pruvagraph install --claude-code` ❌.
 
-**Output in `pruvagraph-out/`:**
-
-| File | What It Contains |
-|---|---|
-| `graph.json` | Queryable knowledge graph (NetworkX node-link format) |
-| `graph.html` | Self-contained interactive D3 visualizer — opens in browser |
-| `GRAPH_REPORT.md` | God nodes, surprising connections, architectural communities |
-| `cost_report.json` | Exact savings breakdown vs naive scanning |
-| `community_summaries.json` | Pre-computed context for each architectural cluster |
-| `hierarchy.json` | 4-level summary pyramid (repo → community → module → symbol) |
-| `privacy_audit.jsonl` | Audit trail of every secret redacted before LLM |
+**Output (`pruvagraph-out/`):** `graph.json` (queryable graph), `graph.html` (interactive D3 visualizer), `GRAPH_REPORT.md` (architecture summary), `cost_report.json`, `hierarchy.json`, `privacy_audit.jsonl`.
 
 ---
 
-## VS Code / Cursor
-
-Install from the Marketplace:
-
-```
-ext install pruvalex.pruvagraph
-```
-
-Or press `Ctrl+Shift+P` → **PruvaGraph: Build Graph**.
-
-### Keyboard Shortcuts
-
-| Shortcut | Action |
-|---|---|
-| `Ctrl+Shift+G` | Build Graph |
-| `Ctrl+Shift+/` | Query Codebase |
-| `Ctrl+Shift+P` → `PruvaGraph: ...` | All 15 commands |
-
-### Sidebar Panel
-
-- **Live status dot** — Green (ready) / Yellow (watching) / Grey (not built)
-- **Metrics grid** — Nodes, Edges, Savings %, Cost Saved $
-- **Build Graph** / **Query Codebase** / **Open Visualizer** buttons
-- **Watch Mode** — auto-rebuild on every file save
-- **Cost Report** — live cost analytics per layer
-- **Dry Run** — estimate cost before spending anything
-- **Clear Cache** — force full rebuild
-
-### Right-Click Context Menu (select any symbol first)
-
-- **Find Callers of Symbol** — who calls this function?
-- **Get Dependencies of Symbol** — what does this module depend on?
-
----
-
-## Claude Code
-
-PruvaGraph installs as an MCP server so Claude Code can query your codebase graph directly — reading the compact `graph.json` instead of opening files one by one (**5×–71× fewer tokens per query**):
+## IDE & Claude Code Integration
 
 ```bash
-pruvagraph . install --claude-code
+pruvagraph . install                # all IDEs at once
+pruvagraph . install --claude-code  # writes ~/.claude/mcp_config.json + CLAUDE.md
 ```
 
-This writes to `~/.claude/mcp_config.json` and creates `CLAUDE.md` automatically.
+| IDE | Install | Status |
+|---|---|---|
+| VS Code | Marketplace or `ext install pruvalex.pruvagraph` | ✅ |
+| Cursor | `.vsix` or Open VSX | ✅ |
+| Claude Code | MCP via `install --claude-code` | ✅ |
+| Windsurf / VSCodium / Gitpod | `.vsix` or Open VSX | ✅ |
+| Any terminal | `pip install pruvagraph` | ✅ |
 
-### 9 MCP Tools Available
+**VS Code sidebar:** build/query/visualize buttons, live cost meter, watch mode, dry-run estimate. Shortcuts: `Ctrl+Shift+G` build, `Ctrl+Shift+/` query, `Ctrl+Shift+P` for the full command palette. Right-click any symbol for **Find Callers** / **Get Dependencies**.
+
+**9 MCP tools** for Claude Code / Cursor — read the graph instead of opening files one by one:
 
 | Tool | Example |
 |---|---|
-| `query_graph` | `"How does UserService connect to the database?"` |
-| `get_dependencies` | `"What does pipeline.py depend on?"` |
-| `find_callers` | `"Who calls build_graph()?"` |
-| `get_summary` | `"Give me a one-line summary of CostTracker"` |
-| `list_communities` | `"What are the architectural modules in this repo?"` |
-| `cost_report` | `"How much did we save on the last build?"` |
-| `get_graph_diff` | `"What architectural changes happened since the last commit?"` |
-| `analyze_impact` | `"What breaks if I change AuthMiddleware?"` |
-| `list_packages` | `"What packages exist in this monorepo?"` |
+| `query_graph` | "How does UserService connect to the database?" |
+| `get_dependencies` | "What does pipeline.py depend on?" |
+| `find_callers` | "Who calls build_graph()?" |
+| `get_summary` | "One-line summary of CostTracker" |
+| `list_communities` | "What are the architectural modules here?" |
+| `cost_report` | "How much did the last build save?" |
+| `get_graph_diff` | "What changed since the last commit?" |
+| `analyze_impact` | "What breaks if I change AuthMiddleware?" |
+| `list_packages` | "What packages exist in this monorepo?" |
 
 ---
 
-## 31-Layer Architecture
+## Architecture — 31 Layers
 
 > "The best API call is the one you never make."
 
-PruvaGraph implements 31 specialized layers across three stages to minimize LLM usage and maximize offline processing:
-
-- **Build-Time (21 layers):** Fast local algorithms replace LLM extraction. Features local tree-sitter parsing, MinHash deduplication, config/schema parsers, git intelligence, and monorepo auto-detection.
-- **Post-Graph (5 layers):** Enriches the graph with Leiden community clustering, type harvesting, hierarchical summaries, and offline embeddings.
-- **Query-Time (5 layers):** Implements a highly optimized routing pipeline where graph diffs and impact analysis are computed structurally rather than generationally.
-
-### Query-Time: 5-Tier Pipeline
-
-60–70% of queries never reach an LLM at all:
+- **Build-time (21 layers)** — tree-sitter AST, MinHash dedup, batch packing, LLM cascade (Ollama → Gemini → Claude), token compression, free parsers for docs/config/schema files, git intelligence, monorepo auto-detection.
+- **Graph enrichment (5 layers)** — Leiden community clustering, type harvesting, 4-level hierarchy summaries, offline embeddings.
+- **Query-time (5 layers)** — cache → deterministic router → semantic subgraph → hierarchy scoping → LLM only as a last resort.
 
 ```
-Question ──► Tier 0: Query Cache (N6)        ──► exact + fuzzy-match repeats → free
-             │ miss
-             ▼
-             Tier 1: Deterministic Router (A2) ──► 8 algorithmic patterns     → free
-             │ no match
-             ▼
-             Tier 2: Embedding Search (A1) + Subgraph (N7) ──► 2-hop BFS      → free
-             │ context ready
-             ▼
-             Tier 3: Hierarchy Router (A3)     ──► right abstraction level     → free
-             │ scoped
-             ▼
-             Tier 4: LLM ──► micro-context only (~200 tokens, not 50,000)      → minimal cost
+Question ──► Query Cache        exact/fuzzy repeats        → free
+         ──► Deterministic Router  8 algorithmic patterns  → free
+         ──► Embedding + Subgraph  2-hop BFS                → free
+         ──► Hierarchy Router      right abstraction level  → free
+         ──► LLM                   micro-context only       → minimal cost
 ```
 
-**Tier 1 — 8 free deterministic patterns:**
-
-| Query Pattern | Example | Algorithm |
-|---|---|---|
-| Callers | "who calls verify_token?" | BFS in-edges |
-| Dependencies | "what does pipeline.py depend on?" | BFS out-edges |
-| Module list | "list all modules" | Community iteration |
-| God nodes | "most connected nodes?" | Degree sort |
-| Summary | "what is SessionManager?" | Node label lookup |
-| Statistics | "how many functions?" | Node type counter |
-| Dead code | "isolated nodes?" | Degree == 0 filter |
-| Shortest path | "how does auth connect to DB?" | `nx.shortest_path` |
+8 query patterns answered with zero LLM calls: callers, dependencies, module list, god nodes, summaries, statistics, dead code, shortest path.
 
 ---
 
-## Cost Reduction — Honest Numbers
+## Honest Cost Numbers
 
-- **For repos with no PDFs/images** (most repos): **0 LLM calls needed for build** — code, config, schemas, and markdown docs are all parsed locally for free.
-- **For repos with genuine LLM-bound docs**: Cache + dedup + batching typically cut **80–95% of LLM calls on re-runs**, and **40–60% on first runs** with similar files.
-- **For AI-assistant query cost** (Claude Code/Cursor reading `graph.json`): Reduces context tokens per query by roughly **5×–20×** vs reading raw files.
-
-### What Still Costs Money
-
-After 31 layers, the only remaining cost is:
-
-- **Image-only PDFs** — no text layer, requires vision LLM
-- **Genuinely novel complex queries** — the truly creative ones Tier 1–3 can't answer
-
-Everything else — all code, all configs, all schemas, all structured docs, all known queries — is handled locally for free.
+- **Repos with no PDFs/images** (most repos): 0 LLM calls for the build.
+- **Repos with genuine LLM-bound docs:** cache + dedup + batching cut 80–95% of calls on re-runs, 40–60% on first runs.
+- **AI-assistant queries** (Claude Code/Cursor reading `graph.json`): roughly 5×–20× fewer tokens per query vs reading raw files.
 
 ---
 
-## Cost Controls
+## CLI Reference
 
 ```bash
-pruvagraph . --budget 2.00   # Hard stop at $2.00 of LLM spend
-pruvagraph . --dry-run       # Estimate cost before spending anything
-pruvagraph . --cascade       # Auto 3-tier routing: Ollama → Gemini → Claude
+# Build
+pruvagraph .  --backend gemini|ollama|claude   # docs/PDFs only — code is always free
+pruvagraph .  --cascade   --dry-run   --budget 2.00   --update   --force   --no-viz
+
+# Query / reports
+pruvagraph query "..."
+pruvagraph cost-report
+pruvagraph benchmark
+
+# Export
+pruvagraph export --format html|cypher|obsidian|graphml
+
+# IDEs & automation
+pruvagraph . install [--claude-code|--cursor|--vscode]
+pruvagraph watch .
+pruvagraph hook install   # git commit hook
 ```
 
 ---
 
-## Backends
+## Languages & Free Parsing
 
-```bash
-# Default: code always free (tree-sitter), no API key needed
-pruvagraph .
-
-# For docs/PDFs — choose your LLM backend
-pruvagraph . --backend claude   # ANTHROPIC_API_KEY  — $3.00/M tokens
-pruvagraph . --backend gemini   # GEMINI_API_KEY     — $0.075/M tokens (40× cheaper)
-pruvagraph . --backend kimi     # MOONSHOT_API_KEY   — $0.07/M tokens
-pruvagraph . --backend openai   # OPENAI_API_KEY     — GPT-4o-mini
-
-# Completely free (local Ollama — ollama must be running)
-pruvagraph . --backend ollama
-
-# Auto cascade: Ollama (free) → Gemini (cheap) → Claude (premium)
-pruvagraph . --cascade
-```
+Tree-sitter covers 30+ languages locally (TypeScript, Python, Go, Rust, Java, C/C++, Swift, Kotlin, and more). Config (JSON/YAML/TOML), schema (OpenAPI, Prisma, GraphQL, Protobuf), and text-layer docs (PDF/DOCX/Markdown) are parsed structurally — never sent to an LLM. Only image-only PDFs require one.
 
 ---
 
-## Full CLI Reference
+## Privacy Shield
 
-```bash
-# ── BUILD ──────────────────────────────────────────────────
-pruvagraph .                        # Build graph (code = always free)
-pruvagraph ./src                    # Specific directory
-pruvagraph . --backend gemini       # Gemini for docs/PDFs
-pruvagraph . --backend ollama       # Free local LLM
-pruvagraph . --cascade              # Auto 3-tier routing
-pruvagraph . --update               # Changed files only (N9 AST diff)
-pruvagraph . --dry-run              # Cost estimate, zero API calls
-pruvagraph . --budget 2.00          # Hard spend cap
-pruvagraph . --force                # Ignore all caches, full rebuild
-pruvagraph . --no-viz               # Skip HTML (faster for CI)
-
-# ── QUERY (5-tier pipeline) ────────────────────────────────
-pruvagraph query "how does auth work?"
-pruvagraph query "who calls build_graph?"     # Always free (Tier 1)
-pruvagraph query "highest risk file?"         # Free — git signal (A8)
-pruvagraph query "what is the architecture?"  # Community summaries (N8)
-
-# ── REPORTS ────────────────────────────────────────────────
-pruvagraph cost-report              # Layer-by-layer cost breakdown
-pruvagraph benchmark                # Savings vs naive file reading
-
-# ── EXPORT ─────────────────────────────────────────────────
-pruvagraph export --format html       # Interactive visualizer (default)
-pruvagraph export --format cypher     # Neo4j import
-pruvagraph export --format obsidian   # Obsidian Canvas vault
-pruvagraph export --format graphml    # yEd / Gephi
-
-# ── IDE INTEGRATION ────────────────────────────────────────
-pruvagraph . install                  # All IDEs at once
-pruvagraph . install --claude-code    # Claude Code MCP
-pruvagraph . install --cursor         # Cursor MCP
-pruvagraph . install --vscode         # VS Code MCP
-
-# ── AUTOMATION ─────────────────────────────────────────────
-pruvagraph watch .                    # Auto-rebuild on file save
-pruvagraph hook install               # Git commit hook
-```
-
----
-
-## Languages
-
-Tree-sitter runs locally — no API, no cost, no internet required for any code file:
-
-| Category | Languages |
-|---|---|
-| **Web** | TypeScript, TSX, JavaScript, JSX, Vue, Svelte, Astro, CSS, HTML |
-| **Backend** | Python, Go, Rust, Java, C#, PHP, Ruby, Elixir, Scala |
-| **Mobile** | Kotlin, KTS, Swift, Dart (Flutter), Objective-C |
-| **Systems** | C, C++, Zig |
-| **Data / Infra** | SQL, YAML, Terraform/HCL, Dockerfile, Bash |
-| **Other** | Lua, Julia, Haskell, OCaml, R, Fortran |
-| **Schemas (free)** | OpenAPI 3.x, Prisma ORM, GraphQL SDL, Protocol Buffers, JSON Schema |
-| **Configs (free)** | JSON, YAML, TOML, package.json, docker-compose, pyproject.toml |
-| **Docs (smart)** | PDF (text layer free), DOCX (free), Markdown (free), Images (LLM) |
-
----
-
-## Security — Privacy Shield (Arch4)
-
-Before any file batch reaches an LLM, PruvaGraph scans and redacts 12 categories of secrets:
-
-| Secret Type | Pattern Detected |
-|---|---|
-| OpenAI API key | `sk-...` |
-| Anthropic API key | `sk-ant-...` |
-| GitHub PAT | `ghp_` / `ghr_` / `github_pat_...` |
-| Stripe key | `sk_live_` / `pk_live_` |
-| AWS access key | `AKIA...` |
-| Google API key | `AIza...` |
-| PEM private key | `-----BEGIN PRIVATE KEY-----` |
-| DB connection strings | `postgres://...`, `mysql://...` |
-| JWT tokens | `eyJ...` |
-| SendGrid key | `SG.` |
-| High-entropy hex tokens | 32+ char hex patterns |
-| `.env` secret values | Env var assignment patterns |
-
-Every redaction is logged to `pruvagraph-out/privacy_audit.jsonl`. Zero performance impact (~1ms per file).
+12 secret categories (OpenAI, Anthropic, AWS, GitHub PAT, Stripe, JWT, DB connection strings, and more) are redacted before any file reaches an LLM, with every redaction logged to `privacy_audit.jsonl`.
 
 ---
 
 ## Optional Extras
 
 ```bash
-pip install "pruvagraph[all]"           # Everything — all 31 layers
-
-# Individual groups:
-pip install "pruvagraph[docs]"          # N1: PDF + DOCX (pypdf, python-docx)
-pip install "pruvagraph[embed]"         # A1: Local embeddings (fastembed, 33MB download once)
-pip install "pruvagraph[yaml]"          # N5 + A7: YAML/schema parsing (pyyaml)
-pip install "pruvagraph[graph]"         # L6: Leiden clustering (leidenalg, igraph)
-pip install "pruvagraph[tree-sitter]"   # N2: High-fidelity AST (tree-sitter + 7 grammars)
-pip install "pruvagraph[ollama]"        # L4: Free local LLM
-pip install "pruvagraph[office]"        # DOCX + XLSX (python-docx, openpyxl)
+pip install "pruvagraph[all]"     # everything
+pip install "pruvagraph[docs]"    # PDF/DOCX parsing
+pip install "pruvagraph[embed]"   # local semantic embeddings (~33MB, one-time)
+pip install "pruvagraph[graph]"   # Leiden clustering
+pip install "pruvagraph[ollama]"  # free local LLM backend
 ```
-
-> [!NOTE]
-> All features degrade gracefully — if an optional package isn't installed, PruvaGraph falls back to the next available method. You never get an import error at runtime.
-
----
-
-## IDE Compatibility
-
-| IDE | Install Method | Status |
-|---|---|---|
-| VS Code | `ext install pruvalex.pruvagraph` or Marketplace | ✅ |
-| Cursor | `.vsix` or Open VSX Registry | ✅ |
-| Claude Code | `pruvagraph . install --claude-code` (MCP) | ✅ |
-| Windsurf | `.vsix` drag-and-drop | ✅ |
-| VSCodium | Open VSX Registry | ✅ |
-| Gitpod | Open VSX Registry | ✅ |
-| Any Terminal | `pip install pruvagraph && pruvagraph .` | ✅ |
-
----
-
-## How It Compares
-
-| Feature | Other Tools | PruvaGraph v1.4.0 |
-|---|---|---|
-| Code extraction | LLM (costs money) | ✅ Tree-sitter local (always free) |
-| Config files | LLM | ✅ Structural parser (free) |
-| Schema files | LLM | ✅ OpenAPI/Prisma/GraphQL/Proto (free) |
-| Docs/PDFs | LLM per file | ✅ Free text extraction first |
-| Duplicate files | N calls | ✅ MinHash dedup → 1 call |
-| Re-runs | Full LLM scan | ✅ Cache + incremental |
-| Repeat queries | LLM every time | ✅ Query cache (free) |
-| Common queries | LLM | ✅ Deterministic router (free) |
-| Secret leaking | Possible | ✅ 12-type privacy shield |
-| Budget control | None | ✅ Hard cap + dry-run |
-| Improves over time | No | ✅ Reputation cache learns |
-| VS Code extension | Rarely | ✅ Marketplace + sidebar |
-| MCP server | Basic | ✅ 9 rich tools |
-| Watch mode | No | ✅ File-event driven |
-| Git intelligence | No | ✅ Co-change + risk scores |
-| Importance scoring | No | ✅ 5-signal depth control |
-
----
-
-## Why It Gets Cheaper Over Time
-
-PruvaGraph is the only tool that improves with use:
-
-1. **Run 1** — full extraction, all layers fire
-2. **Run 2** — cache hits for unchanged files, reputation cache starts learning low-value patterns
-3. **Run 3+** — low-value file directories auto-detected and skipped
-4. **After 1 month** — global package cache filled with all your dependencies (extracted once, reused forever)
-5. **After 3 months** — reputation cache has learned your project's patterns, 10–30% additional skip rate on top of everything else
-
-Switching cost: after 3+ months, the reputation + package cache + query history makes restarting with any other tool 10× slower.
+All features degrade gracefully without the optional package installed.
 
 ---
 
 ## Known Issues
 
-> [!NOTE]
-> **CLI syntax.** Root path required before all subcommands:
-> `pruvagraph . install --claude-code` ✅
-> `pruvagraph install --claude-code` ❌
-
-> [!NOTE]
-> **fastembed first run (A1 embeddings).** Downloads `BAAI/bge-small-en-v1.5` (~33MB) once to `~/.cache/fastembed/`. Fully offline after that. Skip with `pip install pruvagraph` (without `[embed]`) if not needed.
-
-> [!NOTE]
-> **N9 AST Diff.** Requires a git repository. Falls back to full file re-extraction in non-git directories. Run `git init` to enable.
-
-> [!NOTE]
-> **L7 Prompt Caching.** Claude models only. Cache TTL = 5 minutes. Only effective when builds complete under 5 minutes. Gemini/OpenAI/Ollama backends do not use this layer.
-
-> [!NOTE]
-> **Windows PATH (Windows Store Python).** If `pruvagraph` is not found after install, add to PATH:
-> `C:\Users\<you>\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_*\LocalCache\local-packages\Python313\Scripts\`
-
-> [!TIP]
-> **CI lint.** Use `ruff --select F,I` (not the default ruleset). The HTML export template and bash heredoc strings produce intentional `E501` (line length) warnings that cannot be shortened.
+- **CLI syntax:** root path required before subcommands (see Quick Start).
+- **`--update` mode** requires a git repository; falls back to a full cache-checked scan otherwise.
+- **Prompt caching** is Claude-only with a 5-minute TTL.
 
 ---
 
 ## Contributing
 
-PruvaGraph is MIT licensed and welcomes contributions.
-
 ```bash
 git clone https://github.com/PRUVALEX-Systems/pruvagraph
-cd pruvagraph/python
-pip install -e ".[dev]"
+cd pruvagraph/python && pip install -e ".[dev]"
 ```
-
-Best places to contribute:
-
-- **Add a language extractor** — `pruvagraph/extract.py` (tree-sitter grammar)
-- **Add an LLM backend** — `pruvagraph/router.py`
-- **Improve dedup thresholds** — `pruvagraph/dedup.py`
-- **Extend schema parsers** — `pruvagraph/schema_parser.py`
-- **VS Code extension** — `extension.js` (12 commands, sidebar panel)
-- **Compression rules** — `pruvagraph/compress.py`
-- **Deterministic query patterns** — `pruvagraph/deterministic_router.py`
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for full setup.
+Good entry points: a new language extractor (`extract.py`), an LLM backend (`router.py`), schema parsers (`schema_parser.py`), or the VS Code extension (`extension.js`). See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
-## About PRUVALEX
+<div align="center">
 
-PruvaGraph is built and maintained by [PRUVALEX](https://pruvalex.eu).
-
-PRUVALEX builds enterprise AI compliance infrastructure and developer tools for the EU market. PruvaGraph is our open-source contribution — a tool we built because we needed it ourselves and thought others would too.
-
-**[pruvalex.eu](https://pruvalex.eu)** &nbsp;•&nbsp; **[VS Code Marketplace](https://marketplace.visualstudio.com/publishers/pruvalex)** &nbsp;•&nbsp; **[security@pruvalex.eu](mailto:security@pruvalex.eu)**
-
----
-
-## License
+Built by [PRUVALEX](https://pruvalex.eu) · [VS Code Marketplace](https://marketplace.visualstudio.com/publishers/pruvalex) · [security@pruvalex.eu](mailto:security@pruvalex.eu)
 
 MIT © 2026 PRUVALEX
+
+</div>
