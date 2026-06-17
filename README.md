@@ -1,5 +1,7 @@
 <div align="center">
 
+<img width="2659" height="984" alt="PRUVALEX" src="https://github.com/user-attachments/assets/e4fa05ba-dc97-4d62-85d3-3c0415d3671c" />
+
 # PruvaGraph
 
 **Codebase knowledge graphs with 100% local parsing for code & configs.**
