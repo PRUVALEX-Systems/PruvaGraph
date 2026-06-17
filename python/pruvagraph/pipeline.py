@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+import networkx as nx
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -482,7 +483,7 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
         # Dry run stops here
         if cfg.dry_run:
             cost_report = tracker.finalize(out_dir)
-            cost_report.estimated_cost_usd = plan.estimated_cost_usd
+            cost_report.actual_cost_usd = plan.estimated_cost_usd
             _rich_print("\n" + cost_report.format_summary(), "blue")
             return _empty_result(cfg, cost_report)
 

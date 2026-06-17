@@ -365,3 +365,21 @@ def _safe_read(path: Path) -> str:
         return path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return ""
+
+
+def route_request(prompt: str, backend: str = "claude", max_tokens: int = 150) -> str:
+    """Send a generic text prompt to the specified backend and return the response."""
+    try:
+        from pruvagraph.query import _call_anthropic, _call_gemini, _call_openai, _call_ollama
+        system = "You are a helpful software architecture expert."
+        if backend == "claude":
+            return _call_anthropic(system, prompt)
+        if backend == "gemini":
+            return _call_gemini(system, prompt)
+        if backend in ("openai", "gpt"):
+            return _call_openai(system, prompt)
+        if backend == "ollama":
+            return _call_ollama(system, prompt)
+    except Exception as e:
+        return f"Error: {e}"
+    return "Unsupported backend."

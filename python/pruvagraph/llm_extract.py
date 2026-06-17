@@ -72,7 +72,7 @@ def extract_doc_batch(
         # L5: Token compression — strip license headers, badge noise,
         # redundant imports, boilerplate before sending to LLM
         try:
-            compression_result = compress(raw_text, p, p.suffix)
+            compression_result = compress(raw_text, path=p)
             text = compression_result.compressed_content
             # Log compression ratio if significant
             if compression_result.ratio < 0.7:  # saved >30%

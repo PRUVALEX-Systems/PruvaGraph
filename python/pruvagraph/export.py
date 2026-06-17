@@ -612,24 +612,24 @@ def _write_obsidian(G: nx.MultiDiGraph, out_folder: Path) -> None:
         row = i // 10
         px  = col * grid
         py  = row * grid
-        cards.append({{
+        cards.append({
             "id":     node_id[:50],
             "type":   "text",
-            "text":   "**{data.get('label', node_id)}** ({data.get('type','?')})\\n\\n{data.get('summary', '')}",
+            "text":   f"**{data.get('label', node_id)}** ({data.get('type','?')})\n\n{data.get('summary', '')}",
             "x": px, "y": py, "width": 250, "height": 120,
-        }})
+        })
 
     seen: set[tuple[str, str]] = set()
     for u, v, data in G.edges(data=True):
         sig = (u[:50], v[:50])
         if sig not in seen:
             seen.add(sig)
-            edges_out.append({{
-                "id": "{u[:25]}-{v[:25]}",
+            edges_out.append({
+                "id": f"{u[:25]}-{v[:25]}",
                 "fromNode": u[:50], "fromSide": "right",
                 "toNode": v[:50], "toSide": "left",
                 "label": data.get("relation", ""),
-            }})
+            })
 
     canvas = {{"nodes": cards, "edges": edges_out}}
     (out_folder / "pruvagraph.canvas").write_text(json.dumps(canvas, indent=2), encoding="utf-8")
