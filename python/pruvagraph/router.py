@@ -370,7 +370,7 @@ def _safe_read(path: Path) -> str:
 def route_request(prompt: str, backend: str = "claude", max_tokens: int = 150) -> str:
     """Send a generic text prompt to the specified backend and return the response."""
     try:
-        from pruvagraph.query import _call_anthropic, _call_gemini, _call_openai, _call_ollama
+        from pruvagraph.query import _call_anthropic, _call_gemini, _call_ollama, _call_openai
         system = "You are a helpful software architecture expert."
         if backend == "claude":
             return _call_anthropic(system, prompt)

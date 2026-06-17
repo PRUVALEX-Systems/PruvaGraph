@@ -23,11 +23,12 @@ from __future__ import annotations
 
 import asyncio
 import time
-import networkx as nx
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+import networkx as nx
 
 from pruvagraph import global_cache  # noqa: F401 — A5: wired into pipeline
 from pruvagraph.batch import BatchPlan, pack_batches
@@ -359,9 +360,7 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     # ── N9: Incremental update — only re-extract files that changed ────────────
     if cfg.update and not cfg.force:
         try:
-            from pruvagraph.ast_diff import (
-                get_changed_files, get_untracked_files, is_git_repo
-            )
+            from pruvagraph.ast_diff import get_changed_files, get_untracked_files, is_git_repo
             if is_git_repo(cfg.root):
                 _changed  = set(str(p) for p in get_changed_files(cfg.root))
                 _untracked = set(str(p) for p in get_untracked_files(cfg.root))
