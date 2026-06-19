@@ -15,12 +15,12 @@ Made by PRUVALEX — open source, MIT licensed.
 ## See it in action
 
 ### Graph Explorer
-![PruvaGraph interactive graph visualizer — 894 nodes, 1,248 edges, color-coded by node type](./docs/images/graph-explorer.png)
+<img width="1903" height="937" alt="image" src="https://github.com/user-attachments/assets/1e512bfe-b14e-4580-bd20-20c6650816f2" />
 
 The self-contained `graph.html` visualizer. Color palette encodes node type (module, class, function, interface, external, doc), with click-to-isolate dependency highlighting and live search.
 
 ### VS Code Sidebar
-![PruvaGraph VS Code sidebar — build, query, install MCP, and graph diff panel](./docs/images/vscode-sidebar.png)
+<img width="1347" height="1012" alt="image" src="https://github.com/user-attachments/assets/e527493b-919a-4b5d-97ba-ecb36954ece3" />
 
 Build, query, install MCP, and inspect graph diffs without leaving the editor. The panel on the right shows the **Graph Diff (D1)** tool — architectural deltas since the last build.
 
