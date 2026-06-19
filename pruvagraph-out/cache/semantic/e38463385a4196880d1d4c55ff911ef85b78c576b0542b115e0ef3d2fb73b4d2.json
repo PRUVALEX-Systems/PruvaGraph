@@ -1,0 +1,101 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\pruvagraph\\prewarm.py",
+  "stat_size": 5623,
+  "stat_mtime_ns": 1781527685375272300,
+  "content_hash": "e38463385a4196880d1d4c55ff911ef85b78c576b0542b115e0ef3d2fb73b4d2",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "label": "prewarm",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "python module: prewarm",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::predict_queries",
+      "label": "predict_queries",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "python function in prewarm"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::prewarm_cache",
+      "label": "prewarm_cache",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "python function in prewarm"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::prewarm_in_background",
+      "label": "prewarm_in_background",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "python function in prewarm"
+    },
+    {
+      "id": "pkg:threading",
+      "label": "threading",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "External package: threading"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::predict_queries",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::prewarm_cache",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py::prewarm_in_background",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "pkg:threading",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/prewarm.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

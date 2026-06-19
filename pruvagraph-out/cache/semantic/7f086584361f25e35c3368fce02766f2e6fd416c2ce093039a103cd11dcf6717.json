@@ -1,0 +1,75 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\test_dedup.py",
+  "stat_size": 784,
+  "stat_mtime_ns": 1781535857479566000,
+  "content_hash": "7f086584361f25e35c3368fce02766f2e6fd416c2ce093039a103cd11dcf6717",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "label": "test_dedup",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "lang": "python",
+      "summary": "python module: test_dedup",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py::test_deduplicate_groups_near_identical_files",
+      "label": "test_deduplicate_groups_near_identical_files",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "lang": "python",
+      "summary": "python function in test_dedup"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    },
+    {
+      "id": "pkg:pruvagraph.dedup",
+      "label": "pruvagraph.dedup",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "lang": "python",
+      "summary": "External package: pruvagraph.dedup"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py::test_deduplicate_groups_near_identical_files",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dedup.py",
+      "target": "pkg:pruvagraph.dedup",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

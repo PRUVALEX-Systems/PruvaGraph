@@ -1,0 +1,80 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\module-taskweaver\\src\\repository.ts",
+  "stat_size": 953,
+  "stat_mtime_ns": 1781804214361238100,
+  "content_hash": "0c571926b63260b76016e3a3ce6a589e8ad67a608c18d5b5726956eae1887d7d",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "label": "repository",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "lang": "typescript",
+      "summary": "typescript module: repository",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::TaskWeaverRepository",
+      "label": "TaskWeaverRepository",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "lang": "typescript",
+      "summary": "typescript class in repository"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::ITaskCheckpoint",
+      "label": "ITaskCheckpoint",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in repository"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::stmt",
+      "label": "stmt",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "lang": "typescript",
+      "summary": "typescript function in repository"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::TaskWeaverRepository",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::ITaskCheckpoint",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::stmt",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts::stmt",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-taskweaver/src/repository.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

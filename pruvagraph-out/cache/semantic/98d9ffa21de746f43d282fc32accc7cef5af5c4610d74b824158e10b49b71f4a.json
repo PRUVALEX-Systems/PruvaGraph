@@ -1,0 +1,36 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\.github\\workflows\\ci.yml",
+  "stat_size": 3228,
+  "stat_mtime_ns": 1781535864398234800,
+  "content_hash": "98d9ffa21de746f43d282fc32accc7cef5af5c4610d74b824158e10b49b71f4a",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/.github/workflows/ci.yml",
+      "label": "ci",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/.github/workflows/ci.yml",
+      "lang": "yaml",
+      "summary": "yaml module: ci",
+      "community": null
+    },
+    {
+      "id": "pkg:pruvagraph;",
+      "label": "pruvagraph;",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/.github/workflows/ci.yml",
+      "lang": "yaml",
+      "summary": "External package: pruvagraph;"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/.github/workflows/ci.yml",
+      "target": "pkg:pruvagraph;",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

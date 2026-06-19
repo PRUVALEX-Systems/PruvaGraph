@@ -1,0 +1,88 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\conftest.py",
+  "stat_size": 1317,
+  "stat_mtime_ns": 1781535854054545400,
+  "content_hash": "e8eec55285654461bc4b9a851e508545fa74e7d286620cdc7dd2b73546be0912",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "label": "conftest",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "python module: conftest",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py::sample_extractions",
+      "label": "sample_extractions",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "python function in conftest"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py::sample_graph",
+      "label": "sample_graph",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "python function in conftest"
+    },
+    {
+      "id": "pkg:networkx",
+      "label": "networkx",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "External package: networkx"
+    },
+    {
+      "id": "pkg:pytest",
+      "label": "pytest",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "External package: pytest"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py::sample_extractions",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py::sample_graph",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "target": "pkg:networkx",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "target": "pkg:pytest",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/conftest.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

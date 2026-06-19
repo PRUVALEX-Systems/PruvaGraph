@@ -1,5 +1,5 @@
 """
-PruvaGraph — codebase knowledge graphs with 95%+ LLM cost reduction.
+PruvaGraph — codebase knowledge graphs with 31.6% baseline compression and up to 100% cache bypass.
 
 Quick start:
     from pruvagraph import build_graph, query

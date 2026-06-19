@@ -1,0 +1,36 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\shared-ui\\src\\tokens.css.ts",
+  "stat_size": 1414,
+  "stat_mtime_ns": 1781802150060470600,
+  "content_hash": "9d27553579f4b591a67092aad574f741bebe35f48cc45cc45eb0006cf424b17a",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts",
+      "label": "tokens.css",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts",
+      "lang": "typescript",
+      "summary": "typescript module: tokens.css",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts::DESIGN_TOKENS",
+      "label": "DESIGN_TOKENS",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts",
+      "lang": "typescript",
+      "summary": "typescript function in tokens.css"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/tokens.css.ts::DESIGN_TOKENS",
+      "relation": "defines"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

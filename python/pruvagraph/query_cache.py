@@ -22,7 +22,7 @@ class QueryCache:
       2. Fuzzy match  — Jaccard similarity >= threshold
     """
 
-    def __init__(self, cache_dir: Path, similarity_threshold: float = 0.75):
+    def __init__(self, cache_dir: Path, similarity_threshold: float = 0.80):
         self._path      = cache_dir / "query_cache.json"
         self._threshold = similarity_threshold
         self._cache: dict[str, dict] = self._load()
@@ -39,19 +39,22 @@ class QueryCache:
             self._save()
             return entry["answer"]
 
-        # 2. Fuzzy match
+        # 2. Fuzzy match — use Jaccard similarity over normalized token sets.
         q_tokens = set(self._tokenise(question))
-        best_score, best_answer = 0.0, None
+        best_score = 0.0
+        best_entry = None
 
         for entry in self._cache.values():
             cached_tokens = set(self._tokenise(entry.get("question", "")))
             score = self._jaccard(q_tokens, cached_tokens)
             if score > best_score:
                 best_score = score
-                best_answer = entry.get("answer")
+                best_entry = entry
 
-        if best_score >= self._threshold and best_answer:
-            return best_answer
+        if best_score >= self._threshold and best_entry is not None:
+            best_entry["hits"] = best_entry.get("hits", 0) + 1
+            self._save()
+            return best_entry.get("answer")
 
         return None
 

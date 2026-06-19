@@ -1,0 +1,21 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\gemini-svg (1).svg",
+  "stat_size": 1305,
+  "stat_mtime_ns": 1781784433414349200,
+  "content_hash": "50cd9df080c6d474b12daa0d815d0b55086fbe7ba5023ea2294a852c80a31abb",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "doc::C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\gemini-svg (1).svg",
+      "label": "gemini-svg (1).svg",
+      "type": "doc",
+      "summary": "Document file: gemini-svg (1).svg",
+      "file": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\gemini-svg (1).svg",
+      "lang": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "none",
+  "pruvagraph_version": "1.0.0"
+}

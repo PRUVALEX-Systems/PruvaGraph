@@ -1,0 +1,119 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\module-rulesforge\\src\\index.ts",
+  "stat_size": 1251,
+  "stat_mtime_ns": 1781804213058815600,
+  "content_hash": "ed040dfbbc35a9f807c6487c464d7ae8c437c505ca408cf172df82a44926493a",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "label": "index",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript module: index",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::rulesforgeModule",
+      "label": "rulesforgeModule",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript function in index"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::repo",
+      "label": "repo",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript function in index"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::id",
+      "label": "id",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript function in index"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::rules",
+      "label": "rules",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript function in index"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    },
+    {
+      "id": "pkg:crypto",
+      "label": "crypto",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "lang": "typescript",
+      "summary": "External package: crypto"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::rulesforgeModule",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::repo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::id",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts::rules",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "omnimcp/packages/module-rulesforge/src/repository.js",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-rulesforge/src/index.ts",
+      "target": "pkg:crypto",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

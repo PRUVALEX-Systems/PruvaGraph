@@ -1,0 +1,88 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\core-engine\\src\\mcp\\router.ts",
+  "stat_size": 1539,
+  "stat_mtime_ns": 1781802938462015600,
+  "content_hash": "90f9639de48d0729c6ece2b05c23ab60739d70f99eee1fc26690c6f62aa83f87",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "label": "router",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "typescript module: router",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::MCPRouter",
+      "label": "MCPRouter",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "typescript class in router"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::start",
+      "label": "start",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "typescript function in router"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::handler",
+      "label": "handler",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "typescript function in router"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::latencyMs",
+      "label": "latencyMs",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "typescript function in router"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::MCPRouter",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::start",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::handler",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts::latencyMs",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/mcp/router.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

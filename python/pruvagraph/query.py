@@ -11,6 +11,7 @@ Query engine — natural language search over the knowledge graph.
 """
 from __future__ import annotations
 
+import json
 import math
 import re
 from pathlib import Path
@@ -73,10 +74,13 @@ def query(
 
     # ── Tier 2: Seed node finding (embedding > keyword fallback) ──────────────
     seed_nodes: list[str] = []
+    embedding_scores: dict[str, float] = {}
     if out_dir:
         try:
-            from pruvagraph.embedder import semantic_search
-            seed_nodes = semantic_search(question, out_dir, top_k=15)
+            from pruvagraph.embedder import semantic_search_with_scores
+            scored = semantic_search_with_scores(question, out_dir, top_k=15)
+            seed_nodes = [node_id for node_id, _ in scored]
+            embedding_scores = {node_id: score for node_id, score in scored}
         except Exception:
             pass
 
@@ -90,8 +94,14 @@ def query(
     if backend == "none":
         if seed_nodes:
             from pruvagraph.subgraph import extract_query_subgraph
-            sub     = extract_query_subgraph(G, seed_nodes, k_hops=1, max_nodes=20,
-                                             token_budget=token_budget)
+            sub     = extract_query_subgraph(
+                G,
+                seed_nodes,
+                k_hops=1,
+                max_nodes=20,
+                token_budget=token_budget,
+                embedding_scores=embedding_scores,
+            )
             matches = _score_subgraph(sub, question, top_k)
         else:
             matches = _keyword_search(G, question, top_k=top_k)
@@ -113,7 +123,7 @@ def query(
     context_tokens: int = 0
     try:
         from pruvagraph.hierarchy import get_level_context, load_hierarchy, route_query_to_level
-        from pruvagraph.subgraph import build_query_context
+        from pruvagraph.subgraph import build_query_context, prune_context
 
         level = route_query_to_level(question)
 
@@ -122,13 +132,39 @@ def query(
             context   = get_level_context(hierarchy, level)
             context_tokens = len(context) // 4 if context else 0
             if not context:
-                context, context_tokens = build_query_context(
-                    G, seed_nodes, k_hops=2, max_tokens=token_budget
-                )
+                if out_dir:
+                    context, context_tokens = prune_context(
+                        G,
+                        question,
+                        out_dir,
+                        k_hops=2,
+                        max_tokens=token_budget,
+                    )
+                else:
+                    context, context_tokens = build_query_context(
+                        G,
+                        seed_nodes,
+                        k_hops=2,
+                        max_tokens=token_budget,
+                        embedding_scores=embedding_scores,
+                    )
         else:
-            context, context_tokens = build_query_context(
-                G, seed_nodes, k_hops=2, max_tokens=token_budget
-            )
+            if out_dir:
+                context, context_tokens = prune_context(
+                    G,
+                    question,
+                    out_dir,
+                    k_hops=1,
+                    max_tokens=token_budget,
+                )
+            else:
+                context, context_tokens = build_query_context(
+                    G,
+                    seed_nodes,
+                    k_hops=1,
+                    max_tokens=token_budget,
+                    embedding_scores=embedding_scores,
+                )
     except Exception:
         # Pure fallback: BM25 matches
         matches = _keyword_search(G, question, top_k=top_k)
@@ -371,25 +407,61 @@ def _build_context(
 def _llm_answer(question: str, context: str, backend: str) -> str:
     """Call an LLM to answer the question given the graph context."""
     system = (
-        "You are a codebase expert. Answer the question based ONLY on the "
-        "knowledge graph context provided. Be concise (3-5 sentences max). "
-        "If you cannot answer from the context, say so."
+        "You are a codebase expert. Answer the question using only the provided "
+        "knowledge graph context. Output MUST be valid JSON only and must follow "
+        "this schema exactly: {\"answer\":\"string\",\"sources\":[\"string\"]}. "
+        "Do not include markdown fences, analysis, reasoning, or any text outside "
+        "the JSON object. If you cannot answer, return answer as an empty string "
+        "and sources as an empty array."
     )
-    prompt = f"Context:\n{context}\n\nQuestion: {question}"
+    prompt = (
+        f"CONTEXT:\n{context}\n\nQUESTION:\n{question}\n\n"
+        "Return exactly one JSON object with keys answer and sources."
+    )
 
     try:
         if backend == "claude":
-            return _call_anthropic(system, prompt)
-        if backend == "gemini":
-            return _call_gemini(system, prompt)
-        if backend in ("openai", "gpt"):
-            return _call_openai(system, prompt)
-        if backend == "ollama":
-            return _call_ollama(system, prompt)
+            raw = _call_anthropic(system, prompt)
+        elif backend == "gemini":
+            raw = _call_gemini(system, prompt)
+        elif backend in ("openai", "gpt"):
+            raw = _call_openai(system, prompt)
+        elif backend == "ollama":
+            raw = _call_ollama(system, prompt)
+        else:
+            return f"Unknown backend: {backend!r}"
+
+        parsed = _parse_llm_json(raw)
+        if parsed is not None:
+            return json.dumps(parsed, indent=2, ensure_ascii=False)
+        return f"LLM output was not valid JSON. Raw output:\n{raw}"
     except Exception as e:
         return f"LLM error ({backend}): {e}\n\nFallback results:\n{context}"
 
-    return f"Unknown backend: {backend!r}"
+
+def _parse_llm_json(raw: str) -> dict[str, Any] | None:
+    text = raw.strip()
+    if text.startswith("```"):
+        text = text.strip("`")
+        if text.lstrip().startswith("json"):
+            text = text.lstrip()[4:]
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+    if isinstance(data, dict):
+        if "answer" in data:
+            sources = data.get("sources", [])
+            if not isinstance(sources, list):
+                sources = [str(sources)]
+            return {
+                "answer": str(data["answer"]),
+                "sources": [str(item) for item in sources],
+            }
+        return {"answer": str(data), "sources": []}
+
+    return None
 
 
 def _call_anthropic(system: str, prompt: str) -> str:

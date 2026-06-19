@@ -1,0 +1,22 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\shared-ui\\src\\index.ts",
+  "stat_size": 69,
+  "stat_mtime_ns": 1781802154637079400,
+  "content_hash": "203385a8c3533aa9bbc9a400545f6aa0965a4ea798594ac5fb5fe9e5b1c971f2",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/index.ts",
+      "label": "index",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/index.ts",
+      "lang": "typescript",
+      "summary": "typescript module: index",
+      "community": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

@@ -1,0 +1,166 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\pruvagraph\\community_summary.py",
+  "stat_size": 6390,
+  "stat_mtime_ns": 1781518654705098400,
+  "content_hash": "da429a9cdfb7168d77e79dd62a10fd3b700365f2ddd353097fc09c6bc2c6c401",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "label": "community_summary",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python module: community_summary",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::generate_community_summaries",
+      "label": "generate_community_summaries",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::load_community_summaries",
+      "label": "load_community_summaries",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_stat_summary",
+      "label": "_stat_summary",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_top_nodes_by_degree",
+      "label": "_top_nodes_by_degree",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_llm_summarise_community",
+      "label": "_llm_summarise_community",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::build_community_context",
+      "label": "build_community_context",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "python function in community_summary"
+    },
+    {
+      "id": "pkg:json",
+      "label": "json",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "External package: json"
+    },
+    {
+      "id": "pkg:networkx",
+      "label": "networkx",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "External package: networkx"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:collections",
+      "label": "collections",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "External package: collections"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::generate_community_summaries",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::load_community_summaries",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_stat_summary",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_top_nodes_by_degree",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::_llm_summarise_community",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py::build_community_context",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "pkg:json",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "pkg:networkx",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "pkg:collections",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/community_summary.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

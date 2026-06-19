@@ -1,0 +1,41 @@
+{
+  "files": {
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/CHANGELOG.md": {
+      "runs": 19,
+      "avg_score": 72.57,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/CLAUDE.md": {
+      "runs": 19,
+      "avg_score": 18.0,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/CONTRIBUTING.md": {
+      "runs": 19,
+      "avg_score": 44.0,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/README.md": {
+      "runs": 19,
+      "avg_score": 65.21,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/README.md": {
+      "runs": 19,
+      "avg_score": 78.0,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/CLEAN_COMMIT_GRAPH_SETUP.md": {
+      "runs": 17,
+      "avg_score": 50.0,
+      "last_seen": "2026-06"
+    },
+    "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/SECURITY.md": {
+      "runs": 3,
+      "avg_score": 26.0,
+      "last_seen": "2026-06"
+    }
+  },
+  "always_skip_patterns": [],
+  "pattern_reasons": {}
+}

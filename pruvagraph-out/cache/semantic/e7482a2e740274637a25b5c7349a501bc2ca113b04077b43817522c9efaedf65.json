@@ -1,0 +1,101 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\test_package.py",
+  "stat_size": 421,
+  "stat_mtime_ns": 1781718101501251800,
+  "content_hash": "e7482a2e740274637a25b5c7349a501bc2ca113b04077b43817522c9efaedf65",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "label": "test_package",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "python module: test_package",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py::test_version",
+      "label": "test_version",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "python function in test_package"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py::test_cli_help",
+      "label": "test_cli_help",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "python function in test_package"
+    },
+    {
+      "id": "pkg:pruvagraph",
+      "label": "pruvagraph",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "External package: pruvagraph"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:click.testing",
+      "label": "click.testing",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "External package: click.testing"
+    },
+    {
+      "id": "pkg:pruvagraph.cli",
+      "label": "pruvagraph.cli",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "lang": "python",
+      "summary": "External package: pruvagraph.cli"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py::test_version",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py::test_cli_help",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "pkg:pruvagraph",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "pkg:click.testing",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_package.py",
+      "target": "pkg:pruvagraph.cli",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

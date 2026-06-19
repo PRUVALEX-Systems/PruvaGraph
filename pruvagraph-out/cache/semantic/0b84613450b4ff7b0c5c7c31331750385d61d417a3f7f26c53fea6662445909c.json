@@ -1,0 +1,140 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\pruvagraph\\cost.py",
+  "stat_size": 8415,
+  "stat_mtime_ns": 1781470561786322700,
+  "content_hash": "0b84613450b4ff7b0c5c7c31331750385d61d417a3f7f26c53fea6662445909c",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "label": "cost",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "python module: cost",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::LLMCall",
+      "label": "LLMCall",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "python class in cost"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::CostReport",
+      "label": "CostReport",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "python class in cost"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::CostTracker",
+      "label": "CostTracker",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "python class in cost"
+    },
+    {
+      "id": "pkg:json",
+      "label": "json",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: json"
+    },
+    {
+      "id": "pkg:time",
+      "label": "time",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: time"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:dataclasses",
+      "label": "dataclasses",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: dataclasses"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    },
+    {
+      "id": "pkg:typing",
+      "label": "typing",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "lang": "python",
+      "summary": "External package: typing"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::LLMCall",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::CostReport",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py::CostTracker",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:json",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:time",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:dataclasses",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pruvagraph/cost.py",
+      "target": "pkg:typing",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

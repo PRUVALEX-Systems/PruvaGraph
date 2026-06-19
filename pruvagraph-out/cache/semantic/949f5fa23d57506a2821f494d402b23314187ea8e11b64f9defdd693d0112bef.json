@@ -1,0 +1,257 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\test_monorepo.py",
+  "stat_size": 17646,
+  "stat_mtime_ns": 1781636424657851300,
+  "content_hash": "949f5fa23d57506a2821f494d402b23314187ea8e11b64f9defdd693d0112bef",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "label": "test_monorepo",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python module: test_monorepo",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestSingleRepo",
+      "label": "TestSingleRepo",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPnpm",
+      "label": "TestPnpm",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestNx",
+      "label": "TestNx",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestLerna",
+      "label": "TestLerna",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestRush",
+      "label": "TestRush",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestNpmWorkspaces",
+      "label": "TestNpmWorkspaces",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPythonMonorepo",
+      "label": "TestPythonMonorepo",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestGenericMonorepo",
+      "label": "TestGenericMonorepo",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestCrossPackageEdges",
+      "label": "TestCrossPackageEdges",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPackageInfo",
+      "label": "TestPackageInfo",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestMonorepoLayout",
+      "label": "TestMonorepoLayout",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python class in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::_write",
+      "label": "_write",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python function in test_monorepo"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::_write_json",
+      "label": "_write_json",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "python function in test_monorepo"
+    },
+    {
+      "id": "pkg:json",
+      "label": "json",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "External package: json"
+    },
+    {
+      "id": "pkg:pytest",
+      "label": "pytest",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "External package: pytest"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    },
+    {
+      "id": "pkg:pruvagraph.monorepo",
+      "label": "pruvagraph.monorepo",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "lang": "python",
+      "summary": "External package: pruvagraph.monorepo"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestSingleRepo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPnpm",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestNx",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestLerna",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestRush",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestNpmWorkspaces",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPythonMonorepo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestGenericMonorepo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestCrossPackageEdges",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestPackageInfo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::TestMonorepoLayout",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::_write",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py::_write_json",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "pkg:json",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "pkg:pytest",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_monorepo.py",
+      "target": "pkg:pruvagraph.monorepo",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

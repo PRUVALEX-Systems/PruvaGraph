@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <rect width="512" height="512" fill="#0F1115"/>
+
+  <polygon points="256,43 71,150 71,363 256,469" fill="#DE3232"/>
+
+  <polygon points="256,43 441,150 441,363 256,469" fill="#C42727"/>
+
+  <defs>
+    <path id="p-shape" fill-rule="evenodd" d="M 150 140 H 290 C 360 140 390 170 390 230 C 390 290 360 320 290 320 H 230 V 380 H 150 Z M 230 210 H 285 C 310 210 320 215 320 230 C 320 245 310 250 285 250 H 230 Z"/>
+    
+    <path id="plus-shape" d="M 354 332 H 366 V 344 H 378 V 356 H 366 V 368 H 354 V 356 H 342 V 344 H 354 Z"/>
+  </defs>
+
+  <g fill="#A81B1B">
+    <use href="#p-shape" x="1" y="1" />
+    <use href="#p-shape" x="2" y="2" />
+    <use href="#p-shape" x="3" y="3" />
+    <use href="#p-shape" x="4" y="4" />
+    <use href="#p-shape" x="5" y="5" />
+    <use href="#p-shape" x="6" y="6" />
+    <use href="#p-shape" x="7" y="7" />
+    <use href="#p-shape" x="8" y="8" />
+    <use href="#p-shape" x="9" y="9" />
+    <use href="#p-shape" x="10" y="10" />
+    <use href="#p-shape" x="11" y="11" />
+    <use href="#p-shape" x="12" y="12" />
+    <use href="#p-shape" x="13" y="13" />
+    <use href="#p-shape" x="14" y="14" />
+    <use href="#p-shape" x="15" y="15" />
+    <use href="#p-shape" x="16" y="16" />
+    <use href="#p-shape" x="17" y="17" />
+    <use href="#p-shape" x="18" y="18" />
+
+    <use href="#plus-shape" x="1" y="1" />
+    <use href="#plus-shape" x="2" y="2" />
+    <use href="#plus-shape" x="3" y="3" />
+    <use href="#plus-shape" x="4" y="4" />
+    <use href="#plus-shape" x="5" y="5" />
+    <use href="#plus-shape" x="6" y="6" />
+    <use href="#plus-shape" x="7" y="7" />
+    <use href="#plus-shape" x="8" y="8" />
+    <use href="#plus-shape" x="9" y="9" />
+    <use href="#plus-shape" x="10" y="10" />
+    <use href="#plus-shape" x="11" y="11" />
+    <use href="#plus-shape" x="12" y="12" />
+  </g>
+
+  <use href="#p-shape" fill="#FFFFFF"/>
+  <use href="#plus-shape" fill="#FFFFFF"/>
+</svg>

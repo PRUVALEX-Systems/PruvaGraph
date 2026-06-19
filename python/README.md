@@ -260,7 +260,18 @@ pruvagraph query "top 5 god nodes?"
 
 # ── REPORTS ────────────────────────────────────────────────
 pruvagraph cost-report
+pruvagraph report-dashboard        # CLI + Markdown ROI dashboard
 pruvagraph benchmark                # Token savings vs raw file reading
+
+---
+
+## Observability & ROI
+Use `pruvagraph cost-report` to inspect run-time cost analytics from the last build.
+Use `pruvagraph report-dashboard` to emit a Markdown-ready ROI dashboard with:
+- cache hit percentage
+- paid call bypass percentage
+- cost saved vs naive baseline
+- optional token compression metrics
 
 # ── EXPORT ─────────────────────────────────────────────────
 pruvagraph export --format html       # Interactive visualizer (default)
@@ -296,6 +307,9 @@ PruvaGraph uses tree-sitter for local AST extraction — no LLM, no cost, no int
 | **Docs (LLM)** | PDF, DOCX, Markdown, Images |
 
 Docs and images are the only files that cost money — and PruvaGraph minimizes that aggressively with dedup + batching + cascade.
+
+> Note: PDF/DOCX parsing requires the optional `pruvagraph[docs]` dependency.
+> Install with `pip install pruvagraph[docs]` before using document extraction features.
 
 ---
 

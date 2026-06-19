@@ -1,0 +1,22 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\pyproject.toml",
+  "stat_size": 2343,
+  "stat_mtime_ns": 1781650419695178900,
+  "content_hash": "14aea2447875984ac9ecfc3a60a7cb34e760cf8dd4a70eef603b53020d7fd435",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pyproject.toml",
+      "label": "pyproject",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/pyproject.toml",
+      "lang": "toml",
+      "summary": "toml module: pyproject",
+      "community": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

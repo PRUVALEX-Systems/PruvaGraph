@@ -63,16 +63,12 @@ _RULES: list[RedactionRule] = [
         re.compile(r'\b(pk_(?:live|test)_[a-zA-Z0-9]{24,})\b'),
         "[REDACTED:stripe_pubkey]"),
 
-    RedactionRule("aws_key",
-        re.compile(r'\b((?:AKIA|AROA|AIDA|APKA|ANPA|ANVA|ASIA)[A-Z0-9]{16})\b'),
-        "[REDACTED:aws_access_key]"),
-
-    RedactionRule("aws_secret",
-        re.compile(
-            r'(?:aws[_\-]secret[_\-]access[_\-]key|AWS_SECRET_ACCESS_KEY)\s*[=:]\s*["\']?([A-Za-z0-9/+=]{40})["\']?',
-            re.I,
-        ),
-        r'aws_secret=[REDACTED:aws_secret]'),
+    RedactionRule(
+        name="aws_secret_key",
+        # New regex: matches AWS-style access keys, session tokens, and AWS secret values.
+        pattern=re.compile(r'(?i)(?:aws(?:_secret_access_key|_access_key_id|_session_token)?)[=\s:]+[\'"]?((?:AKIA|AGPA|AIDA|AROA|ASCA)[A-Z0-9]{16}|(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])|aws_sec_[a-zA-Z0-9]+)[\'"]?'),
+        replacement="[REDACTED:aws_key]"
+    ),
 
     RedactionRule("google_api_key",
         re.compile(r'\b(AIza[0-9A-Za-z\-_]{35})\b'),
@@ -81,6 +77,10 @@ _RULES: list[RedactionRule] = [
     RedactionRule("sendgrid_key",
         re.compile(r'\b(SG\.[a-zA-Z0-9\-_]{22}\.[a-zA-Z0-9\-_]{43})\b'),
         "[REDACTED:sendgrid_key]"),
+
+    RedactionRule("slack_token",
+        re.compile(r'\b(xoxb-[A-Za-z0-9\-]{10,})\b'),
+        "[REDACTED:slack_token]"),
 
     RedactionRule("twilio_token",
         re.compile(r'\b(SK[a-f0-9]{32})\b'),
@@ -98,19 +98,19 @@ _RULES: list[RedactionRule] = [
     # ── Passwords and secrets in config ───────────────────────────────────────
     RedactionRule("password_assignment",
         re.compile(
-            r'(?:password|passwd|secret|api[_\-]?key|auth[_\-]?token|access[_\-]?token|secret[_\-]?key)'
-            r'\s*(?:=|:)\s*["\']([^"\']{8,})["\']',
+            r'((?:password|passwd|secret|api[_\-]?key|auth[_\-]?token|access[_\-]?token|secret[_\-]?key)'
+            r'\s*(?:=|:)\s*)(["\']?)([^"\'\s\n]{8,})\2',
             re.I,
         ),
-        r'[KEY]=[REDACTED:secret_value]'),
+        r'\1\2[REDACTED:secret_value]\2'),
 
     RedactionRule("env_secret",
         re.compile(
-            r'(?:^|\n)((?:API_KEY|SECRET|PASSWORD|AUTH_TOKEN|ACCESS_TOKEN|PRIVATE_KEY|SIGNING_KEY|JWT_SECRET)'
-            r'\s*=\s*)([^\n"\']{8,})',
+            r'(^|\n)((?:API[_\-]?KEY|SECRET|PASSWORD|AUTH[_\-]?TOKEN|ACCESS[_\-]?TOKEN|PRIVATE[_\-]?KEY|SIGNING[_\-]?KEY|JWT[_\-]?SECRET)'
+            r'\s*=\s*["\']?)([^\n"\'\s]{8,})(["\']?)',
             re.I,
         ),
-        r'\1[REDACTED:env_secret]'),
+        r'\1\2[REDACTED:env_secret]\4'),
 
     # ── Database connection strings ────────────────────────────────────────────
     RedactionRule("db_connection_string",
@@ -133,6 +133,14 @@ _RULES: list[RedactionRule] = [
             re.I,
         ),
         r'[KEY]=[REDACTED:hex_secret]',
+        severity="medium"),
+
+    RedactionRule("high_entropy_base64",
+        re.compile(
+            r'(?:token|secret|key|hash|credential|cert|certificate|apikey|api_key|auth)\s*[=:]\s*["\']?((?:[A-Za-z0-9+/]{4}){6,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})?)["\']?',
+            re.I,
+        ),
+        r'[KEY]=[REDACTED:base64_secret]',
         severity="medium"),
 
 ]

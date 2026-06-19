@@ -22,13 +22,15 @@ Example:
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import networkx as nx
 
 
 def extract_query_subgraph(
     G: nx.MultiDiGraph,
     seed_nodes: list[str],
-    k_hops: int = 2,
+    k_hops: int = 1,
     max_nodes: int = 60,
     token_budget: int = 6000,
     embedding_scores: dict[str, float] | None = None,
@@ -37,6 +39,8 @@ def extract_query_subgraph(
     """
     BFS expansion from seed_nodes up to k_hops.
 
+    Default pruning uses 1-hop context for the smallest relevant graph.
+    Use k_hops=2 for deeper analysis only when broad repo-level context is required.
     Nodes are ranked by composite relevance before applying the max_nodes cap,
     so the most relevant items survive truncation first (Part C fix).
 
@@ -162,7 +166,7 @@ def find_seed_nodes(G: nx.MultiDiGraph, keywords: list[str]) -> list[str]:
 def build_query_context(
     G: nx.MultiDiGraph,
     seed_nodes: list[str],
-    k_hops: int = 2,
+    k_hops: int = 1,
     max_tokens: int = 6000,
     embedding_scores: dict[str, float] | None = None,
     git_scores: dict[str, float] | None = None,
@@ -170,6 +174,8 @@ def build_query_context(
     """
     Build a compact text context from a subgraph for LLM queries.
 
+    Default context extraction uses 1-hop pruning for minimal token usage.
+    Deep analysis may use k_hops=2 for broader but still filtered context.
     Part C: returns (context_str, actual_token_count) so the caller can
     report exact context size to the user and IDE.
 
@@ -222,6 +228,38 @@ def build_query_context(
 
     context = "\n".join(lines)
     return context, estimated_tokens
+
+
+def prune_context(
+    G: nx.MultiDiGraph,
+    query_embedding: str | list[float] | tuple[float, ...],
+    out_dir: Path,
+    k_hops: int = 1,
+    max_tokens: int = 6000,
+    max_nodes: int = 60,
+    top_k: int = 15,
+    git_scores: dict[str, float] | None = None,
+) -> tuple[str, int]:
+    """
+    Prune the graph context using a query embedding and return a compact LLM context.
+
+    This performs semantic seed selection and then extracts the smallest relevant
+    k-hop subgraph that fits under the token budget.
+    """
+    from pruvagraph.embedder import semantic_search_with_scores
+
+    scored = semantic_search_with_scores(query_embedding, out_dir, top_k=top_k)
+    seed_nodes = [node_id for node_id, _ in scored]
+    embedding_scores = {node_id: score for node_id, score in scored}
+
+    return build_query_context(
+        G,
+        seed_nodes,
+        k_hops=k_hops,
+        max_tokens=max_tokens,
+        embedding_scores=embedding_scores,
+        git_scores=git_scores,
+    )
 
 
 def extract_keywords(question: str) -> list[str]:

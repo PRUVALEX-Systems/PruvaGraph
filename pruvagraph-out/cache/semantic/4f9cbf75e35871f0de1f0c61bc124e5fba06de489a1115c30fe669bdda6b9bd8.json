@@ -1,0 +1,93 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\module-driftguard\\src\\indexer.ts",
+  "stat_size": 1144,
+  "stat_mtime_ns": 1781803870336745400,
+  "content_hash": "4f9cbf75e35871f0de1f0c61bc124e5fba06de489a1115c30fe669bdda6b9bd8",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "label": "indexer",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "typescript module: indexer",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::DriftGuardIndexer",
+      "label": "DriftGuardIndexer",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "typescript class in indexer"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::manifest",
+      "label": "manifest",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "typescript function in indexer"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::version",
+      "label": "version",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "typescript function in indexer"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::DriftGuardIndexer",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::manifest",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts::version",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "omnimcp/packages/module-driftguard/src/repository.js",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-driftguard/src/indexer.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

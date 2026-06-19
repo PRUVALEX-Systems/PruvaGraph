@@ -1,0 +1,22 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\module-ghostmemory\\package.json",
+  "stat_size": 273,
+  "stat_mtime_ns": 1781802208435322000,
+  "content_hash": "aa322ef7736897cb5d594059982fa49a8910a7ae08eb2463687d35df37be4e98",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-ghostmemory/package.json",
+      "label": "package",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/module-ghostmemory/package.json",
+      "lang": "json",
+      "summary": "json module: package",
+      "community": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

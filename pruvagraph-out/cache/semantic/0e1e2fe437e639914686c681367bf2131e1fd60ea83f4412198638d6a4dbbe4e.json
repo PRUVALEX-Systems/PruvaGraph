@@ -1,0 +1,166 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\test_dead_layers.py",
+  "stat_size": 2748,
+  "stat_mtime_ns": 1781560075698960800,
+  "content_hash": "0e1e2fe437e639914686c681367bf2131e1fd60ea83f4412198638d6a4dbbe4e",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "label": "test_dead_layers",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python module: test_dead_layers",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_l5_compression_imported_in_llm_extract",
+      "label": "test_l5_compression_imported_in_llm_extract",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_l5_compress_called_before_llm",
+      "label": "test_l5_compress_called_before_llm",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_update_field_in_buildconfig",
+      "label": "test_n9_update_field_in_buildconfig",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_build_graph_accepts_update",
+      "label": "test_n9_build_graph_accepts_update",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_ast_diff_is_git_repo",
+      "label": "test_n9_ast_diff_is_git_repo",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_a5_global_cache_round_trip",
+      "label": "test_a5_global_cache_round_trip",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_a5_pipeline_imports_global_cache",
+      "label": "test_a5_pipeline_imports_global_cache",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "python function in test_dead_layers"
+    },
+    {
+      "id": "pkg:json",
+      "label": "json",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "External package: json"
+    },
+    {
+      "id": "pkg:pytest",
+      "label": "pytest",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "External package: pytest"
+    },
+    {
+      "id": "pkg:__future__",
+      "label": "__future__",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "External package: __future__"
+    },
+    {
+      "id": "pkg:pathlib",
+      "label": "pathlib",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "lang": "python",
+      "summary": "External package: pathlib"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_l5_compression_imported_in_llm_extract",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_l5_compress_called_before_llm",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_update_field_in_buildconfig",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_build_graph_accepts_update",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_n9_ast_diff_is_git_repo",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_a5_global_cache_round_trip",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py::test_a5_pipeline_imports_global_cache",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "pkg:json",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "pkg:pytest",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "pkg:__future__",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_dead_layers.py",
+      "target": "pkg:pathlib",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

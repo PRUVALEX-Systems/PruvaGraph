@@ -1,0 +1,22 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\core-engine\\package.json",
+  "stat_size": 430,
+  "stat_mtime_ns": 1781802861925068500,
+  "content_hash": "1b9d9b7f778764521f2839e3aada443bb6f3fbf3e009d542526e967f75b9435f",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/package.json",
+      "label": "package",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/package.json",
+      "lang": "json",
+      "summary": "json module: package",
+      "community": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

@@ -1,0 +1,652 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\extension.js",
+  "stat_size": 36257,
+  "stat_mtime_ns": 1781523663901404500,
+  "content_hash": "f446f087a1bffe68b7e18d79c842acd2111f3c650f14bb1bb5f5fd8d16d2f9cf",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "label": "extension",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript module: extension",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::PruvaGraphViewProvider",
+      "label": "PruvaGraphViewProvider",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript class in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::name",
+      "label": "name",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript class in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::activate",
+      "label": "activate",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::deactivate",
+      "label": "deactivate",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuild",
+      "label": "runBuild",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::extractSymbolsViaLSP",
+      "label": "extractSymbolsViaLSP",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuildFast",
+      "label": "runBuildFast",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runQuery",
+      "label": "runQuery",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runCostReport",
+      "label": "runCostReport",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallMCP",
+      "label": "runInstallMCP",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::openVisualizer",
+      "label": "openVisualizer",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::clearCache",
+      "label": "clearCache",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::toggleWatch",
+      "label": "toggleWatch",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::findCallers",
+      "label": "findCallers",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getDependencies",
+      "label": "getDependencies",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallPkg",
+      "label": "runInstallPkg",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runDryRun",
+      "label": "runDryRun",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::sendStatus",
+      "label": "sendStatus",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getWorkspaceRoot",
+      "label": "getWorkspaceRoot",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::noWorkspace",
+      "label": "noWorkspace",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runCLI",
+      "label": "runCLI",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::handleData",
+      "label": "handleData",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::spawnCLI",
+      "label": "spawnCLI",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::log",
+      "label": "log",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getWebviewHtml",
+      "label": "getWebviewHtml",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::send",
+      "label": "send",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onStatus",
+      "label": "onStatus",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onBuildStart",
+      "label": "onBuildStart",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onBuildLog",
+      "label": "onBuildLog",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onQueryStart",
+      "label": "onQueryStart",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onQueryResult",
+      "label": "onQueryResult",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onCostReport",
+      "label": "onCostReport",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onLogLine",
+      "label": "onLogLine",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onWatchStatus",
+      "label": "onWatchStatus",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onError",
+      "label": "onError",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::appendLog",
+      "label": "appendLog",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::appendQuery",
+      "label": "appendQuery",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::escHtml",
+      "label": "escHtml",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getNonce",
+      "label": "getNonce",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "javascript function in extension"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "External package: vscode"
+    },
+    {
+      "id": "pkg:path",
+      "label": "path",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "External package: path"
+    },
+    {
+      "id": "pkg:child_process",
+      "label": "child_process",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "External package: child_process"
+    },
+    {
+      "id": "pkg:fs",
+      "label": "fs",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "lang": "javascript",
+      "summary": "External package: fs"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::PruvaGraphViewProvider",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::name",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::activate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::deactivate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuild",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::extractSymbolsViaLSP",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuildFast",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runQuery",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runCostReport",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallMCP",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::openVisualizer",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::clearCache",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::toggleWatch",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::findCallers",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getDependencies",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallPkg",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runDryRun",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::sendStatus",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getWorkspaceRoot",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::noWorkspace",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runCLI",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::handleData",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::spawnCLI",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::log",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getWebviewHtml",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::send",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onStatus",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onBuildStart",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onBuildLog",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onQueryStart",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onQueryResult",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onCostReport",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onLogLine",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onWatchStatus",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::onError",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::appendLog",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::appendQuery",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::escHtml",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getNonce",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::activate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::deactivate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuild",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::extractSymbolsViaLSP",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runBuildFast",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runQuery",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runCostReport",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallMCP",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::openVisualizer",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::clearCache",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::toggleWatch",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::findCallers",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::getDependencies",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js::runInstallPkg",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "pkg:path",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "pkg:child_process",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/extension.js",
+      "target": "pkg:fs",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

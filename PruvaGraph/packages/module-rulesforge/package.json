@@ -1,0 +1,15 @@
+{
+  "name": "@pruvalex/module-rulesforge",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@pruvalex/shared-types": "*"
+  }
+}
+

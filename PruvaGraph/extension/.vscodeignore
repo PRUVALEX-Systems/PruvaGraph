@@ -1,0 +1,6 @@
+# Everything except dist and LICENSE
+**/*
+!dist/
+!LICENSE
+!package.json
+!README.md

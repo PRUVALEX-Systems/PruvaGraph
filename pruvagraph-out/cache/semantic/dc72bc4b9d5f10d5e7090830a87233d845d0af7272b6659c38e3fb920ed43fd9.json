@@ -1,0 +1,62 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\extension\\src\\settings.ts",
+  "stat_size": 233,
+  "stat_mtime_ns": 1781802258691658200,
+  "content_hash": "dc72bc4b9d5f10d5e7090830a87233d845d0af7272b6659c38e3fb920ed43fd9",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "label": "settings",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "lang": "typescript",
+      "summary": "typescript module: settings",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts::config",
+      "label": "config",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "lang": "typescript",
+      "summary": "typescript function in settings"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts::isModuleEnabled",
+      "label": "isModuleEnabled",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "lang": "typescript",
+      "summary": "typescript function in settings"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts::config",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts::isModuleEnabled",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/settings.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

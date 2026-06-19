@@ -1,0 +1,49 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\shared-types\\src\\events.ts",
+  "stat_size": 513,
+  "stat_mtime_ns": 1781802122224598000,
+  "content_hash": "ad6b5b48957a005cc971138196ce60e16cc9d6a3ef9e394e8f3b1bfadc397ece",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "label": "events",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "lang": "typescript",
+      "summary": "typescript module: events",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts::IEventBus",
+      "label": "IEventBus",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in events"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts::OmniMCPEventMap",
+      "label": "OmniMCPEventMap",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in events"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts::IEventBus",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/events.ts::OmniMCPEventMap",
+      "relation": "defines"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

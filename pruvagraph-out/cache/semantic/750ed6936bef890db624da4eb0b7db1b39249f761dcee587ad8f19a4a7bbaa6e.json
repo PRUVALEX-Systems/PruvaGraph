@@ -1,0 +1,189 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\extension\\src\\extension.ts",
+  "stat_size": 1634,
+  "stat_mtime_ns": 1781802261598169500,
+  "content_hash": "750ed6936bef890db624da4eb0b7db1b39249f761dcee587ad8f19a4a7bbaa6e",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "label": "extension",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript module: extension",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::ModuleRegistry",
+      "label": "ModuleRegistry",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript class in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::core",
+      "label": "core",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::registry",
+      "label": "registry",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::activate",
+      "label": "activate",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript function in extension"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::deactivate",
+      "label": "deactivate",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "typescript function in extension"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    },
+    {
+      "id": "pkg:@omnimcp/module-driftguard",
+      "label": "@omnimcp/module-driftguard",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/module-driftguard"
+    },
+    {
+      "id": "pkg:@omnimcp/module-contextlens",
+      "label": "@omnimcp/module-contextlens",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/module-contextlens"
+    },
+    {
+      "id": "pkg:@omnimcp/module-ghostmemory",
+      "label": "@omnimcp/module-ghostmemory",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/module-ghostmemory"
+    },
+    {
+      "id": "pkg:@omnimcp/module-rulesforge",
+      "label": "@omnimcp/module-rulesforge",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/module-rulesforge"
+    },
+    {
+      "id": "pkg:@omnimcp/module-taskweaver",
+      "label": "@omnimcp/module-taskweaver",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/module-taskweaver"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::ModuleRegistry",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::core",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::registry",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::activate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts::deactivate",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "omnimcp/extension/src/di/container.js",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "omnimcp/extension/src/settings.js",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/module-driftguard",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/module-contextlens",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/module-ghostmemory",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/module-rulesforge",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/src/extension.ts",
+      "target": "pkg:@omnimcp/module-taskweaver",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

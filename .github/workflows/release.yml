@@ -1,0 +1,176 @@
+name: Release — Publish to VS Code Marketplace
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"       # e.g. v1.2.3
+      - "v[0-9]+.[0-9]+.[0-9]+-rc*"   # e.g. v1.2.3-rc1 (pre-release)
+
+permissions:
+  contents: write  # needed for GitHub Release creation
+
+env:
+  NODE_VERSION: "20.x"
+
+jobs:
+  validate:
+    name: Pre-release Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --workspaces
+
+      - name: Full build + test (same as CI)
+        run: |
+          npm run build --workspaces
+          npm run test --workspaces
+          npm run lint --workspaces
+
+      - name: Verify CHANGELOG entry exists for this tag
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          echo "Checking CHANGELOG.md for version $VERSION..."
+          if ! grep -q "## \[$VERSION\]" CHANGELOG.md; then
+            echo "❌ No CHANGELOG.md entry found for version $VERSION"
+            echo "   Please add an entry before tagging a release."
+            exit 1
+          fi
+          echo "✅ CHANGELOG entry found for $VERSION"
+
+  package:
+    name: Package VSIX
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      vsix-name: ${{ steps.package.outputs.vsix-name }}
+      vsix-size-kb: ${{ steps.size-check.outputs.size-kb }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies + vsce
+        run: |
+          npm ci --workspaces
+          npm install -g @vscode/vsce
+
+      - name: Build
+        run: npm run build --workspaces
+
+      - name: Package VSIX
+        id: package
+        working-directory: extension
+        run: |
+          vsce package --no-dependencies
+          VSIX_FILE=$(ls *.vsix | head -1)
+          echo "vsix-name=$VSIX_FILE" >> "$GITHUB_OUTPUT"
+          echo "📦 Packaged: $VSIX_FILE"
+
+      - name: Enforce VSIX size < 10MB
+        id: size-check
+        working-directory: extension
+        run: |
+          VSIX_FILE=$(ls *.vsix | head -1)
+          SIZE_KB=$(du -k "$VSIX_FILE" | cut -f1)
+          echo "size-kb=$SIZE_KB" >> "$GITHUB_OUTPUT"
+          echo "📏 VSIX size: ${SIZE_KB}KB (limit: 10240KB)"
+          if [ "$SIZE_KB" -gt 10240 ]; then
+            echo "❌ VSIX exceeds 10MB size limit: ${SIZE_KB}KB"
+            exit 1
+          fi
+          echo "✅ Size check passed: ${SIZE_KB}KB"
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pruvagraph-vsix
+          path: extension/*.vsix
+          retention-days: 30
+
+  publish-marketplace:
+    name: Publish to VS Code Marketplace
+    runs-on: ubuntu-latest
+    needs: package
+    environment: marketplace  # requires manual approval for production releases
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pruvagraph-vsix
+          path: extension/
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Publish to Marketplace
+        working-directory: extension
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ "$TAG" == *"-rc"* ]]; then
+            echo "🚀 Publishing pre-release..."
+            vsce publish --pre-release --pat "$VSCE_PAT" --no-dependencies
+          else
+            echo "🚀 Publishing stable release..."
+            vsce publish --pat "$VSCE_PAT" --no-dependencies
+          fi
+
+  publish-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [package, publish-marketplace]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: omnimcp-vsix
+          path: ./release-assets/
+
+      - name: Extract version changelog
+        id: changelog
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          # Extract the section for this version from CHANGELOG.md
+          NOTES=$(awk "/## \[$VERSION\]/{flag=1; next} /## \[/{flag=0} flag" CHANGELOG.md)
+          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$NOTES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./release-assets/*.vsix
+          body: |
+            ## PRUVALEX PruvaGraph ${{ github.ref_name }}
+
+            ${{ steps.changelog.outputs.notes }}
+
+            ---
+            **VSIX size:** ${{ needs.package.outputs.vsix-size-kb }}KB  
+            **Install:** Search `PRUVALEX.pruvagraph` in VS Code Extensions, or download the `.vsix` above.
+
+            ```bash
+            # Install from file:
+            code --install-extension pruvagraph-*.vsix
+            ```
+          draft: false
+          prerelease: ${{ contains(github.ref, '-rc') }}

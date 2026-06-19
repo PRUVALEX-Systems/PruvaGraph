@@ -24,7 +24,7 @@ err()  { echo -e "${R}✗${NC} $*"; }
 echo ""
 echo -e "${B}╔══════════════════════════════════════════════════════╗${NC}"
 echo -e "${B}║   PRUVALEX PruvaGraph — Installer                   ║${NC}"
-echo -e "${B}║   99%+ LLM cost reduction · Zero server required    ║${NC}"
+echo -e "${B}║   31.6% baseline compression · up to 100% cache bypass   ║${NC}"
 echo -e "${B}╚══════════════════════════════════════════════════════╝${NC}"
 echo ""
 

@@ -1,0 +1,49 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\scripts\\install.sh",
+  "stat_size": 9036,
+  "stat_mtime_ns": 1781448012259915100,
+  "content_hash": "ea989ca270e9c5fda3ad67d8f4ff161b2020e9f69bbe4e49cfb3f0739cc4a89a",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "label": "install",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "lang": "bash",
+      "summary": "bash module: install",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh::X",
+      "label": "X",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "lang": "bash",
+      "summary": "bash function in install"
+    },
+    {
+      "id": "pkg:json,",
+      "label": "json,",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "lang": "bash",
+      "summary": "External package: json,"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh::X",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/install.sh",
+      "target": "pkg:json,",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

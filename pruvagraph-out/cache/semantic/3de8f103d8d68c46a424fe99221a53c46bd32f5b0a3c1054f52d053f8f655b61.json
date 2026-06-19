@@ -1,0 +1,114 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\core-engine\\src\\workspace\\context.ts",
+  "stat_size": 1976,
+  "stat_mtime_ns": 1781802922268884300,
+  "content_hash": "3de8f103d8d68c46a424fe99221a53c46bd32f5b0a3c1054f52d053f8f655b61",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "label": "context",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "typescript module: context",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::WorkspaceContext",
+      "label": "WorkspaceContext",
+      "type": "class",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "typescript class in context"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::rootPath",
+      "label": "rootPath",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "typescript function in context"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::pkgPath",
+      "label": "pkgPath",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "typescript function in context"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    },
+    {
+      "id": "pkg:fs",
+      "label": "fs",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "External package: fs"
+    },
+    {
+      "id": "pkg:path",
+      "label": "path",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "External package: path"
+    },
+    {
+      "id": "pkg:@omnimcp/shared-types",
+      "label": "@omnimcp/shared-types",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "lang": "typescript",
+      "summary": "External package: @omnimcp/shared-types"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::WorkspaceContext",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::rootPath",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts::pkgPath",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "pkg:fs",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "pkg:path",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/core-engine/src/workspace/context.ts",
+      "target": "pkg:@omnimcp/shared-types",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

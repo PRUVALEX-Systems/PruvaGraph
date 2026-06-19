@@ -1,7 +1,19 @@
-﻿__pycache__/
+# Runtime artifacts — NEVER commit these
+python/pruvagraph-out/
+python/__pycache__/
+python/pruvagraph/__pycache__/
+python/.venv_omnimcp/
+**/__pycache__/
 *.pyc
 *.pyo
 .env
 .venv/
-pruvagraph-out/
-node_modules
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+node_modules/
+*.vsix
+dist/*.vsix
+pruvagraph/**/.vsix
+!pruvagraph/dist/*.vsix
+.opencode

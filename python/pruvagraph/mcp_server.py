@@ -103,7 +103,7 @@ def _query_graph(question: str, root: str = ".") -> str:
     """
     G, is_partial = _load_graph(root)
     if G is None:
-        return "No graph found. Run 'pruvagraph .' first."
+        return "Please run pruvagraph . first to build the graph."
 
     prefix = ""
     if is_partial:
@@ -161,7 +161,7 @@ def _get_dependencies(node_id: str, root: str = ".") -> str:
 
     G, is_partial = _load_graph(root)
     if G is None:
-        return "No graph found."
+        return "Please run pruvagraph . first to build the graph."
 
     if node_id not in G:
         return f"Node '{node_id}' not found in graph."
@@ -202,7 +202,7 @@ def _find_callers(node_id: str, root: str = ".") -> str:
 
     G, is_partial = _load_graph(root)
     if G is None:
-        return "No graph found."
+        return "Please run pruvagraph . first to build the graph."
 
     if node_id not in G:
         return f"Node '{node_id}' not found in graph."
@@ -242,7 +242,7 @@ def _get_summary(node_id: str, root: str = ".") -> str:
 
     G, is_partial = _load_graph(root)
     if G is None:
-        return "No graph found."
+        return "Please run pruvagraph . first to build the graph."
 
     # Fuzzy match by label if exact ID not found
     target = None
@@ -278,7 +278,7 @@ def _list_communities(root: str = ".") -> str:
     """List detected architectural communities/modules."""
     G, is_partial = _load_graph(root)
     if G is None:
-        return "No graph found."
+        return "Please run pruvagraph . first to build the graph."
 
     communities: dict[int, list[str]] = {}
     for node_id, data in G.nodes(data=True):
@@ -348,7 +348,7 @@ def _analyze_impact(node_id: str, root: str = ".", depth: int = 3) -> str:
     out_dir    = Path(root) / "pruvagraph-out"
     graph_path = out_dir / "graph.json"
     if not graph_path.exists():
-        return "No graph found. Run 'pruvagraph .' first."
+        return "Please run pruvagraph . first to build the graph."
 
     try:
         import networkx as nx

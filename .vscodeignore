@@ -1,51 +1,48 @@
-# ─────────────────────────────────────────────
-# PRUVALEX PruvaGraph — .vscodeignore
-# Excludes everything NOT needed in the .vsix
-# ─────────────────────────────────────────────
+# .vscodeignore for PRUVALEX PruvaGraph
+# Include only the extension runtime package and required assets.
 
-# Python backend (installed separately via pip)
-python/**
-
-# Build scripts & CI
-scripts/**
-.github/**
-
-# Already-built VSIX files
-dist/**
-*.vsix
-
-# Dev tooling
-node_modules/**
-.vscode/**
-.vscode-test/**
-*.test.js
-*.spec.js
-
-# Husky / git hooks
-.husky/**
-
-# Graph output cache
-pruvagraph-out/**
-
-# Random images (keep only icon.png which is required by the manifest)
-*.jpeg
-*.jpg
-105bc64f-92a7-49fc-a9ac-067cfb535a1e.png
-4k_resolution_Mein_Do_2K_202606160058.jpeg
-upgrade_karo_aur_4k_resolution_202606160006.jpeg
-{200E29D6-0563-49C2-AC1E-3329B1A816BF}.png
-
-# Source control
-.git/**
-.gitignore
-
-# Docs (keep README + CHANGELOG in vsix)
-*.md
+**
+!.vscodeignore
+!package.json
 !README.md
+!LICENSE
+!icon.png
+!extension.js
+!dist/**
+
+# Allow important project metadata if needed
 !CHANGELOG.md
 
-# OS noise
+# Ignore everything else
+.git/**
+.gitignore
+.gitmessage
+.node_modules/**
+node_modules/**
+.pruvagraph/**
+python/**
+.venv/**
+.vscode/**
+.vscode-test/**
+.github/**
+.husky/**
+docs/**
+scripts/**
+benchmarks/**
+tests/**
+test/**
+coverage/**
+pruvagraph-out/**
+*.vsix
+*.log
+*.tmp
+*.temp
+*.map
+*.ts
+*.tsx
+*.yml
+*.yaml
+*.md
 .DS_Store
 Thumbs.db
-Thumbs.db:encryptable
 desktop.ini

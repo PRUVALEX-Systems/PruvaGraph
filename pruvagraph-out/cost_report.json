@@ -1,0 +1,36 @@
+{
+  "total_files_processed": 128,
+  "cache_hits": 120,
+  "dedup_projected": 0,
+  "llm_calls_made": 0,
+  "total_input_tokens": 0,
+  "total_output_tokens": 0,
+  "actual_cost_usd": 0.0,
+  "run_duration_seconds": 4.74,
+  "naive_calls": 8,
+  "naive_cost_usd": 0.0192,
+  "calls_saved": 8,
+  "cost_saved_usd": 0.0192,
+  "savings_pct": 100.0,
+  "backend_breakdown": {
+    "tree-sitter": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0
+    }
+  },
+  "calls": [
+    {
+      "backend": "tree-sitter",
+      "files_in_batch": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 0.0,
+      "from_cache": false,
+      "from_dedup": false,
+      "timestamp": 1781805068.9762626
+    }
+  ]
+}

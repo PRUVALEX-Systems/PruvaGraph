@@ -1,0 +1,184 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\shared-types\\src\\module-contract.ts",
+  "stat_size": 1447,
+  "stat_mtime_ns": 1781803840493920000,
+  "content_hash": "81f22d1735169b2328bd89a2e995c57250493887ffbc86154746c91ac80a163b",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "label": "module-contract",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript module: module-contract",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::ModuleRepository",
+      "label": "ModuleRepository",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IGraphStore",
+      "label": "IGraphStore",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IMCPTransport",
+      "label": "IMCPTransport",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::PackageJson",
+      "label": "PackageJson",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::TypeDeclarationIndex",
+      "label": "TypeDeclarationIndex",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::Tree",
+      "label": "Tree",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::abstract",
+      "label": "abstract",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IWorkspaceContext",
+      "label": "IWorkspaceContext",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::WebviewHost",
+      "label": "WebviewHost",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::CoreEngineAPI",
+      "label": "CoreEngineAPI",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::OmniMCPModule",
+      "label": "OmniMCPModule",
+      "type": "interface",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "typescript interface/type in module-contract"
+    },
+    {
+      "id": "pkg:vscode",
+      "label": "vscode",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "lang": "typescript",
+      "summary": "External package: vscode"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::ModuleRepository",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IGraphStore",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IMCPTransport",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::PackageJson",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::TypeDeclarationIndex",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::Tree",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::abstract",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::IWorkspaceContext",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::WebviewHost",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::CoreEngineAPI",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts::OmniMCPModule",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "pkg:vscode",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-types/src/module-contract.ts",
+      "target": "omnimcp/packages/shared-types/src/events.js",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

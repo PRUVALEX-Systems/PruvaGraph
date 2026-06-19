@@ -1,0 +1,49 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\scripts\\encode_icon.py",
+  "stat_size": 295,
+  "stat_mtime_ns": 1781763648444898600,
+  "content_hash": "55bea598e76bffb75e1411c00f9f0e8796eb1e84b4afdccad4c08ba2ff7cab75",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "label": "encode_icon",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "lang": "python",
+      "summary": "python module: encode_icon",
+      "community": null
+    },
+    {
+      "id": "pkg:sys",
+      "label": "sys",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "lang": "python",
+      "summary": "External package: sys"
+    },
+    {
+      "id": "pkg:base64",
+      "label": "base64",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "lang": "python",
+      "summary": "External package: base64"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "target": "pkg:sys",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/scripts/encode_icon.py",
+      "target": "pkg:base64",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

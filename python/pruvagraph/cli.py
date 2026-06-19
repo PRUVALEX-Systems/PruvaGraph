@@ -37,7 +37,8 @@ _CONSOLE = Console() if _RICH else None
 LOGO = """
 ╔═══════════════════════════════════════╗
 ║  PruvaGraph  ·  by PRUVALEX           ║
-║  Codebase graphs. 95%+ cost savings.  ║
+║  31.6% Baseline Compression &        ║
+║  up to 100% Cache Bypass.           ║
 ╚═══════════════════════════════════════╝"""
 
 
@@ -105,7 +106,7 @@ def main(
         try:
             _CONSOLE.print(f"[bold cyan]{LOGO}[/bold cyan]")
         except UnicodeEncodeError:
-            click.echo("PruvaGraph — by PRUVALEX (codebase graphs, 95%+ cost savings)")
+            click.echo("PruvaGraph — by PRUVALEX (31.6% baseline compression, up to 100% cache bypass)")
 
     root_path = Path(root).resolve()
     if not root_path.exists():
@@ -212,6 +213,108 @@ def cost_report_cmd(root: str) -> None:
         for k, v in data.items():
             if k != "calls":
                 click.echo(f"{k}: {v}")
+
+
+@main.command("report-dashboard")
+@click.option("--root", default=".", show_default=True)
+def report_dashboard(root: str) -> None:
+    """Show a Markdown + CLI dashboard report for ROI and cost savings."""
+    report_path = Path(root) / "pruvagraph-out" / "cost_report.json"
+    if not report_path.exists():
+        click.echo("No cost report found. Run 'pruvagraph .' first.", err=True)
+        sys.exit(1)
+
+    data = json.loads(report_path.read_text())
+    graph_json = Path(root) / "pruvagraph-out" / "graph.json"
+    benchmark_text = ""
+    compression_pct = None
+    raw_tokens = None
+    graph_tokens = None
+
+    if graph_json.exists():
+        try:
+            from pruvagraph.benchmark import run_benchmark
+            benchmark_text = run_benchmark(graph_json)
+            import re
+            match = re.search(r"Raw codebase tokens:\s+([0-9,]+)", benchmark_text)
+            if match:
+                raw_tokens = int(match.group(1).replace(",", ""))
+            match = re.search(r"PruvaGraph tokens:\s+([0-9,]+)", benchmark_text)
+            if match:
+                graph_tokens = int(match.group(1).replace(",", ""))
+            match = re.search(r"Token savings:\s+([0-9\.]+)%", benchmark_text)
+            if match:
+                compression_pct = float(match.group(1))
+        except Exception:
+            benchmark_text = ""
+
+    cache_hit_rate = (
+        data["cache_hits"] / data["total_files_processed"] * 100
+        if data["total_files_processed"] > 0 else 0.0
+    )
+    paid_calls_bypassed = (
+        data["calls_saved"] / (data["calls_saved"] + data["llm_calls_made"]) * 100
+        if (data["calls_saved"] + data["llm_calls_made"]) > 0 else 0.0
+    )
+
+    markdown_rows = [
+        ("Metric", "Value"),
+        ("Files processed", f"{data['total_files_processed']:,}"),
+        ("Cache hits (free)", f"{data['cache_hits']:,}"),
+        ("LLM calls made", f"{data['llm_calls_made']:,}"),
+        ("Naive calls (est.)", f"{data['naive_calls']:,}"),
+        ("Calls saved", f"{data['calls_saved']:,}"),
+        ("Actual cost", f"${data['actual_cost_usd']:.6f}"),
+        ("Naive cost (est.)", f"${data['naive_cost_usd']:.4f}"),
+        ("Cost saved", f"${data['cost_saved_usd']:.4f}"),
+        ("Savings %", f"{data['savings_pct']:.1f}%"),
+    ]
+    if compression_pct is not None:
+        markdown_rows.append(("ContextLens compression", f"{compression_pct:.1f}%"))
+    markdown_rows.extend([
+        ("GhostMemory cache hit rate", f"{cache_hit_rate:.1f}%"),
+        ("Paid calls bypassed", f"{paid_calls_bypassed:.1f}%"),
+        ("Run time", f"{data['run_duration_seconds']:.1f}s"),
+    ])
+
+    md_lines = ["| Metric | Value |", "|---|---|"]
+    for label, value in markdown_rows:
+        md_lines.append(f"| {label} | {value} |")
+
+    dashboard = [
+        "PruvaGraph — Cost & ROI Dashboard",
+        "-----------------------------------",
+        f"Files processed:    {data['total_files_processed']:,}",
+        f"Cache hits (free):  {data['cache_hits']:,}",
+        f"LLM calls made:     {data['llm_calls_made']:,}",
+        f"Naive calls (est.): {data['naive_calls']:,}",
+        f"Calls saved:        {data['calls_saved']:,}",
+        "",
+        f"Actual cost:        ${data['actual_cost_usd']:.6f}",
+        f"Naive cost (est.):  ${data['naive_cost_usd']:.4f}",
+        f"Cost saved:         ${data['cost_saved_usd']:.4f}",
+        f"Savings %:          {data['savings_pct']:.1f}%",
+        "",
+        f"ContextLens compression:  {compression_pct:.1f}%" if compression_pct is not None else "ContextLens compression:  unavailable",
+        f"GhostMemory cache hit rate:  {cache_hit_rate:.1f}%",
+        f"Paid calls bypassed:         {paid_calls_bypassed:.1f}%",
+        "",
+        f"Run time:           {data['run_duration_seconds']:.1f}s",
+    ]
+
+    if _RICH:
+        t = Table(title="PruvaGraph — ROI Dashboard", show_header=True)
+        t.add_column("Metric", style="cyan")
+        t.add_column("Value", justify="right")
+        for label, value in markdown_rows:
+            t.add_row(label, value)
+        _CONSOLE.print(t)
+        _CONSOLE.print("\n[bold]Markdown Summary:[/bold]\n")
+        _CONSOLE.print("\n".join(md_lines))
+        _CONSOLE.print("\n".join(dashboard))
+    else:
+        click.echo("\n".join(md_lines))
+        click.echo("\n".join(dashboard))
 
 
 @main.command()

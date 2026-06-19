@@ -1,9 +1,9 @@
 {
   "name": "pruvalex-pruvagraph",
   "displayName": "PRUVALEX PruvaGraph",
-  "description": "🧠 Codebase knowledge graphs. 99%+ LLM cost reduction. Free local analysis — zero API cost for code.",
+  "description": "The unified engine for cost-optimized and secure LLM interactions.",
   "version": "1.4.0",
-  "publisher": "pruvalex",
+  "publisher": "PRUVALEX",
   "license": "MIT",
   "icon": "icon.png",
   "repository": {
@@ -22,26 +22,21 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other",
-    "Visualization",
-    "Programming Languages"
+    "AI",
+    "Cost Optimization",
+    "Security"
   ],
   "keywords": [
+    "AI",
+    "Cost Optimization",
+    "Security",
+    "LLM",
     "knowledge-graph",
-    "llm-cost-reduction",
-    "cost-optimization",
-    "code-analysis",
-    "mcp",
-    "claude",
-    "cursor",
-    "graph",
-    "tree-sitter",
-    "free",
-    "ai",
+    "privacy",
     "token-reduction",
-    "pruvalex",
-    "pruvagraph",
-    "codebase-graph"
+    "code-analysis",
+    "graph",
+    "pruvalex"
   ],
   "activationEvents": [
     "onStartupFinished"

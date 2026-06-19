@@ -64,6 +64,18 @@ def build_embedding_index(graph_path: Path, out_dir: Path) -> bool:
 
 # ── Semantic search ───────────────────────────────────────────────────────────
 
+def _build_query_embedding(query: str | list[float] | tuple[float, ...]) -> np.ndarray:
+    """
+    Convert a text query or an existing embedding vector into a normalized ndarray.
+    """
+    if isinstance(query, (list, tuple, np.ndarray)):
+        return np.array(query, dtype=np.float32)
+
+    from fastembed import TextEmbedding  # type: ignore
+    model = TextEmbedding("BAAI/bge-small-en-v1.5")
+    return np.array(list(model.embed([query]))[0], dtype=np.float32)
+
+
 def semantic_search(
     query: str,
     out_dir: Path,
@@ -73,6 +85,18 @@ def semantic_search(
     Return top-k node IDs most semantically similar to query.
     Zero LLM calls. Pure local cosine similarity.
     Returns [] if embedding index not built or fastembed not installed.
+    """
+    scored = semantic_search_with_scores(query, out_dir, top_k=top_k)
+    return [node_id for node_id, _ in scored]
+
+
+def semantic_search_with_scores(
+    query: str | list[float] | tuple[float, ...],
+    out_dir: Path,
+    top_k: int = 15,
+) -> list[tuple[str, float]]:
+    """
+    Return top-k (node_id, score) results most semantically similar to query.
     """
     emb_path = out_dir / "node_embeddings.npy"
     ids_path = out_dir / "node_ids.json"
@@ -87,16 +111,18 @@ def semantic_search(
 
     try:
         emb_matrix = np.load(str(emb_path))
-        node_ids   = json.loads(ids_path.read_text(encoding="utf-8"))
-
-        model = TextEmbedding("BAAI/bge-small-en-v1.5")
-        q_emb = np.array(list(model.embed([query]))[0], dtype=np.float32)
+        node_ids = json.loads(ids_path.read_text(encoding="utf-8"))
+        q_emb = _build_query_embedding(query)
 
         # Cosine similarity: BGE embeddings are L2-normalized → dot product = cosine
-        scores  = emb_matrix @ q_emb
+        scores = emb_matrix @ q_emb
         top_idx = np.argsort(scores)[-top_k:][::-1]
 
-        return [node_ids[i] for i in top_idx if i < len(node_ids)]
+        return [
+            (node_ids[i], float(scores[i]))
+            for i in top_idx
+            if 0 <= i < len(node_ids)
+        ]
     except Exception:
         return []
 

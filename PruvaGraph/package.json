@@ -1,0 +1,28 @@
+{
+  "name": "pruvagraph-monorepo",
+  "private": true,
+  "workspaces": [
+    "extension",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "prebuild": "node scripts/clean-vsix.js",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "vitest run --coverage",
+    "bench": "vitest run",
+    "lint": "npm run lint --workspaces --if-present",
+    "preview:ui": "node packages/shared-ui/preview-server.js"
+  },
+  "documentation": {
+    "root": "README.md",
+    "extensionGuide": "extension/README.md"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
+

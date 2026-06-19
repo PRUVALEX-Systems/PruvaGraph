@@ -1,0 +1,22 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\extension\\tsconfig.json",
+  "stat_size": 454,
+  "stat_mtime_ns": 1781802256403136800,
+  "content_hash": "b4bb2aa013b9012e775392af404e278d3984af5d31c6df1100c2a2d6123ba03e",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/tsconfig.json",
+      "label": "tsconfig",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/extension/tsconfig.json",
+      "lang": "json",
+      "summary": "json module: tsconfig",
+      "community": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

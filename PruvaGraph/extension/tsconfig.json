@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": false
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../packages/core-engine" },
+    { "path": "../packages/module-driftguard" },
+    { "path": "../packages/module-contextlens" },
+    { "path": "../packages/module-ghostmemory" },
+    { "path": "../packages/module-rulesforge" },
+    { "path": "../packages/module-taskweaver" }
+  ]
+}

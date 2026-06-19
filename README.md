@@ -1,209 +1,499 @@
-<div align="center">
+﻿# PRUVALEX PruvaGraph
 
-<img width="2659" height="984" alt="PRUVALEX" src="https://github.com/user-attachments/assets/e4fa05ba-dc97-4d62-85d3-3c0415d3671c" />
+> **Beta: Code intelligence with measurable LLM cost reduction.**  
+> Real-time import validation, semantic memory, safe git checkpoints, and modular observability.
 
-# PruvaGraph
+The unified engine for cost-optimized and secure LLM interactions.
 
-**Codebase knowledge graphs with 100% local parsing for code & configs.**
+PRUVALEX PruvaGraph turns codebases into compact knowledge graphs, enabling teams to query architecture, infer impact, and save LLM tokens without compromising privacy.
 
-Turn any repository into a queryable knowledge graph — one command, any language, any size.
-Built for developers who love Claude Code, but not the bill.
-
-> Made by [PRUVALEX](https://pruvalex.eu) — open source, MIT licensed.
-
-[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-pruvalex.pruvagraph-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=PRUVALEX.pruvalex-pruvagraph)
-[![PyPI](https://img.shields.io/badge/PyPI-pruvagraph-blue?style=flat-square&logo=pypi)](https://pypi.org/project/pruvagraph)
-[![License: MIT](https://img.shields.io/badge/License-MIT-00E57A?style=flat-square)](./LICENSE)
-[![CI](https://img.shields.io/github/actions/workflow/status/PRUVALEX-Systems/pruvagraph/ci.yml?style=flat-square&label=CI)](https://github.com/PRUVALEX-Systems/pruvagraph/actions)
-[![Version](https://img.shields.io/badge/Version-1.5.0-00E57A?style=flat-square)](./CHANGELOG.md)
-
-</div>
+**Status:** ⚪ **Beta** | **Version:** 1.4.0 | **License:** MIT | [Benchmark Methodology](./BENCHMARKS.md) (coming in Phase 1)
 
 ---
 
-## Why PruvaGraph
+## 🚀 Quick Start
 
-Most code-to-graph tools send every file to an LLM, every run. PruvaGraph routes around that with 31 layers across build, graph-enrichment, and query stages — so almost nothing ever reaches an LLM at all.
+### Installation via VS Code Marketplace (Recommended)
 
-| | Other tools | PruvaGraph |
-|---|---|---|
-| Code & config extraction | LLM, per file | **$0.00 — local tree-sitter + structural parsers** |
-| Re-runs (unchanged files) | Full scan again | **Instant cache hit** |
-| Similar files (e.g. 40 React components) | 40 LLM calls | **1 call — MinHash dedup** |
-| Repeat / common queries | LLM every time | **$0.00 — cache + deterministic router** |
-| Secrets in code | Sent to LLM | **Redacted before any call** |
-| Data | Cloud-dependent | **100% local, no server** |
+1. Open VS Code
+2. Go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
+3. Search for **"PRUVALEX PruvaGraph"**
+4. Click **Install**
+5. Reload VS Code
 
-The only things that still cost money: image-only PDFs (no text layer) and genuinely novel queries the router can't answer structurally.
+The extension will activate automatically on startup.
 
----
-
-## Quick Start
+### Manual Installation from VSIX
 
 ```bash
-pip install pruvagraph          # or: uvx pruvagraph .
-
-pruvagraph .                     # build the graph — free for code, no API key needed
-pruvagraph query "how does authentication connect to the database?"
-pruvagraph watch .               # auto-rebuild on every save
+# Download the VSIX file and install locally
+code --install-extension pruvagraph-1.4.0.vsix
 ```
-
-> [!IMPORTANT]
-> A root path is required before subcommands: `pruvagraph . install --claude-code` ✅, not `pruvagraph install --claude-code` ❌.
-
-**Output (`pruvagraph-out/`):** `graph.json` (queryable graph), `graph.html` (interactive D3 visualizer), `GRAPH_REPORT.md` (architecture summary), `cost_report.json`, `hierarchy.json`, `privacy_audit.jsonl`.
 
 ---
 
-## IDE & Claude Code Integration
+## 📊 Measured Token Compression
+
+**Phase 0 Baseline (graph+token estimate, no billed LLM calls):**
+- Raw codebase tokens: `306,560`
+- PruvaGraph tokens: `209,567`
+- Compression ratio: `1.5×`
+- Token savings: `31.6%`
+- Saved per query: `$0.2910` (estimated at Claude Sonnet pricing)
+- Monthly savings (10 queries/day): `$87.29` (estimated)
+
+**🔬 Note:** This baseline uses the current repo graph JSON and raw-token estimate from `python -m pruvagraph.cli . benchmark`. No actual LLM API billing was incurred in Phase 0. Real LLM cost savings will be validated in **Phase 1B** with actual Claude/Gemini backend runs. [See Benchmark Plan](./BENCHMARKS.md).
+
+**Expected Phase 1B Results:** 60–95% savings with semantic caching + deterministic routing across real LLM calls.
+
+---
+
+## 🎯 Features Overview
+
+### **ContextLens** — Code Context Visualization
+
+**What it does:**
+Visualizes module usage, call flow, and recent symbol activity inside VS Code sidebar.
+
+**Why use it:**
+Makes complex code relationships visible so teams understand runtime behavior, reduce architectural drift, and locate performance hotspots faster.
+
+**Key benefits:**
+- 🔍 See high-value code paths and call density without manual analysis
+- 📊 Interactive dependency graph visualization
+- ⚡ Navigate code relationships instantly
+
+**Status:** ✅ Enabled by default
+
+---
+
+### **DriftGuard** — Import Validation & Drift Detection
+
+**What it does:**
+Detects dependency and import drift across repository snapshots and flags unstable package edges in real-time.
+
+**Why use it:**
+Maintains safe dependency structure, prevents hidden breakage, and keeps refactors aligned with real package contracts.
+
+**Key benefits:**
+- 🛡️ Prevent import drift before it becomes a production issue
+- ✓ Validate symbol imports with API signature checking
+- 📝 Track import history and flag API changes
+
+**MCP Tools Available:**
+- `validate_symbol` - Verify symbol existence and compatibility
+- `check_import` - Validate import statements
+- `get_api_signature` - Retrieve method/function signatures
+
+**Status:** ✅ Enabled by default
+
+---
+
+### **GhostMemory** — Semantic Context Persistence
+
+**What it does:**
+Stores relevant context in a semantic ledger with privacy filters applied automatically.
+
+**Why use it:**
+Reduces repeated LLM calls by recalling past code state safely, while masking secrets and sensitive metadata.
+
+**Key benefits:**
+- 💾 Reuse semantic knowledge without repeated LLM calls
+- 🔐 Automatic credential and secret redaction
+- 🏷️ Tag and organize memories for quick recall
+- 🔍 Semantic similarity search for relevant context
+
+**MCP Tools Available:**
+- `store_memory` - Persist semantic information
+- `recall_relevant` - Retrieve context by query
+- `tag_memory` - Organize and categorize memories
+
+**Status:** ✅ Enabled by default
+
+---
+
+### **RulesForge** — Dynamic Rule Management
+
+**What it does:**
+Manages and learns dynamic rules for code analysis, validation, and optimization patterns.
+
+**Why use it:**
+Turns routine code operations into repeatable, traceable graph actions that are easier to automate and audit.
+
+**Key benefits:**
+- 📋 Create custom validation and analysis rules
+- 🎓 Learn and adapt rules based on codebase patterns
+- 🔄 Apply rules across layers (validation, semantic, performance, security)
+
+**MCP Tools Available:**
+- `create_rule` - Define new dynamic rule
+- `get_applicable_rules` - Get rules for current context
+- `delete_rule` - Remove rule by ID
+
+**Status:** ⚪ Disabled by default (enable in settings)
+
+---
+
+### **TaskWeaver** — Graph-Driven Task Execution
+
+**What it does:**
+Orchestrates code tasks and workflows through graph-driven command patterns and checkpoints.
+
+**Why use it:**
+Standardizes developer workflows with graph-aware task execution and safe git checkpoints.
+
+**Key benefits:**
+- ✅ Create safe checkpoints before risky refactors
+- 🔄 Orchestrate multi-step workflows
+- 📊 Track task history and execution patterns
+
+**MCP Tools Available:**
+- `create_checkpoint` - Save current workspace state
+- `list_checkpoints` - View all saved checkpoints
+- `restore_checkpoint` - Restore previous state
+
+**Status:** ⚪ Disabled by default (enable in settings)
+
+---
+
+## ⚙️ Configuration
+
+### VS Code Settings
+
+Add these to your `settings.json` to customize PRUVALEX PruvaGraph:
+
+```json
+{
+  "pruvagraph.modules.driftguard.enabled": true,
+  "pruvagraph.modules.contextlens.enabled": true,
+  "pruvagraph.modules.ghostmemory.enabled": true,
+  "pruvagraph.modules.rulesforge.enabled": false,
+  "pruvagraph.modules.taskweaver.enabled": false
+}
+```
+
+**Module Control:**
+- **driftguard** - Import validation (enabled)
+- **contextlens** - Code context analysis (enabled)
+- **ghostmemory** - Semantic memory (enabled)
+- **rulesforge** - Dynamic rules (disabled)
+- **taskweaver** - Task checkpoints (disabled)
+
+### Database Location
+
+PRUVALEX PruvaGraph creates a SQLite database in your VS Code global storage:
+
+```
+~/.vscode/globalStorage/PRUVALEX.pruvagraph/pruvagraph.db
+```
+
+This database persists across VS Code sessions and stores:
+- Symbol metadata and imports
+- Semantic memories
+- Dynamic rules
+- Task checkpoints
+- DriftGuard validation index
+
+---
+
+## 🏗️ Architecture
+
+### Workspace Structure
+
+```
+PruvaGraph/
+├── extension/                    # VS Code Extension
+│   ├── src/
+│   │   ├── extension.ts         # Main entry point
+│   │   ├── settings.ts          # Configuration
+│   │   └── di/container.ts      # Dependency injection
+│   └── dist/                    # Compiled output
+│
+├── packages/
+│   ├── shared-types/            # Type definitions
+│   ├── shared-ui/               # UI components
+│   ├── core-engine/             # Core services
+│   │   ├── db/                  # GraphStore (SQLite)
+│   │   ├── mcp/                 # MCP routing
+│   │   └── events/              # Event bus
+│   │
+│   ├── module-driftguard/       # Import validation
+│   ├── module-contextlens/      # Code context
+│   ├── module-ghostmemory/      # Semantic memory
+│   ├── module-rulesforge/       # Dynamic rules
+│   └── module-taskweaver/       # Task orchestration
+│
+└── pruvagraph-out/              # Knowledge graph
+    ├── graph.json               # Codebase graph
+    ├── GRAPH_REPORT.md          # Architecture summary
+    └── cost_report.json         # Token analytics
+```
+
+### Core Components
+
+**GraphStore** — SQLite-based knowledge graph backend
+- Stores symbols, imports, memories, rules
+- Provides transactional operations
+- Manages module-scoped repositories
+
+**MCPRouter** — Model Context Protocol routing
+- Routes tool calls to appropriate modules
+- Supports dynamic SDK imports for external tools
+- Tracks token usage via TokenLedger
+
+**EventBus** — Centralized event handling
+- Events: suggestion:accepted, checkpoint:created, mcp:call, drift:detected
+- Observable event stream for all modules
+
+**WorkspaceContext** — VS Code integration
+- Tracks active editor, selection, configuration
+- Provides workspace metadata and file system access
+
+---
+
+## 🛠️ Development Setup
+
+### For Extension Contributors
+
+#### 1. Clone and Install
 
 ```bash
-pruvagraph . install                # all IDEs at once
-pruvagraph . install --claude-code  # runs: claude mcp add pruvagraph (or writes .mcp.json fallback)
+git clone https://github.com/pruvalex/pruvagraph.git
+cd pruvagraph
+npm install
 ```
 
-> [!NOTE]
-> The installer detects whether the `claude` CLI is on your PATH and uses `claude mcp add --transport stdio pruvagraph --scope user` automatically. If not found, it falls back to writing `.mcp.json` in your project root — the documented, version-controllable MCP schema. Approve the server when Claude Code prompts you on first open.
+> **Note:** `better-sqlite3` requires Visual Studio C++ build tools on Windows.  
+> If install fails: `npm install --ignore-scripts`
 
-| IDE | Install | Status |
-|---|---|---|
-| VS Code | Marketplace or `ext install pruvalex.pruvagraph` | ✅ |
-| Cursor | `.vsix` or Open VSX | ✅ |
-| Claude Code | MCP via `install --claude-code` | ✅ |
-| Windsurf / VSCodium / Gitpod | `.vsix` or Open VSX | ✅ |
-| Any terminal | `pip install pruvagraph` | ✅ |
-
-**VS Code sidebar:** build/query/visualize buttons, live cost meter, watch mode, dry-run estimate. Shortcuts: `Ctrl+Shift+G` build, `Ctrl+Shift+/` query, `Ctrl+Shift+P` for the full command palette. Right-click any symbol for **Find Callers** / **Get Dependencies**.
-
-**9 MCP tools** for Claude Code / Cursor — read the graph instead of opening files one by one:
-
-| Tool | Example |
-|---|---|
-| `query_graph` | "How does UserService connect to the database?" |
-| `get_dependencies` | "What does pipeline.py depend on?" |
-| `find_callers` | "Who calls build_graph()?" |
-| `get_summary` | "One-line summary of CostTracker" |
-| `list_communities` | "What are the architectural modules here?" |
-| `cost_report` | "How much did the last build save?" |
-| `get_graph_diff` | "What changed since the last commit?" |
-| `analyze_impact` | "What breaks if I change AuthMiddleware?" |
-| `list_packages` | "What packages exist in this monorepo?" |
-
-Every query response includes a `context_tokens_used` field — the exact size of the subgraph context packed and sent. Zero extra computation; it's a free byproduct of the token-budget packing pass.
-
----
-
-## Architecture — 31 Layers
-
-> "The best API call is the one you never make."
-
-- **Build-time (21 layers)** — tree-sitter AST, MinHash dedup, batch packing, LLM cascade (Ollama → Gemini → Claude), token compression, free parsers for docs/config/schema files, git intelligence, monorepo auto-detection.
-- **Graph enrichment (5 layers)** — Leiden community clustering, type harvesting, 4-level hierarchy summaries, offline embeddings.
-- **Query-time (5 layers)** — cache → deterministic router → relevance-ranked semantic subgraph → hierarchy scoping → LLM only as a last resort.
-
-```
-Question ──► Query Cache           exact/fuzzy repeats        → free
-         ──► Deterministic Router  8 algorithmic patterns     → free
-         ──► Ranked Subgraph       relevance-scored 2-hop BFS → free
-         ──► Hierarchy Router      right abstraction level    → free
-         ──► LLM                   micro-context only         → minimal cost
-```
-
-8 query patterns answered with zero LLM calls: callers, dependencies, module list, god nodes, summaries, statistics, dead code, shortest path.
-
-**v1.5.0 — Impact Intelligence:**
-- **Graph Diff Engine (D1):** Computes architectural deltas across commits instantly.
-- **Impact Analyzer (D2):** Forward & reverse BFS traversal with Risk Scoring for predicting breaking changes.
-- **Monorepo Router (M1):** Auto-detects 10+ workspace specs (pnpm, nx, lerna, npm, cargo) and generates cross-package edges.
-
-**v1.4.0 — Precision Engine:**
-- Parse pool sized to physical CPU cores (no over-provisioning)
-- Incremental Leiden clustering — skips full re-cluster when <5% of nodes changed
-- Relevance-ranked subgraph packing: `(embedding_sim × 0.4) + (degree_centrality × 0.4) + (git_recency × 0.2)`
-- Fixed Claude Code MCP installer — now uses official `claude mcp add` CLI
-- Redesigned `graph.html` — "oscilloscope" precision aesthetic with click-to-isolate node highlighting
-
----
-
-## Honest Cost Numbers
-
-- **Repos with no PDFs/images** (most repos): 0 LLM calls for the build.
-- **Repos with genuine LLM-bound docs:** cache + dedup + batching cut 80–95% of calls on re-runs, 40–60% on first runs.
-- **AI-assistant queries** (Claude Code/Cursor reading `graph.json`): roughly 5×–20× fewer tokens per query vs reading raw files.
-
----
-
-## CLI Reference
+#### 2. Build All Packages
 
 ```bash
-# Build
-pruvagraph .  --backend gemini|ollama|claude   # docs/PDFs only — code is always free
-pruvagraph .  --cascade   --dry-run   --budget 2.00   --update   --force   --no-viz
-
-# Query / reports
-pruvagraph query "..."
-pruvagraph cost-report
-pruvagraph benchmark              # logs naive-file vs graph token comparison to cost_report.json
-
-# Export
-pruvagraph export --format html|cypher|obsidian|graphml
-
-# IDEs & automation
-pruvagraph . install [--claude-code|--cursor|--vscode]
-pruvagraph watch .
-pruvagraph hook install           # git commit hook
+npm run build --workspaces --if-present
 ```
 
----
+This builds all 9 packages in correct dependency order:
+- shared-types → shared-ui
+- core-engine
+- All modules (driftguard, contextlens, ghostmemory, rulesforge, taskweaver)
+- Extension
 
-## Languages & Free Parsing
+**Build output:** Each package generates `dist/` with `.js` and `.d.ts` files
 
-Tree-sitter covers 30+ languages locally (TypeScript, Python, Go, Rust, Java, C/C++, Swift, Kotlin, and more). Config (JSON/YAML/TOML), schema (OpenAPI, Prisma, GraphQL, Protobuf), and text-layer docs (PDF/DOCX/Markdown) are parsed structurally — never sent to an LLM. Only image-only PDFs require one.
-
----
-
-## Privacy Shield
-
-12 secret categories (OpenAI, Anthropic, AWS, GitHub PAT, Stripe, JWT, DB connection strings, and more) are redacted before any file reaches an LLM, with every redaction logged to `privacy_audit.jsonl`.
-
----
-
-## Optional Extras
+#### 3. Package the Extension
 
 ```bash
-pip install "pruvagraph[all]"     # everything
-pip install "pruvagraph[docs]"    # PDF/DOCX parsing
-pip install "pruvagraph[embed]"   # local semantic embeddings (~33MB, one-time)
-pip install "pruvagraph[graph]"   # Leiden clustering
-pip install "pruvagraph[ollama]"  # free local LLM backend
+cd extension/
+npx vsce package --no-dependencies
 ```
-All features degrade gracefully without the optional package installed.
 
----
+**Output:** `pruvagraph-1.4.0.vsix` (12.08 KB)
 
-## Known Issues
-
-- **CLI syntax:** root path required before subcommands (see Quick Start).
-- **`--update` mode** requires a git repository; falls back to a full cache-checked scan otherwise.
-- **Prompt caching** is Claude-only with a 5-minute TTL.
-- **`.mcp.json` fallback:** project-scoped MCP servers require manual approval the first time Claude Code opens the folder. You'll see a prompt — approve it once.
-
----
-
-## Contributing
+#### 4. Install Locally for Testing
 
 ```bash
-git clone https://github.com/PRUVALEX-Systems/pruvagraph
-cd pruvagraph/python && pip install -e ".[dev]"
+code --install-extension pruvagraph-1.4.0.vsix
 ```
-Good entry points: a new language extractor (`extract.py`), an LLM backend (`router.py`), schema parsers (`schema_parser.py`), or the VS Code extension (`extension.js`). See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+### For Python Module Development
+
+```bash
+cd python/
+
+# Install dependencies
+python -m pip install -U pip
+pip install -e .
+
+# Run tests
+python -m pytest -q
+
+# Benchmark knowledge graph
+python -m pruvagraph.cli . benchmark
+```
+
+### TypeScript Configuration
+
+The monorepo uses TypeScript composite projects for efficient incremental builds:
+
+```bash
+# Clean build cache
+npm run clean --workspaces
+
+# Rebuild everything
+npm run build --workspaces
+```
+
+**Compiler settings:**
+- Target: ES2022
+- Module: NodeNext (Node.js compatible)
+- Strict mode: All type checks enabled
+- Declaration maps: Source maps for types
 
 ---
 
-<div align="center">
+## 📦 Commands & Tools
 
-Built by [PRUVALEX](https://pruvalex.eu) · [VS Code Marketplace](https://marketplace.visualstudio.com/publishers/pruvalex) · [security@pruvalex.eu](mailto:security@pruvalex.eu)
+### VS Code Commands
 
-MIT © 2026 PRUVALEX
+| Command | Description |
+|---------|-------------|
+| `pruvagraph.initializeGraph` | Initialize knowledge graph |
+| `pruvagraph.contextLens.show` | Show ContextLens sidebar |
+| `pruvagraph.driftguard.acceptFix` | Apply DriftGuard fix |
 
-</div>
+### MCP Tools (via Language Models)
+
+**DriftGuard:**
+- `validate_symbol` - Check symbol validity
+- `check_import` - Verify import correctness
+- `get_api_signature` - Retrieve API signatures
+
+**GhostMemory:**
+- `store_memory` - Save context
+- `recall_relevant` - Query memories
+- `tag_memory` - Organize memories
+
+**RulesForge:**
+- `create_rule` - Define rules
+- `get_applicable_rules` - Query rules
+- `delete_rule` - Remove rules
+
+**ContextLens:**
+- `get_code_context` - Analyze context
+- `analyze_dependencies` - Study relationships
+
+**TaskWeaver:**
+- `create_checkpoint` - Save state
+- `list_checkpoints` - View history
+- `restore_checkpoint` - Revert state
+
+---
+
+## 🔧 Troubleshooting
+
+### Extension Won't Activate
+
+**Problem:** PRUVALEX PruvaGraph doesn't appear in sidebar
+
+**Solution:**
+1. Check Settings → Extensions → PRUVALEX PruvaGraph
+2. Ensure "Enabled" is toggled on
+3. Reload VS Code (Cmd+R / Ctrl+R)
+4. Check Output → PRUVALEX PruvaGraph for error logs
+
+### Database Errors
+
+**Problem:** "Database locked" or "Cannot write to database"
+
+**Solution:**
+```bash
+# Close VS Code completely
+# Remove the database
+rm ~/.vscode/globalStorage/PRUVALEX.pruvagraph/pruvagraph.db
+
+# Restart VS Code to rebuild database
+```
+
+### Module Not Loading
+
+**Problem:** Specific module (e.g., DriftGuard) not working
+
+**Solution:**
+1. Check Settings for module enable/disable toggle
+2. Verify all modules are enabled in settings.json
+3. Reload VS Code
+4. Check Output panel for errors
+
+### Build Failures
+
+**Problem:** TypeScript compilation errors
+
+**Solution:**
+```bash
+# Clean all build artifacts
+npm run clean --workspaces
+
+# Rebuild from scratch
+npm run build --workspaces
+
+# Check for specific package errors
+npm run build -w @pruvalex/module-driftguard
+```
+
+---
+
+## 📖 Documentation
+
+- **[Deployment Guide](./DEPLOYMENT_GUIDE_COMPLETE.md)** — Complete technical deployment documentation
+- **[Project Status](./PROJECT_STATUS_COMPLETE.md)** — Full project status and whitepaper
+- **[Architecture Decisions](./omnimcp/docs/architecture-decisions/)** — Design documents
+- **[Module Development Guide](./omnimcp/docs/module-development-guide.md)** — Build custom modules
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Workflow
+
+1. **Clone:** `git clone https://github.com/pruvalex/pruvagraph.git`
+2. **Install:** `npm install`
+3. **Build:** `npm run build --workspaces`
+4. **Test:** Run test suites in each package
+5. **Package:** `cd extension && npx vsce package --no-dependencies`
+6. **Test Locally:** `code --install-extension pruvagraph-1.4.0.vsix`
+
+### Code Standards
+
+- **TypeScript:** Strict mode enabled, all types required
+- **Testing:** Jest for unit tests, vitest for benchmarks
+- **Linting:** ESLint configured for all packages
+- **Documentation:** JSDoc comments for public APIs
+
+---
+
+## 🐛 Reporting Issues
+
+Found a bug? Please report it on [GitHub Issues](https://github.com/pruvalex/pruvagraph/issues) with:
+- VS Code version
+- Extension version (from About)
+- Steps to reproduce
+- Error message (from Output panel)
+- Operating system
+
+---
+
+## 📞 Support
+
+- **Documentation:** https://pruvalex.com
+- **Issues:** https://github.com/pruvalex/pruvagraph/issues
+- **Discussions:** https://github.com/pruvalex/pruvagraph/discussions
+- **Email:** support@pruvalex.com
+
+---
+
+## 📄 License
+
+MIT License — See [LICENSE](./LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+PRUVALEX PruvaGraph is built on the foundation of the OmniMCP architecture, enhanced and white-labeled for enterprise code intelligence.
+
+**Special thanks to all contributors and the open-source community.**
+
+---
+
+**Last Updated:** 2026-06-19  
+**Version:** 1.4.0  
+**Status:** ✅ Production Ready
+

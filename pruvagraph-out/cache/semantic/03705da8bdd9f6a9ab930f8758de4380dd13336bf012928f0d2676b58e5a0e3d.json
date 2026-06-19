@@ -1,0 +1,21 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\icon.png",
+  "stat_size": 283998,
+  "stat_mtime_ns": 1781449539446420100,
+  "content_hash": "03705da8bdd9f6a9ab930f8758de4380dd13336bf012928f0d2676b58e5a0e3d",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "doc::C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\icon.png",
+      "label": "icon.png",
+      "type": "doc",
+      "summary": "Document file: icon.png",
+      "file": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\icon.png",
+      "lang": null
+    }
+  ],
+  "edges": [],
+  "extraction_cost_usd": 0.0,
+  "backend": "none",
+  "pruvagraph_version": "1.0.0"
+}

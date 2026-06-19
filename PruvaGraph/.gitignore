@@ -1,0 +1,12 @@
+﻿node_modules/
+dist/
+\.venv_pruvagraph/
+.bench-tmp/
+*.vsix
+pruvagraph.db
+.DS_Store
+coverage/
+*.tsbuildinfo
+extension/dist/
+packages/*/dist/
+

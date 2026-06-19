@@ -5,13 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "pruvagraph"
 version = "1.4.0"
-description = "Codebase knowledge graphs with 99%+ LLM cost reduction — by PRUVALEX"
+description = "Codebase knowledge graphs with measurable LLM cost reduction — by PRUVALEX"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
 keywords = ["knowledge-graph", "llm", "cost-reduction", "code-analysis", "mcp", "claude", "cursor"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
@@ -26,13 +26,15 @@ dependencies = [
     "rich>=13.7",
     "mcp>=1.3",
     "watchdog>=4.0",
-    "anthropic>=0.40",
     "httpx>=0.27",
     "tiktoken>=0.7",
     "jinja2>=3.1",
 ]
 
 [project.optional-dependencies]
+claude = [
+    "anthropic>=0.40",
+]
 tree-sitter = [
     "tree-sitter>=0.23",
     "tree-sitter-python>=0.23",
@@ -48,7 +50,7 @@ ollama  = ["ollama>=0.3"]
 docs    = ["pypdf>=4.0", "python-docx>=1.1"]          # N1 free doc parser
 embed   = ["fastembed>=0.2", "numpy>=1.26"]            # A1 local embeddings
 yaml    = ["pyyaml>=6.0"]                              # N5 YAML config parser
-all     = ["pruvagraph[tree-sitter,graph,office,ollama,docs,embed,yaml]"]
+all     = ["pruvagraph[tree-sitter,graph,office,ollama,docs,embed,yaml,claude]"]
 dev     = ["pytest>=8", "pytest-asyncio>=0.23", "ruff>=0.4", "mypy>=1.10"]
 
 [project.scripts]

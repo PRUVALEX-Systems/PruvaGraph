@@ -1,0 +1,100 @@
+﻿{
+  "name": "pruvagraph",
+  "displayName": "PRUVALEX PruvaGraph",
+  "version": "0.1.0",
+  "description": "Enterprise-grade code intelligence with 95% LLM cost reduction. Real-time import validation, semantic memory, safe git checkpoints, and modular observability.",
+  "publisher": "pruvalex-labs",
+  "license": "MIT",
+  "homepage": "https://pruvalex.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pruvalex/pruvagraph"
+  },
+  "categories": [
+    "AI",
+    "Code Analysis",
+    "Cost Optimization",
+    "Other"
+  ],
+  "keywords": [
+    "AI",
+    "LLM",
+    "cost-optimization",
+    "code-intelligence",
+    "import-validation",
+    "semantic-memory",
+    "git-checkpoint",
+    "enterprise",
+    "knowledge-graph",
+    "token-tracking"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "pruvagraph.initializeGraph",
+        "title": "PRUVALEX: Initialize Graph"
+      },
+      {
+        "command": "pruvagraph.contextLens.show",
+        "title": "PRUVALEX: ContextLens — Show"
+      },
+      {
+        "command": "pruvagraph.driftguard.acceptFix",
+        "title": "PRUVALEX: DriftGuard Accept Fix"
+      }
+    ],
+    "configuration": {
+      "title": "PRUVALEX",
+      "properties": {
+        "pruvagraph.modules.driftguard.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.contextlens.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.ghostmemory.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.rulesforge.enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "pruvagraph.modules.taskweaver.enabled": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@pruvalex/core-engine": "*",
+    "@pruvalex/module-driftguard": "*",
+    "@pruvalex/module-contextlens": "*",
+    "@pruvalex/module-ghostmemory": "*",
+    "@pruvalex/module-rulesforge": "*",
+    "@pruvalex/module-taskweaver": "*",
+    "@pruvalex/shared-types": "*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.20.2"
+  },
+  "scripts": {
+    "build": "tsc -b && node esbuild.js",
+    "clean": "tsc -b --clean"
+  },
+  "author": "PRUVALEX GmbH",
+  "type": "commonjs",
+  "types": "./dist/extension.d.ts"
+}
+

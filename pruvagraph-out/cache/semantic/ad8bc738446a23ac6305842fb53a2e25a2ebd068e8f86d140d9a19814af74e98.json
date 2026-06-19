@@ -1,0 +1,127 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\python\\tests\\test_privacy_adversarial.py",
+  "stat_size": 3509,
+  "stat_mtime_ns": 1781786836582355700,
+  "content_hash": "ad8bc738446a23ac6305842fb53a2e25a2ebd068e8f86d140d9a19814af74e98",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "label": "test_privacy_adversarial",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "python module: test_privacy_adversarial",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_env_file",
+      "label": "test_adversarial_env_file",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "python function in test_privacy_adversarial"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_base64",
+      "label": "test_adversarial_base64",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "python function in test_privacy_adversarial"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_camelCase",
+      "label": "test_adversarial_camelCase",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "python function in test_privacy_adversarial"
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_full_pipeline_mock_llm_redaction",
+      "label": "test_full_pipeline_mock_llm_redaction",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "python function in test_privacy_adversarial"
+    },
+    {
+      "id": "pkg:pytest",
+      "label": "pytest",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "External package: pytest"
+    },
+    {
+      "id": "pkg:asyncio",
+      "label": "asyncio",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "External package: asyncio"
+    },
+    {
+      "id": "pkg:pruvagraph.privacy",
+      "label": "pruvagraph.privacy",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "External package: pruvagraph.privacy"
+    },
+    {
+      "id": "pkg:typing",
+      "label": "typing",
+      "type": "external",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "lang": "python",
+      "summary": "External package: typing"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_env_file",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_base64",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_adversarial_camelCase",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py::test_full_pipeline_mock_llm_redaction",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "pkg:pytest",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "pkg:asyncio",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "pkg:pruvagraph.privacy",
+      "relation": "imports"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/python/tests/test_privacy_adversarial.py",
+      "target": "pkg:typing",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}

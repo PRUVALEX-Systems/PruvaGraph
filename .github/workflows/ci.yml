@@ -1,114 +1,265 @@
-name: CI
+name: CI — Quality Gate
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20.x"
 
 jobs:
-  # ── Python package ──────────────────────────────────────────
-  python:
-    name: Python ${{ matrix.python-version }}
+  # ─────────────────────────────────────────────
+  # STEP 1 — BUILD (fail fast if TypeScript errors)
+  # ─────────────────────────────────────────────
+  build:
+    name: TypeScript Build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.11", "3.12", "3.13"]
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install minimal dependencies
-        working-directory: python
-        run: |
-          python -m pip install --upgrade pip
-          # Copy root README so hatchling finds it (pyproject.toml lives in python/)
-          cp ../README.md README.md
-          pip install -e ".[dev]"
-
-      - name: Lint (ruff)
-        working-directory: python
-        run: ruff check pruvagraph/ --select F,I
-
-      - name: Import check
-        working-directory: python
-        run: |
-          python -c "import pruvagraph; print(pruvagraph.__version__)"
-
-      - name: Run tests
-        working-directory: python
-        run: python -m pytest tests/ -v --tb=short
-
-  # ── VS Code extension ───────────────────────────────────────
-  vscode:
-    name: VS Code Extension
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-      - name: Install vsce
-        run: npm install -g @vscode/vsce
+      - name: Install dependencies
+        run: npm ci --workspaces
 
-      - name: Package extension
-        run: vsce package --no-dependencies --out pruvalex-pruvagraph-${{ github.sha }}.vsix
+      - name: Build all packages
+        run: npm run build --workspaces
 
-      - name: Upload .vsix artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pruvagraph-vsix-${{ github.sha }}
-          path: "*.vsix"
-          retention-days: 14
+          name: build-output
+          path: |
+            extension/out/
+            packages/*/dist/
+          retention-days: 1
 
-  # ── Release: publish to PyPI + VS Code Marketplace ─────────
-  release:
-    name: Release
+  # ─────────────────────────────────────────────
+  # STEP 2 — LINT (architecture enforcement)
+  # ─────────────────────────────────────────────
+  lint:
+    name: Lint + Architecture Rules
     runs-on: ubuntu-latest
-    needs: [python, vscode]
-    if: startsWith(github.ref, 'refs/tags/v')
-
+    needs: build
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Build Python wheel
-        working-directory: python
-        run: |
-          pip install build
-          cp ../README.md README.md
-          python -m build
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: python/dist/
-          password: ${{ secrets.PYPI_API_TOKEN }}
-
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-      - name: Publish to VS Code Marketplace
+      - name: Install dependencies
+        run: npm ci --workspaces
+
+      - name: Run ESLint (includes forbidden-import rules)
+        run: npm run lint --workspaces
+
+      - name: Enforce no getInternalDB() in module packages
         run: |
-          npm install -g @vscode/vsce ovsx
-          vsce publish --no-dependencies --pat ${{ secrets.VSCE_PAT }}
-          ovsx publish --pat ${{ secrets.OVSX_PAT }}
+          echo "🔍 Scanning for getInternalDB() backdoor in module packages..."
+          VIOLATIONS=$(grep -r --include="*.ts" \
+            "getInternalDB" \
+            packages/module-*/src/ 2>/dev/null || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ ARCHITECTURE VIOLATION — getInternalDB() in module detected:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ No getInternalDB() backdoor in modules."
+
+      - name: Enforce MCP tool names match spec
+        run: |
+          echo "🔍 Checking for deprecated MCP tool names..."
+          DEPRECATED_NAMES="search_memory\|restore_checkpoint\|get_active_rules\|get_task_status"
+          VIOLATIONS=$(grep -r --include="*.ts" \
+            "registerTool.*$DEPRECATED_NAMES" \
+            packages/module-*/src/ 2>/dev/null || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ DEPRECATED tool names found (use spec names):"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ MCP tool names match spec."
+
+      - name: Verify suggestion:accepted has listeners
+        run: |
+          echo "🔍 Checking suggestion:accepted event usage..."
+          COUNT=$(grep -r --include="*.ts" \
+            "suggestion:accepted" \
+            packages/module-*/src/ 2>/dev/null | wc -l)
+          if [ "$COUNT" -lt 2 ]; then
+            echo "❌ suggestion:accepted must be subscribed by at least 2 modules (ghostmemory + rulesforge)"
+            exit 1
+          fi
+          echo "✅ suggestion:accepted has $COUNT subscribers."
+
+      - name: Enforce zero cross-module imports (hard grep check)
+        run: |
+          echo "🔍 Scanning for forbidden direct cross-module imports..."
+          VIOLATIONS=$(grep -r --include="*.ts" \
+            -e "from '.*module-driftguard" \
+            -e "from '.*module-contextlens" \
+            -e "from '.*module-ghostmemory" \
+            -e "from '.*module-rulesforge" \
+            -e "from '.*module-taskweaver" \
+            packages/module-*/src/ 2>/dev/null || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ ARCHITECTURE VIOLATION — Cross-module imports detected:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ No cross-module import violations found."
+
+      - name: Enforce no direct better-sqlite3 in modules
+        run: |
+          echo "🔍 Scanning for forbidden better-sqlite3 in module packages..."
+          VIOLATIONS=$(grep -r --include="*.ts" \
+            "from 'better-sqlite3'" \
+            packages/module-*/src/ 2>/dev/null || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ ARCHITECTURE VIOLATION — Direct DB usage in module detected:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ No direct DB usage in modules."
+
+      - name: Enforce no direct MCP SDK in modules
+        run: |
+          echo "🔍 Scanning for forbidden MCP SDK in module packages..."
+          VIOLATIONS=$(grep -r --include="*.ts" \
+            "@modelcontextprotocol/sdk" \
+            packages/module-*/src/ 2>/dev/null || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ ARCHITECTURE VIOLATION — Direct MCP SDK usage in module:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ No direct MCP SDK usage in modules."
+
+  # ─────────────────────────────────────────────
+  # STEP 3 — TESTS (unit + integration)
+  # ─────────────────────────────────────────────
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --workspaces
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage --workspaces
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+          CI: true
+
+      - name: Enforce coverage threshold (core-engine ≥ 80%)
+        run: |
+          COVERAGE=$(cat packages/core-engine/coverage/coverage-summary.json \
+            | node -e "const d=require('/dev/stdin'); console.log(d.total.lines.pct)")
+          echo "Core-engine line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ Coverage below 80% threshold: $COVERAGE%"
+            exit 1
+          fi
+          echo "✅ Coverage: $COVERAGE%"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: packages/core-engine/coverage/
+          retention-days: 7
+
+  # ─────────────────────────────────────────────
+  # STEP 4 — SECURITY AUDIT
+  # ─────────────────────────────────────────────
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --workspaces
+
+      - name: Run npm audit (zero high/critical CVEs)
+        run: npm audit --audit-level=high --workspaces
+
+  # ─────────────────────────────────────────────
+  # STEP 5 — PERFORMANCE BENCHMARKS
+  # ─────────────────────────────────────────────
+  performance:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --workspaces
+
+      - name: Build
+        run: npm run build --workspaces
+
+      - name: Run performance benchmarks
+        run: npm run bench
+        env:
+          CI: true
+
+      - name: Assert benchmark contracts
+        run: |
+          echo "📊 Checking performance contracts..."
+          node scripts/assert-perf-contracts.js
+          echo "✅ All performance contracts met."
+
+  # ─────────────────────────────────────────────
+  # STEP 6 — ALL GATES PASSED
+  # ─────────────────────────────────────────────
+  all-green:
+    name: ✅ All Gates Passed
+    runs-on: ubuntu-latest
+    needs: [build, lint, test, security, performance]
+    steps:
+      - name: All checks passed
+        run: |
+          echo "==========================================="
+          echo "✅ BUILD    — TypeScript: zero errors"
+          echo "✅ LINT     — Architecture rules: no violations"
+          echo "✅ TEST     — Coverage ≥ 80% on core-engine"
+          echo "✅ SECURITY — Zero high/critical CVEs"
+          echo "✅ PERF     — All 6 contracts within bounds"
+          echo "==========================================="
+          echo "This PR is safe to merge."

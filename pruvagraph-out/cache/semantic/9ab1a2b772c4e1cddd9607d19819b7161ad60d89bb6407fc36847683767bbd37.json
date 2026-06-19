@@ -1,0 +1,41 @@
+{
+  "path": "C:\\Users\\affan\\Downloads\\PRUVALEX Graph optimise LLM cost tool\\omnimcp\\packages\\shared-ui\\src\\webview-shell.ts",
+  "stat_size": 421,
+  "stat_mtime_ns": 1781802152122735600,
+  "content_hash": "9ab1a2b772c4e1cddd9607d19819b7161ad60d89bb6407fc36847683767bbd37",
+  "ast_hash": null,
+  "nodes": [
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts",
+      "label": "webview-shell",
+      "type": "module",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts",
+      "lang": "typescript",
+      "summary": "typescript module: webview-shell",
+      "community": null
+    },
+    {
+      "id": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts::getWebviewShell",
+      "label": "getWebviewShell",
+      "type": "function",
+      "file": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts",
+      "lang": "typescript",
+      "summary": "typescript function in webview-shell"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts",
+      "target": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts::getWebviewShell",
+      "relation": "defines"
+    },
+    {
+      "source": "C:/Users/affan/Downloads/PRUVALEX Graph optimise LLM cost tool/omnimcp/packages/shared-ui/src/webview-shell.ts",
+      "target": "omnimcp/packages/shared-ui/src/tokens.css.js",
+      "relation": "imports"
+    }
+  ],
+  "extraction_cost_usd": 0.0,
+  "backend": "tree-sitter",
+  "pruvagraph_version": "1.0.0"
+}
