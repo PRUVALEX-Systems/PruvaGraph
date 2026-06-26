@@ -1,0 +1,41 @@
+/* PRUVALEX PruvaGraph - Custom Branding Styles */
+
+/* Make PRUVALEX PruvaGraph title white */
+.pruvagraph-sidebar-title,
+[id="pruvagraph-sidebar-header"],
+.view-title,
+.title-label,
+.sidebar-header,
+h1, h2, h3,
+.pruvagraph-header,
+.extension-header {
+    color: #FFFFFF !important;
+}
+
+/* Target the specific title in the activity bar */
+.activity-bar-container .view-header .title,
+.sidebar-container .view-header .title {
+    color: #FFFFFF !important;
+}
+
+/* Ensure text elements are white */
+[data-id="pruvagraph.contextLens"],
+[data-id="pruvagraph.costDashboard"],
+.context-view,
+.cost-dashboard {
+    color: #FFFFFF !important;
+}
+
+/* Override any text color from core-engine */
+.pruvalex-content,
+.pruvagraph-container {
+    color: #FFFFFF !important;
+}
+
+/* Make sure headings and labels are white */
+.webview-content h1,
+.webview-content h2,
+.webview-content h3,
+.webview-content label {
+    color: #FFFFFF !important;
+}

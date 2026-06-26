@@ -1,0 +1,143 @@
+{
+  "name": "pruvalex-pruvagraph",
+  "displayName": "PRUVALEX PruvaGraph",
+  "icon": "assets/logo.png",
+  "version": "1.4.2",
+  "description": "Enterprise-grade code intelligence with 95% LLM cost reduction. Real-time import validation, semantic memory, safe git checkpoints, and modular observability.",
+  "publisher": "PRUVALEX",
+  "license": "MIT",
+  "homepage": "https://pruvalex.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pruvalex/pruvagraph"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "AI",
+    "LLM",
+    "cost-optimization",
+    "code-intelligence",
+    "import-validation",
+    "semantic-memory",
+    "git-checkpoint",
+    "enterprise",
+    "knowledge-graph",
+    "token-tracking"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "pruvagraph.initializeGraph",
+        "title": "PRUVALEX: Initialize Graph"
+      },
+      {
+        "command": "pruvagraph.queryCodebase",
+        "title": "PRUVALEX: Query Codebase"
+      },
+      {
+        "command": "pruvagraph.toggleWatchMode",
+        "title": "PRUVALEX: Toggle Watch Mode"
+      },
+      {
+        "command": "pruvagraph.showCostReport",
+        "title": "PRUVALEX: Show Cost Report"
+      },
+      {
+        "command": "pruvagraph.dryRun",
+        "title": "PRUVALEX: Dry Run"
+      },
+      {
+        "command": "pruvagraph.contextLens.show",
+        "title": "PRUVALEX: ContextLens — Show"
+      },
+      {
+        "command": "pruvagraph.driftguard.acceptFix",
+        "title": "PRUVALEX: DriftGuard Accept Fix"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pruvagraph-sidebar",
+          "title": "PRUVALEX PruvaGraph",
+          "icon": "./resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "pruvagraph-sidebar": [
+        {
+          "id": "pruvagraph.contextLens",
+          "name": "ContextLens",
+          "type": "webview",
+          "icon": "./resources/icon.png"
+        },
+        {
+          "id": "pruvagraph.costDashboard",
+          "name": "Cost Dashboard",
+          "type": "webview",
+          "icon": "./resources/icon.png"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "PRUVALEX",
+      "properties": {
+        "pruvagraph.modules.driftguard.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.contextlens.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.ghostmemory.enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "pruvagraph.modules.rulesforge.enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "pruvagraph.modules.taskweaver.enabled": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@pruvalex/core-engine": "*",
+    "@pruvalex/module-contextlens": "*",
+    "@pruvalex/module-driftguard": "*",
+    "@pruvalex/module-ghostmemory": "*",
+    "@pruvalex/module-rulesforge": "*",
+    "@pruvalex/module-taskweaver": "*",
+    "@pruvalex/shared-types": "*",
+    "better-sqlite3": "^9.6.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "tsc -b && node esbuild.js",
+    "package": "npm run build && node -e \"const v=require('./package.json').version; require('child_process').execSync('vsce package --no-dependencies --out pruvagraph-'+v+'.vsix', {stdio:'inherit'});\"",
+    "clean": "tsc -b --clean"
+  },
+  "author": "PRUVALEX GmbH",
+  "type": "commonjs",
+  "types": "./dist/extension.d.ts"
+}

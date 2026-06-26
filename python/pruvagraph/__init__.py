@@ -1,5 +1,5 @@
 """
-PruvaGraph — codebase knowledge graphs with 31.6% baseline compression and up to 100% cache bypass.
+PruvaGraph — codebase knowledge graphs with 70.5%-81.5% token savings and up to 100% cache bypass.
 
 Quick start:
     from pruvagraph import build_graph, query
@@ -24,6 +24,6 @@ __all__ = [
     "GraphCache",
 ]
 
-__version__ = "1.5.0"
+__version__ = "1.9.0"
 __author__ = "PRUVALEX"
 __license__ = "MIT"

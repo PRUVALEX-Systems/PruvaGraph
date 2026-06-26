@@ -51,6 +51,7 @@ def install_all(
     claude_code: bool = True,
     hooks: bool = False,
     project_scope: bool = False,
+    disabled_modules: list[str] | None = None,
 ) -> dict[str, Path]:
     """
     Write IDE integration files.
@@ -58,18 +59,21 @@ def install_all(
     Returns dict of {name: path} for everything written.
 
     Args:
-        root:          Project root directory.
-        vscode:        Write .vscode/mcp.json.
-        cursor:        Write .cursor/mcp.json.
-        claude_code:   Register with Claude Code via ``claude mcp add``
-                       (falls back to .mcp.json if CLI not found).
-        hooks:         Write .claude/settings.json with PreToolUse hook.
-        project_scope: Use --scope project (team .mcp.json) instead of user.
+        root:             Project root directory.
+        vscode:           Write .vscode/mcp.json.
+        cursor:           Write .cursor/mcp.json.
+        claude_code:      Register with Claude Code via ``claude mcp add``
+                          (falls back to .mcp.json if CLI not found).
+        hooks:            Write .claude/settings.json with PreToolUse hook.
+        project_scope:    Use --scope project (team .mcp.json) instead of user.
+        disabled_modules: Module keys to disable. Written as
+                          PRUVAGRAPH_DISABLED_MODULES in every MCP config env
+                          block so the server skips those tools on startup.
     """
     written: dict[str, Path] = {}
 
     exe = _find_exe()
-    mcp_config = _build_mcp_config(exe)
+    mcp_config = _build_mcp_config(exe, disabled_modules=disabled_modules)
 
     if vscode:
         p = _write_vscode(root, mcp_config)
@@ -374,20 +378,37 @@ pruvagraph . --force    # Force full rebuild, ignore cache
 
 
 def _find_exe() -> list[str]:
-    """Find the pruvagraph CLI command."""
+    """Find the pruvagraph CLI command.
+
+    Returns a command prefix that, when 'serve' is appended, starts the
+    MCP server over stdio.
+
+    Priority:
+      1. ``pruvagraph`` console_script on PATH (installed package, cleanest)
+      2. ``python -m pruvagraph.cli`` (editable install / source checkout)
+         NOTE: ``python -m pruvagraph`` does NOT work — the package has no
+         __main__.py. The CLI entry point is pruvagraph.cli.
+    """
     if shutil.which("pruvagraph"):
         return ["pruvagraph"]
-    return [sys.executable, "-m", "pruvagraph"]
+    return [sys.executable, "-m", "pruvagraph.cli"]
 
 
-def _build_mcp_config(cmd: list[str]) -> dict:
+def _build_mcp_config(
+    cmd: list[str],
+    disabled_modules: list[str] | None = None,
+) -> dict:
+    """Build the MCP server config dict, optionally gating modules via env var."""
     serve_cmd = cmd + ["serve"]
+    env: dict[str, str] = {}
+    if disabled_modules:
+        env["PRUVAGRAPH_DISABLED_MODULES"] = ",".join(disabled_modules)
     return {
         "mcpServers": {
             "pruvagraph": {
                 "command": serve_cmd[0],
                 "args": serve_cmd[1:],
-                "env": {},
+                "env": env,
                 "description": "PRUVALEX PruvaGraph — query your codebase knowledge graph",
             }
         }

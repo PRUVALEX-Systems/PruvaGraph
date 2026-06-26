@@ -4,7 +4,7 @@
 
 # PruvaGraph
 
-**Codebase knowledge graphs with 99%+ LLM cost reduction.**
+**Codebase knowledge graphs with measured LLM cost reduction.**
 
 Turn any repository into a queryable knowledge graph. One command, any language, any size.
 Built for developers who love Claude Code — but not the bill.
@@ -133,7 +133,7 @@ Then in Claude Code:
 
 Claude Code reads the compact `graph.json` instead of opening files one by one — **5×–71× fewer tokens per query** depending on repo size.
 
-### 6 MCP Tools Available
+### 13 MCP Tools Available
 
 | Tool | Example Query |
 |---|---|
@@ -143,6 +143,13 @@ Claude Code reads the compact `graph.json` instead of opening files one by one �
 | `get_summary` | `"Give me a one-line summary of CostTracker"` |
 | `list_communities` | `"What are the architectural modules in this repo?"` |
 | `cost_report` | `"How much did we save on the last run?"` |
+| `get_graph_diff` | `"What changed since the last commit?"` |
+| `analyze_impact` | `"What breaks if I change AuthMiddleware?"` |
+| `list_packages` | `"What packages exist in this monorepo?"` |
+| `remember` | `"Remember that migration work is blocked on infra."` |
+| `recall` | `"Recall the last persisted session memory."` |
+| `validate_import` | `"Does package requests contain HTTPAdapter?"` |
+| `scan_suggestion` | `"Scan this patch for invalid imports."` |
 
 ---
 

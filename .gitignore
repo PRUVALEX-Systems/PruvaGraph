@@ -17,3 +17,12 @@ dist/*.vsix
 pruvagraph/**/.vsix
 !pruvagraph/dist/*.vsix
 .opencode
+
+# Build artifacts & temp files
+tmp-vsix.zip
+*.coverage
+.coverage
+.vscode-test/
+pruvagraph-out/
+coverage/
+.nyc_output/

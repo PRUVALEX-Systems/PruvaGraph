@@ -1,39 +1,48 @@
 # .vscodeignore for PRUVALEX PruvaGraph
-# Include only the extension runtime package and required assets.
+# Strategy: exclude everything (**), then whitelist only runtime files.
+# This keeps VSIX lean (< 1 MB target).
 
 **
-!.vscodeignore
 !package.json
 !README.md
 !LICENSE
-!icon.png
-!extension.js
-!dist/**
-
-# Allow important project metadata if needed
 !CHANGELOG.md
+!icon.png
+!dist/extension.js
+!extension-savings-receipt.js
+!extension-mcp-server.js
+!media/**
 
-# Ignore everything else
+# ── Exclude everything else ──────────────────────────────────
 .git/**
 .gitignore
 .gitmessage
-.node_modules/**
 node_modules/**
-.pruvagraph/**
+.node_modules/**
 python/**
 .venv/**
 .vscode/**
 .vscode-test/**
 .github/**
 .husky/**
+.opencode/**
 docs/**
 scripts/**
 benchmarks/**
 tests/**
 test/**
+test-workspace/**
 coverage/**
+legacy/**
+omnimcp/**
+PruvaGraph/**
 pruvagraph-out/**
+dist/**
+.mypy_cache/**
+.pytest_cache/**
+.ruff_cache/**
 *.vsix
+*.zip
 *.log
 *.tmp
 *.temp
@@ -42,7 +51,9 @@ pruvagraph-out/**
 *.tsx
 *.yml
 *.yaml
-*.md
+*.coverage
 .DS_Store
 Thumbs.db
 desktop.ini
+analyzer.js
+gemini-svg*.svg

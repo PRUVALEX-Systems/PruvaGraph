@@ -24,6 +24,26 @@ from typing import Any
 
 import click
 
+
+class RootGroup(click.Group):
+    def parse_args(self, ctx, args):
+        if args and args[0] in self.commands:
+            if "root" not in ctx.params or ctx.params["root"] is None:
+                ctx.params["root"] = "."
+            saved_params = self.params
+            self.params = [p for p in self.params if getattr(p, 'name', None) != 'root']
+            try:
+                return super().parse_args(ctx, args)
+            finally:
+                self.params = saved_params
+
+        if args and args[0].startswith("-"):
+            return super().parse_args(ctx, args)
+
+        # If the first token is not a subcommand, treat it as the root path.
+        ctx.params["root"] = args.pop(0)
+        return super().parse_args(ctx, args)
+
 try:
     from rich.console import Console
     from rich.table import Table
@@ -35,10 +55,10 @@ except ImportError:
 _CONSOLE = Console() if _RICH else None
 
 LOGO = """
-╔═══════════════════════════════════════╗
+╬═══════════════════════════════════════╣
 ║  PruvaGraph  ·  by PRUVALEX           ║
-║  31.6% Baseline Compression &        ║
-║  up to 100% Cache Bypass.           ║
+║  70.5%-81.5% Token Savings •           ║
+║  up to 100% Cache Bypass.            ║
 ╚═══════════════════════════════════════╝"""
 
 
@@ -46,7 +66,7 @@ LOGO = """
 # Root group
 # ──────────────────────────────────────────────────────────────────────────────
 
-@click.group(invoke_without_command=True)
+@click.group(cls=RootGroup, invoke_without_command=True)
 @click.argument("root", default=".", required=False)
 @click.option("--backend", "-b", default="none",
               type=click.Choice(["none", "claude", "gemini", "kimi", "openai", "ollama"]),
@@ -106,7 +126,7 @@ def main(
         try:
             _CONSOLE.print(f"[bold cyan]{LOGO}[/bold cyan]")
         except UnicodeEncodeError:
-            click.echo("PruvaGraph — by PRUVALEX (31.6% baseline compression, up to 100% cache bypass)")
+            click.echo("PruvaGraph -- by PRUVALEX (70.5%-81.5% token savings, up to 100% cache bypass)")
 
     root_path = Path(root).resolve()
     if not root_path.exists():
@@ -270,9 +290,9 @@ def report_dashboard(root: str) -> None:
         ("Savings %", f"{data['savings_pct']:.1f}%"),
     ]
     if compression_pct is not None:
-        markdown_rows.append(("ContextLens compression", f"{compression_pct:.1f}%"))
+        markdown_rows.append(("Token compression (vs raw files)", f"{compression_pct:.1f}%"))
     markdown_rows.extend([
-        ("GhostMemory cache hit rate", f"{cache_hit_rate:.1f}%"),
+        ("Build cache hit rate", f"{cache_hit_rate:.1f}%"),
         ("Paid calls bypassed", f"{paid_calls_bypassed:.1f}%"),
         ("Run time", f"{data['run_duration_seconds']:.1f}s"),
     ])
@@ -295,8 +315,8 @@ def report_dashboard(root: str) -> None:
         f"Cost saved:         ${data['cost_saved_usd']:.4f}",
         f"Savings %:          {data['savings_pct']:.1f}%",
         "",
-        f"ContextLens compression:  {compression_pct:.1f}%" if compression_pct is not None else "ContextLens compression:  unavailable",
-        f"GhostMemory cache hit rate:  {cache_hit_rate:.1f}%",
+        f"Token compression (vs raw files):  {compression_pct:.1f}%" if compression_pct is not None else "Token compression (vs raw files):  unavailable",
+        f"Build cache hit rate:  {cache_hit_rate:.1f}%",
         f"Paid calls bypassed:         {paid_calls_bypassed:.1f}%",
         "",
         f"Run time:           {data['run_duration_seconds']:.1f}s",
@@ -344,10 +364,17 @@ def export(root: str, fmt: str) -> None:
               help="[Gap 1] Install Claude Code PreToolUse hooks — hard Read enforcement.")
 @click.option("--project", "project_scope", is_flag=True,
               help="Use --scope project (team config in .mcp.json) instead of --scope user.")
-def install(root: str, vscode: bool, cursor: bool, claude_code: bool, hooks: bool, project_scope: bool) -> None:
+@click.option("--disable-modules", "disable_modules", default="",
+              help="Comma-separated module keys to disable, e.g. 'taskweaver,rulesforge'. "
+                   "Written as PRUVAGRAPH_DISABLED_MODULES in the MCP config env block "
+                   "so the server excludes those tools on startup. "
+                   "Set automatically by the VS Code extension based on workspace settings.")
+def install(root: str, vscode: bool, cursor: bool, claude_code: bool,
+            hooks: bool, project_scope: bool, disable_modules: str) -> None:
     """Write IDE integration files (CLAUDE.md, MCP config, optional hooks)."""
     from pruvagraph.installer import install_all
     all_flags = not vscode and not cursor and not claude_code and not hooks
+    disabled = [m.strip() for m in disable_modules.split(",") if m.strip()] or None
     install_all(
         Path(root),
         vscode=vscode or all_flags,
@@ -355,12 +382,17 @@ def install(root: str, vscode: bool, cursor: bool, claude_code: bool, hooks: boo
         claude_code=claude_code or all_flags,
         hooks=hooks,
         project_scope=project_scope,
+        disabled_modules=disabled,
     )
     click.echo("✓ Integration files written.")
+    if disabled:
+        click.echo(f"  → Disabled modules: {', '.join(disabled)}")
+        click.echo("    PRUVAGRAPH_DISABLED_MODULES is set in MCP config env.")
     if hooks:
         click.echo(
             "  → Restart Claude Code to activate PreToolUse hook enforcement."
         )
+
 
 
 # ── Part E: serve subcommand ─────────────────────────────────────────────────
@@ -375,8 +407,9 @@ def serve_cmd(root: str) -> None:
         claude mcp add --transport stdio pruvagraph -- pruvagraph serve
 
     The server reads graph.json from <root>/pruvagraph-out/ and exposes
-    9 MCP tools (query_graph, get_dependencies, find_callers, get_summary,
-    list_communities, cost_report, get_graph_diff, analyze_impact, list_packages).
+    13 MCP tools (query_graph, get_dependencies, find_callers, get_summary,
+    list_communities, cost_report, get_graph_diff, analyze_impact,
+    list_packages, remember, recall, validate_import, scan_suggestion).
     """
     import os
     # Set the root so the MCP server knows where to find graph.json
@@ -481,6 +514,65 @@ def benchmark(root: str) -> None:
         sys.exit(1)
     result = run_benchmark(graph_json)
     click.echo(result)
+
+
+@main.command("benchmark-suite")
+@click.option("--root", default=".", show_default=True,
+              help="Project root (where pruvagraph-out/ lives).")
+@click.option("--questions", "questions_file", default=None, type=click.Path(exists=True),
+              help="JSON file with questions list. Uses built-in 80-question set if omitted.")
+@click.option("--output", default=None, type=click.Path(),
+              help="Output JSONL path (default: pruvagraph-out/benchmark_results.jsonl).")
+@click.option("--backend", "-b", default="none",
+              type=click.Choice(["none", "claude", "gemini", "openai", "ollama"]),
+              help="LLM backend for query fallback (default: none = free).")
+def benchmark_suite_cmd(root: str, questions_file: str | None, output: str | None, backend: str) -> None:
+    """[Truth Machine] Run the full benchmark suite: graph queries vs naive file reads.
+
+    Outputs a JSONL file with per-question token savings metrics. This is the
+    reproducible benchmark harness that backs every savings % shown in the UI.
+
+    \\b
+    Examples:
+        pruvagraph benchmark-suite                              # 80 built-in questions
+        pruvagraph benchmark-suite --questions my_q.json       # custom question set
+        pruvagraph benchmark-suite --output results.jsonl
+    """
+    from pruvagraph.benchmark_harness import (
+        DEFAULT_QUESTIONS,
+        BenchmarkResult,
+        load_questions,
+        run_benchmark_suite,
+    )
+
+    graph_json = Path(root) / "pruvagraph-out" / "graph.json"
+    if not graph_json.exists():
+        click.echo("No graph found. Run 'pruvagraph .' first.", err=True)
+        sys.exit(1)
+
+    questions: list[str]
+    if questions_file:
+        questions = load_questions(Path(questions_file))
+        click.echo(f"Loaded {len(questions)} questions from {questions_file}")
+    else:
+        questions = DEFAULT_QUESTIONS
+        click.echo(f"Using built-in {len(questions)}-question benchmark set.")
+
+    out_path = Path(output) if output else Path(root) / "pruvagraph-out" / "benchmark_results.jsonl"
+    click.echo(f"Running benchmark suite... (output: {out_path})")
+
+    result = run_benchmark_suite(
+        graph_json=graph_json,
+        subject_dir=Path(root),
+        questions=questions,
+        output_path=out_path,
+        backend=backend,
+    )
+
+    click.echo("\n" + result.summary())
+    click.echo(f"\n✓ Results written to: {out_path}")
+    click.echo("  Share this file alongside your README to make savings claims reproducible.")
+
 
 
 @main.command("build-from-lsp")
@@ -632,10 +724,188 @@ def impact_cmd(symbol: str, root: str, depth: int, fmt: str) -> None:
     click.echo(report.format(fmt))
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# v1.6.0 — DriftGuard: validate-import subcommand
+# ──────────────────────────────────────────────────────────────────────────────
+
+@main.command("validate-import")
+@click.argument("module")
+@click.argument("symbol", required=False, default=None)
+@click.option("--root", default=".", show_default=True,
+              help="Root directory to validate imports against.")
+def validate_import_cmd(module: str, symbol: str | None, root: str) -> None:
+    """DriftGuard — validate that a module/symbol exists in this environment."""
+    from pruvagraph.driftguard import validate_import
+
+    result = validate_import(module, symbol, Path(root))
+
+    if result.valid:
+        ver = f" (v{result.actual_version})" if result.actual_version else ""
+        sym_part = f".{symbol}" if symbol else ""
+        click.echo(f"OK {module}{sym_part} -- valid{ver}")
+    else:
+        click.echo(f"INVALID {module}.{symbol or '*'}", err=True)
+        if result.suggestion:
+            click.echo(f"  -> {result.suggestion}", err=True)
+        sys.exit(1)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# v1.7.0 — ContextLens: context-lens subcommand
+# ──────────────────────────────────────────────────────────────────────────────
+
+@main.command("context-lens")
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+@click.option("--last", default=10, show_default=True, type=int,
+              help="Number of recent tool calls to show.")
+def context_lens_cmd(root: str, last: int) -> None:
+    """ContextLens -- show what's been injected into context this session."""
+    from pruvagraph.context_lens import get_active_context, trace_last_tool_calls
+
+    summary = get_active_context(root=root)
+    trace = trace_last_tool_calls(root=root, n=last)
+
+    click.echo(summary)
+    click.echo("")
+    click.echo(trace)
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# v1.8.0 — TaskWeaver: checkpoint / task-progress subcommands
+# ──────────────────────────────────────────────────────────────────────────────
+
+@main.command("checkpoint")
+@click.option("--task", "task_id", required=True,
+              help="Task label (e.g. 'implement-auth').")
+@click.option("--description", "description", required=True,
+              help="What was done at this step.")
+@click.option("--files", "files", multiple=True, default=None,
+              help="Files changed (may be repeated).")
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+def checkpoint_cmd(task_id: str, description: str, files: tuple, root: str) -> None:
+    """TaskWeaver -- save an agent step checkpoint with optional git micro-commit."""
+    from pruvagraph.task_weaver import create_checkpoint
+
+    files_list = list(files) if files else None
+    result = create_checkpoint(task_id, description, files_list, root=root)
+    click.echo(result)
+
+
+@main.command("task-progress")
+@click.argument("task_id", required=False, default=None)
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+@click.option("--all", "all_tasks", is_flag=True, default=False,
+              help="Show checkpoints for all tasks (ignores TASK_ID).")
+@click.option("--format", "output_format", default="text",
+              type=click.Choice(["text", "json"]), show_default=True,
+              help="Output format: human-readable text or machine-readable JSON.")
+def task_progress_cmd(task_id: str | None, root: str, all_tasks: bool,
+                      output_format: str) -> None:
+    """TaskWeaver -- show checkpoint DAG progress for a task.
+
+    \b
+    Examples:
+      pruvagraph task-progress my-task
+      pruvagraph task-progress --all
+      pruvagraph task-progress --all --format json
+    """
+    import json as _json
+    from pruvagraph.task_weaver import get_task_progress, list_checkpoints_json
+
+    if output_format == "json":
+        data = list_checkpoints_json(task_id=None if all_tasks else task_id, root=root)
+        click.echo(_json.dumps(data, indent=2))
+    else:
+        if all_tasks:
+            from pruvagraph.task_weaver import list_checkpoints
+            click.echo(list_checkpoints(task_id=None, root=root))
+        else:
+            if task_id is None:
+                raise click.UsageError("TASK_ID is required unless --all is used.")
+            click.echo(get_task_progress(task_id, root=root))
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# v1.8.0 — BudgetGovernor: budget set / budget check subcommands
+# ──────────────────────────────────────────────────────────────────────────────
+
+@main.group("budget")
+def budget_group() -> None:
+    """BudgetGovernor -- manage per-session token budget."""
+
+
+@budget_group.command("set")
+@click.argument("tokens", type=int)
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+def budget_set_cmd(tokens: int, root: str) -> None:
+    """Set the session token budget cap."""
+    from pruvagraph.budget_governor import set_budget
+
+    click.echo(set_budget(tokens, root=root))
+
+
+@budget_group.command("check")
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+@click.option("--format", "output_format", default="text",
+              type=click.Choice(["text", "json"]), show_default=True,
+              help="Output format: human-readable text or machine-readable JSON.")
+def budget_check_cmd(root: str, output_format: str) -> None:
+    """Check remaining token budget and status for this session."""
+    import json as _json
+    from pruvagraph.budget_governor import check_budget, check_budget_json
+
+    if output_format == "json":
+        click.echo(_json.dumps(check_budget_json(root=root), indent=2))
+    else:
+        click.echo(check_budget(root=root))
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# v1.9.0 — RulesForge: rules subcommand
+# ──────────────────────────────────────────────────────────────────────────────
+
+@main.command("rules")
+@click.argument("file_path")
+@click.option("--root", default=".", show_default=True,
+              help="Project root directory.")
+@click.option("--learn", "learn_description", default=None,
+              help="Learn a rule: provide a description and pipe a diff via stdin.")
+def rules_cmd(file_path: str, root: str, learn_description: str | None) -> None:
+    """RulesForge -- show context-aware AI coding rules for a file.
+
+    Detects the file's architectural layer (api/ui/test/util/config) via
+    AST analysis and returns layer-appropriate coding constraints.
+
+    \b
+    Examples:
+      pruvagraph rules src/auth.py
+      pruvagraph rules src/routes.py
+      git diff HEAD | pruvagraph rules src/api.py --learn "Validate before saving"
+    """
+    if learn_description:
+        import sys
+        from pruvagraph.rules_forge import learn_from_accept
+
+        diff = sys.stdin.read()
+        result = learn_from_accept(diff, learn_description, root=root)
+        click.echo(result)
+    else:
+        from pruvagraph.rules_forge import get_applicable_rules
+
+        click.echo(get_applicable_rules(file_path, root=root))
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def _print_success(result: Any, out_dir: str) -> None:
     cr = result.cost_report

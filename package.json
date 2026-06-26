@@ -2,7 +2,7 @@
   "name": "pruvalex-pruvagraph",
   "displayName": "PRUVALEX PruvaGraph",
   "description": "The unified engine for cost-optimized and secure LLM interactions.",
-  "version": "1.4.0",
+  "version": "1.9.0",
   "publisher": "PRUVALEX",
   "license": "MIT",
   "icon": "icon.png",
@@ -22,9 +22,11 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "AI",
-    "Cost Optimization",
-    "Security"
+    "Machine Learning",
+    "Data Science",
+    "Visualization",
+    "Linters",
+    "Other"
   ],
   "keywords": [
     "AI",
@@ -41,7 +43,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -131,6 +133,30 @@
         "title": "Build Monorepo Graph",
         "category": "PruvaGraph",
         "icon": "$(repo)"
+      },
+      {
+        "command": "pruvagraph.showDashboard",
+        "title": "Open Analytics Dashboard",
+        "category": "PruvaGraph",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "pruvagraph.showTierMap",
+        "title": "Open Cascade Tier Map",
+        "category": "PruvaGraph",
+        "icon": "$(pie-chart)"
+      },
+      {
+        "command": "pruvagraph.showTimeline",
+        "title": "Open Agent Run Timeline",
+        "category": "PruvaGraph",
+        "icon": "$(history)"
+      },
+      {
+        "command": "pruvagraph.showBudget",
+        "title": "Open Token Budget Meter",
+        "category": "PruvaGraph",
+        "icon": "$(credit-card)"
       }
     ],
     "viewsContainers": {
@@ -189,6 +215,11 @@
           "command": "pruvagraph.showDiff",
           "when": "view == pruvagraphPanel",
           "group": "navigation@4"
+        },
+        {
+          "command": "pruvagraph.showDashboard",
+          "when": "view == pruvagraphPanel",
+          "group": "navigation@5"
         }
       ],
       "commandPalette": [
@@ -227,6 +258,18 @@
         },
         {
           "command": "pruvagraph.buildMonorepo"
+        },
+        {
+          "command": "pruvagraph.showDashboard"
+        },
+        {
+          "command": "pruvagraph.showTierMap"
+        },
+        {
+          "command": "pruvagraph.showTimeline"
+        },
+        {
+          "command": "pruvagraph.showBudget"
         }
       ]
     },
@@ -297,17 +340,67 @@
           "type": "boolean",
           "default": false,
           "description": "[M1] Auto-detect monorepo layout and build per-package graphs on every build."
+        },
+        "pruvagraph.modules.driftguard.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "DriftGuard: validates AI-suggested imports against your installed packages on every save. Renders invalid imports as VS Code diagnostics.",
+          "markdownDescription": "**DriftGuard** validates AI-suggested code against your actual installed dependency versions on every file save. Catches hallucinated or wrong-version API calls and renders them as native VS Code diagnostics (warning severity). Disable to skip on-save import validation."
+        },
+        "pruvagraph.modules.contextlens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "ContextLens: logs every MCP tool call with token cost. MCP tools: get_active_context, measure_token_usage, trace_last_tool_calls.",
+          "markdownDescription": "**ContextLens** gives you visibility into what PruvaGraph has injected into your AI's context this session. Every MCP tool call is automatically logged with its token cost estimate. Three MCP tools: `get_active_context` (session summary + per-tool breakdown), `measure_token_usage` (total token cost), `trace_last_tool_calls` (recent call history). Disable to turn off session logging."
+        },
+        "pruvagraph.modules.ghostmemory.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "GhostMemory: persists decisions, tasks, and blockers across Claude Code sessions via remember/recall MCP tools.",
+          "markdownDescription": "**GhostMemory** persists decisions, tasks, and blockers across Claude Code sessions via `remember`/`recall` MCP tools and auto-injects them into CLAUDE.md. Disable to stop session memory persistence."
+        },
+        "pruvagraph.modules.rulesforge.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "RulesForge: detects file layer (api/ui/test/util/config) via AST and returns context-appropriate AI coding rules. MCP tools: get_applicable_rules, learn_from_accept.",
+          "markdownDescription": "**RulesForge** detects your current file's architectural layer (api/ui/test/util/config) via AST analysis and returns context-appropriate AI coding rules. Unlike static `.cursorrules` files, these rules change based on what file the agent is working on. Two MCP tools: `get_applicable_rules` (layer detection + rules) and `learn_from_accept` (capture patterns from accepted AI suggestions). Disable to skip context-aware rule injection."
+        },
+        "pruvagraph.modules.taskweaver.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "TaskWeaver: checkpoints agent runs as a SQLite DAG with git micro-commits. MCP tools: create_checkpoint, get_task_progress, rollback_to_checkpoint, list_checkpoints.",
+          "markdownDescription": "**TaskWeaver** checkpoints multi-step agent runs as a SQLite DAG with real git micro-commits, so an interrupted session can resume from the last good state without re-paying for context. Four MCP tools: `create_checkpoint`, `get_task_progress`, `rollback_to_checkpoint`, `list_checkpoints`. Rollback is advisory — surfaces the git command but never executes destructive operations without explicit consent. Disable to stop checkpoint creation."
+        },
+        "pruvagraph.modules.budgetgovernor.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "BudgetGovernor: tracks token spend per session and enforces caps. MCP dispatch auto-estimates tokens for every tool call.",
+          "markdownDescription": "**BudgetGovernor** tracks token spend per session and enforces a configurable token cap. Every MCP tool call flows through `_dispatch()` which estimates tokens as `len(result) // 4` and records spend automatically. Thresholds: OK (<80%), WARNING (80–99%), EXCEEDED (≥100%). Disable to stop token budget tracking."
         }
       }
     }
   },
   "scripts": {
+    "build": "node build.js",
+    "build:watch": "node build.js --watch",
+    "test": "node ./tests/runTest.js",
+    "test:unit": "node test/test_extension_driftguard.js && node test/test_dashboard_html.js",
+    "coverage": "nyc --reporter=text --reporter=html --reporter=lcov node test/test_extension_driftguard.js && nyc --reporter=text --reporter=html --reporter=lcov --no-clean node test/test_dashboard_html.js && nyc report",
+    "typecheck": "tsc --noEmit --project jsconfig.json",
+    "lint": "node --check extension.js src/utils.js src/cli-runner.js src/commands.js src/driftguard.js src/sidebar-provider.js src/sidebar-html.js src/dashboard.js src/telemetry.js",
     "package": "vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies",
     "publish-ovsx": "ovsx publish"
   },
   "devDependencies": {
+    "@types/node": "^26.0.1",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.0",
     "@vscode/vsce": "^2.24.0",
-    "ovsx": "^0.9.0"
+    "esbuild": "^0.28.1",
+    "mocha": "^11.7.6",
+    "nyc": "^18.0.0",
+    "ovsx": "^0.9.0",
+    "typescript": "5.4"
   }
 }

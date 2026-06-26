@@ -25,7 +25,7 @@ Category = Literal["decisions", "tasks", "blockers"]
 
 STORE_REL_PATH = Path(".pruvagraph") / "context-store.json"
 
-_EMPTY: dict[str, list] = {"decisions": [], "tasks": [], "blockers": []}
+
 
 
 def _store_path(root: Path) -> Path:
@@ -36,14 +36,14 @@ def load_context(root: Path) -> dict[str, Any]:
     """Load the context store.  Returns empty structure if not yet created."""
     path = _store_path(root)
     if not path.exists():
-        return dict(_EMPTY)
+        return {"decisions": [], "tasks": [], "blockers": []}   # fresh lists — NOT a shared ref
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        for k in _EMPTY:
+        for k in ("decisions", "tasks", "blockers"):
             data.setdefault(k, [])
         return data
     except (json.JSONDecodeError, OSError):
-        return dict(_EMPTY)
+        return {"decisions": [], "tasks": [], "blockers": []}   # fresh lists — NOT a shared ref
 
 
 def append_entry(root: Path, category: Category, text: str) -> dict[str, Any]:

@@ -9,13 +9,30 @@ making it accessible from any MCP-compatible IDE:
   - Windsurf     (mcp_config.json)
   - Any LLM tool supporting MCP
 
-Tools exposed:
-  1. query_graph        — Natural language query over the codebase graph.
-  2. get_dependencies   — Find all dependencies of a module/function.
-  3. find_callers       — Who calls a given function?
-  4. get_summary        — One-sentence summary of any node.
-  5. list_communities   — Show architectural clusters/modules.
-  6. cost_report        — Show LLM cost savings from last run.
+Tools exposed (v1.9.0 — 23 tools):
+  1. query_graph           — Natural language query over the codebase graph.
+  2. get_dependencies      — Find all dependencies of a module/function.
+  3. find_callers          — Who calls a given function?
+  4. get_summary           — One-sentence summary of any node.
+  5. list_communities      — Show architectural clusters/modules.
+  6. cost_report           — Show LLM cost savings from last run.
+  7. get_graph_diff        — What changed since last build?
+  8. analyze_impact        — What breaks if X changes? (blast radius)
+  9. list_packages         — Monorepo: list packages + cross-package edges.
+  10. remember             — Persist a decision/task/blocker across sessions.
+  11. recall               — Retrieve all persisted session memory.
+  12. validate_import      — DriftGuard: check if a module/symbol exists.
+  13. scan_suggestion      — DriftGuard: scan a diff for invalid imports.
+  14. get_active_context   — ContextLens: session summary + token breakdown.
+  15. measure_token_usage  — ContextLens: per-tool token cost this session.
+  16. trace_last_tool_calls— ContextLens: recent tool call history.
+  17. create_checkpoint    — TaskWeaver: save agent step with git micro-commit.
+  18. get_task_progress    — TaskWeaver: show checkpoint DAG for a task.
+  19. rollback_to_checkpoint— TaskWeaver: advisory rollback with git command.
+  20. list_checkpoints     — TaskWeaver: list all checkpoints.
+  21. check_budget         — BudgetGovernor: remaining token budget this session.
+  22. get_applicable_rules — RulesForge: context-aware rules for the current file.
+  23. learn_from_accept    — RulesForge: capture a rule from an accepted AI suggestion.
 
 Running the server:
     python -m pruvagraph.mcp_server            # stdio transport (Claude Code)
@@ -31,9 +48,52 @@ Requires: pip install mcp  (Model Context Protocol SDK, free, MIT license)
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
+
+# ---------------------------------------------------------------------------
+# Settings-gating: PRUVAGRAPH_DISABLED_MODULES env var
+# ---------------------------------------------------------------------------
+# VS Code extension reads workspace settings (pruvagraph.modules.X.enabled)
+# and passes disabled module names via this env var when spawning the server.
+# Format: comma-separated module keys, e.g. "taskweaver,rulesforge"
+# Each key maps to a set of MCP tool names (see _MODULE_TOOLS below).
+# This is the ONLY way to conditionally disable server-side modules because
+# the MCP server runs as a separate subprocess outside VS Code's API.
+
+_raw_disabled = os.environ.get("PRUVAGRAPH_DISABLED_MODULES", "").strip()
+_DISABLED_MODULES: frozenset[str] = (
+    frozenset(m.strip().lower() for m in _raw_disabled.split(",") if m.strip())
+    if _raw_disabled else frozenset()
+)
+
+# Map: settings key → MCP tool names that belong to that module
+_MODULE_TOOLS: dict[str, list[str]] = {
+    "ghostmemory":   ["remember", "recall"],
+    "driftguard":    ["validate_import", "scan_suggestion"],
+    "contextlens":   ["get_active_context", "measure_token_usage", "trace_last_tool_calls"],
+    "taskweaver":    ["create_checkpoint", "get_task_progress", "rollback_to_checkpoint", "list_checkpoints"],
+    "budgetgovernor": ["check_budget"],
+    "rulesforge":    ["get_applicable_rules", "learn_from_accept"],
+}
+
+# Build set of tool names that are gated off right now
+_DISABLED_TOOLS: frozenset[str] = frozenset(
+    tool
+    for module_key, tools in _MODULE_TOOLS.items()
+    if module_key in _DISABLED_MODULES
+    for tool in tools
+)
+
+if _DISABLED_TOOLS:
+    _disabled_str = ", ".join(sorted(_DISABLED_TOOLS))
+    print(
+        f"[pruvagraph] Settings-gating: disabled modules={_DISABLED_MODULES!r} "
+        f"→ tools excluded: {_disabled_str}",
+        file=sys.stderr,
+    )
 
 # Gap 2 — session-level read tracker (in-process, lives for MCP server lifetime)
 try:
@@ -42,12 +102,14 @@ try:
 except ImportError:
     _SESSION_TRACKING = False
 
+
 # ---------------------------------------------------------------------------
 # MCP SDK (pip install mcp)
 # ---------------------------------------------------------------------------
 try:
     from mcp.server import Server
     from mcp.server.models import InitializationOptions
+    from mcp.server.lowlevel.server import NotificationOptions
     from mcp.server.stdio import stdio_server
     from mcp.types import (
         CallToolRequest,
@@ -404,8 +466,204 @@ def _list_packages(root: str = ".") -> str:
 
 
 # ---------------------------------------------------------------------------
+# Arch5+6: Session Memory tools — GhostMemory (_remember / _recall)
+# ---------------------------------------------------------------------------
+
+def _remember(category: str, text: str, root: str = ".") -> str:
+    """
+    Persist a decision, task, or blocker to .pruvagraph/context-store.json.
+    Entries are auto-injected into CLAUDE.md on the next 'pruvagraph .' build.
+    """
+    try:
+        from pruvagraph.context_store import append_entry
+        root_path = Path(root)
+        append_entry(root_path, category, text)  # type: ignore[arg-type]
+        return (
+            f"✓ Remembered under '{category}': {text}\n"
+            f"  → Will be injected into CLAUDE.md on next 'pruvagraph .' build.\n"
+            f"  → Use recall() to retrieve all session memory."
+        )
+    except Exception as e:
+        return f"Error storing memory: {e}"
+
+
+def _recall(root: str = ".") -> str:
+    """
+    Return all persisted session memory as a markdown-formatted summary.
+    Returns empty string with a hint if no memory has been stored yet.
+    """
+    try:
+        from pruvagraph.context_store import format_for_injection, load_context
+        root_path = Path(root)
+        block = format_for_injection(root_path)
+        if not block:
+            ctx = load_context(root_path)
+            total = sum(len(v) for v in ctx.values())
+            if total == 0:
+                return (
+                    "No session memory stored yet.\n"
+                    "Use remember(category, text) to persist decisions, tasks, or blockers."
+                )
+        return block
+    except Exception as e:
+        return f"Error reading session memory: {e}"
+
+
+# ---------------------------------------------------------------------------
+# DriftGuard tools — validate AI-suggested imports
+# ---------------------------------------------------------------------------
+
+def _validate_import(module: str, symbol: str | None = None, root: str = ".") -> str:
+    """
+    Check whether a Python module and optional symbol actually exist in
+    the current environment.  Returns a human-readable verdict.
+    """
+    try:
+        from pruvagraph.driftguard import validate_import
+        r = validate_import(module, symbol, Path(root))
+        if r.valid:
+            ver = f" (v{r.actual_version})" if r.actual_version else ""
+            sym_part = f".{symbol}" if symbol else ""
+            return f"✓ {module}{sym_part} — valid{ver}"
+        msg = f"⚠ {module}.{symbol or '*'} — INVALID"
+        if r.suggestion:
+            msg += f"\n  → {r.suggestion}"
+        return msg
+    except Exception as e:
+        return f"Error validating import: {e}"
+
+
+def _scan_suggestion(diff: str, root: str = ".") -> str:
+    """
+    Scan a unified diff for added import lines and validate each one
+    against the current environment.
+    """
+    try:
+        from pruvagraph.driftguard import scan_ai_suggestion
+        results = scan_ai_suggestion(diff, Path(root))
+        bad = [r for r in results if not r.valid]
+        if not bad:
+            return "✓ All imports in the suggestion are valid."
+        lines = [f"⚠ {len(bad)} import issue(s) found:\n"]
+        for r in bad:
+            lines.append(f"  • {r.module}.{r.symbol or '*'}: {r.suggestion or 'not found'}")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"Error scanning suggestion: {e}"
+
+
+# ---------------------------------------------------------------------------
+# ContextLens tool handlers (v1.7.0)
+# ---------------------------------------------------------------------------
+
+def _get_active_context(root: str = ".") -> str:
+    """ContextLens: return a session summary with per-tool token breakdown."""
+    try:
+        from pruvagraph.context_lens import get_active_context
+        return get_active_context(root=root)
+    except Exception as e:
+        return f"Error reading context lens session: {e}"
+
+
+def _measure_token_usage(root: str = ".") -> str:
+    """ContextLens: return per-tool token cost totals for this session."""
+    try:
+        from pruvagraph.context_lens import measure_token_usage
+        return measure_token_usage(root=root)
+    except Exception as e:
+        return f"Error measuring token usage: {e}"
+
+
+def _trace_last_tool_calls(root: str = ".", n: int = 10) -> str:
+    """ContextLens: return the last N tool calls with timestamps."""
+    try:
+        from pruvagraph.context_lens import trace_last_tool_calls
+        return trace_last_tool_calls(root=root, n=n)
+    except Exception as e:
+        return f"Error tracing tool calls: {e}"
+
+
+# ---------------------------------------------------------------------------
+# TaskWeaver tool handlers (v1.8.0)
+# ---------------------------------------------------------------------------
+
+def _create_checkpoint(task_id: str, description: str,
+                       files_changed: list | None = None,
+                       root: str = ".") -> str:
+    """TaskWeaver: create an agent step checkpoint with optional git micro-commit."""
+    try:
+        from pruvagraph.task_weaver import create_checkpoint
+        return create_checkpoint(task_id, description, files_changed, root=root)
+    except Exception as e:
+        return f"Error creating checkpoint: {e}"
+
+
+def _get_task_progress(task_id: str, root: str = ".") -> str:
+    """TaskWeaver: return checkpoint DAG progress for a task."""
+    try:
+        from pruvagraph.task_weaver import get_task_progress
+        return get_task_progress(task_id, root=root)
+    except Exception as e:
+        return f"Error getting task progress: {e}"
+
+
+def _rollback_to_checkpoint(checkpoint_id: str, root: str = ".") -> str:
+    """TaskWeaver: mark a checkpoint rolled_back and return the git restore command."""
+    try:
+        from pruvagraph.task_weaver import rollback_to_checkpoint
+        return rollback_to_checkpoint(checkpoint_id, root=root)
+    except Exception as e:
+        return f"Error rolling back checkpoint: {e}"
+
+
+def _list_checkpoints(task_id: str | None = None, root: str = ".") -> str:
+    """TaskWeaver: list all checkpoints, optionally filtered by task_id."""
+    try:
+        from pruvagraph.task_weaver import list_checkpoints
+        return list_checkpoints(task_id=task_id, root=root)
+    except Exception as e:
+        return f"Error listing checkpoints: {e}"
+
+
+# ---------------------------------------------------------------------------
+# Budget Governor tool handlers (v1.8.0)
+# ---------------------------------------------------------------------------
+
+def _check_budget(root: str = ".") -> str:
+    """BudgetGovernor: return remaining token budget and status for this session."""
+    try:
+        from pruvagraph.budget_governor import check_budget
+        return check_budget(root=root)
+    except Exception as e:
+        return f"Error checking budget: {e}"
+
+
+# ---------------------------------------------------------------------------
+# RulesForge tool handlers (v1.9.0)
+# ---------------------------------------------------------------------------
+
+def _get_applicable_rules(file_uri: str, root: str = ".") -> str:
+    """RulesForge: return context-aware rules for the given file's layer."""
+    try:
+        from pruvagraph.rules_forge import get_applicable_rules
+        return get_applicable_rules(file_uri, root=root)
+    except Exception as e:
+        return f"Error getting rules: {e}"
+
+
+def _learn_from_accept(diff: str, description: str, root: str = ".") -> str:
+    """RulesForge: store a pattern learned from a developer-accepted AI suggestion."""
+    try:
+        from pruvagraph.rules_forge import learn_from_accept
+        return learn_from_accept(diff, description, root=root)
+    except Exception as e:
+        return f"Error learning from accept: {e}"
+
+
+# ---------------------------------------------------------------------------
 # MCP Server
-# -------------------------------------------# D1 fix: All descriptions rewritten with "CALL THIS FIRST" pattern so
+# ---------------------------------------------------------------------------
+# D1 fix: All descriptions rewritten with "CALL THIS FIRST" pattern so
 # Claude Code prioritises graph tools over built-in file-read tools.
 TOOLS: list[dict[str, Any]] = [
     {
@@ -564,7 +822,271 @@ TOOLS: list[dict[str, Any]] = [
             },
         },
     },
+    # ── Arch5+6: Session Memory (GhostMemory) ────────────────────────────────
+    {
+        "name": "remember",
+        "description": (
+            "Persist a decision, task, or blocker across Claude Code sessions so the "
+            "next session doesn't start from zero. Stored entries are automatically "
+            "injected into CLAUDE.md on the next 'pruvagraph .' build. "
+            "category must be one of: 'decisions', 'tasks', 'blockers'. "
+            "Examples: remember(category='decisions', text='Use Gemini for doc extraction — 40x cheaper') "
+            "remember(category='tasks', text='Wire A5 global cache into pipeline.py')"
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "enum": ["decisions", "tasks", "blockers"],
+                    "description": "Category to store under.",
+                },
+                "text": {
+                    "type": "string",
+                    "description": "What to remember — a decision made, task to do, or blocker encountered.",
+                },
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["category", "text"],
+        },
+    },
+    {
+        "name": "recall",
+        "description": (
+            "Retrieve all persisted session memory (decisions, tasks, blockers) from "
+            "previous Claude Code sessions. Returns a markdown-formatted summary of "
+            "everything stored via 'remember'. Call this at the start of a new session "
+            "to resume where you left off without re-explaining context."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    # v1.6.0 — DriftGuard
+    {
+        "name": "validate_import",
+        "description": (
+            "DriftGuard: validate that a Python module and optional symbol (function, "
+            "class, constant) actually exist in the current environment. Catches "
+            "hallucinated imports and wrong-version API calls. Returns the installed "
+            "version and a fuzzy-matched suggestion if the symbol is close to a real name."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "module": {
+                    "type": "string",
+                    "description": "Python module name (e.g. 'pandas', 'json', 'os.path').",
+                },
+                "symbol": {
+                    "type": "string",
+                    "description": "Symbol to check (e.g. 'read_csv'). Omit to just check the module.",
+                },
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["module"],
+        },
+    },
+    {
+        "name": "scan_suggestion",
+        "description": (
+            "DriftGuard: scan a unified diff (AI-suggested code change) for added import "
+            "lines and validate each one against the actual installed packages. Reports "
+            "any hallucinated or wrong-version imports with fuzzy-matched suggestions."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "diff": {
+                    "type": "string",
+                    "description": "Unified diff text of the AI suggestion.",
+                },
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["diff"],
+        },
+    },
+    # v1.7.0 — ContextLens
+    {
+        "name": "get_active_context",
+        "description": (
+            "ContextLens: return a summary of what PruvaGraph tools have been called this "
+            "session and how many tokens each consumed. Use this to understand what's already "
+            "in context before making redundant tool calls. Shows per-tool token breakdown."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    {
+        "name": "measure_token_usage",
+        "description": (
+            "ContextLens: measure the total estimated token cost of all PruvaGraph tool calls "
+            "made this session, broken down by tool. Helps identify which tools are consuming "
+            "the most context budget so you can avoid redundant calls."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    {
+        "name": "trace_last_tool_calls",
+        "description": (
+            "ContextLens: return the last N PruvaGraph tool calls made in this session with "
+            "their names, estimated token cost, and timestamps. Default N=10. Use this to "
+            "avoid repeating recent tool calls that already populated the context window."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+                "n":    {"type": "integer", "description": "Number of recent calls to return (default: 10)"},
+            },
+        },
+    },
+    # v1.8.0 — TaskWeaver
+    {
+        "name": "create_checkpoint",
+        "description": (
+            "TaskWeaver: save the current agent step as a checkpoint. Creates a git "
+            "micro-commit (if inside a git repo) and records which files were changed. "
+            "Use at the end of each significant step so a failed run can resume from "
+            "this point instead of restarting from scratch. Returns the checkpoint ID "
+            "and git SHA."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "task_id":     {"type": "string", "description": "Label for this agent task (e.g. 'implement-auth')."},
+                "description": {"type": "string", "description": "What was done at this step."},
+                "files_changed": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of relative file paths changed at this step.",
+                },
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["task_id", "description"],
+        },
+    },
+    {
+        "name": "get_task_progress",
+        "description": (
+            "TaskWeaver: show the full checkpoint history for a task — step count, "
+            "cumulative token spend, per-step description and status. Use to understand "
+            "what an agent has already done before continuing a partially-completed task."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "task_id": {"type": "string", "description": "Task label to query."},
+                "root":    {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["task_id"],
+        },
+    },
+    {
+        "name": "rollback_to_checkpoint",
+        "description": (
+            "TaskWeaver: mark a checkpoint (and all subsequent steps) as rolled back. "
+            "Returns the git SHA at that point and the exact git command needed to restore "
+            "the working tree. Does NOT automatically run git reset — that requires explicit "
+            "user consent. Review the diff before executing the returned command."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "checkpoint_id": {"type": "string", "description": "UUID of the checkpoint to roll back to."},
+                "root":          {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["checkpoint_id"],
+        },
+    },
+    {
+        "name": "list_checkpoints",
+        "description": (
+            "TaskWeaver: list all agent checkpoints, optionally filtered to a specific "
+            "task. Shows checkpoint IDs, descriptions, status (active/rolled_back), and "
+            "git SHAs. Use to find a checkpoint_id before calling rollback_to_checkpoint."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "task_id": {"type": "string", "description": "Filter to this task only (optional)."},
+                "root":    {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    # v1.8.0 — Budget Governor
+    {
+        "name": "check_budget",
+        "description": (
+            "BudgetGovernor: check remaining token budget for this session. Returns "
+            "the cap, amount spent so far, remaining tokens, percentage used, and a "
+            "status (OK / WARNING at 80% / EXCEEDED at 100%). Call this before expensive "
+            "operations to avoid overspending. Set the budget with the CLI: "
+            "`pruvagraph budget set <tokens>`."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "root": {"type": "string", "description": "Project root directory (default: .)"},
+            },
+        },
+    },
+    # v1.9.0 — RulesForge
+    {
+        "name": "get_applicable_rules",
+        "description": (
+            "RulesForge: given a file URI, detect its architectural layer (api/ui/test/util/ "
+            "config) using AST analysis and return the context-appropriate AI coding rules "
+            "for that layer. Unlike static .cursorrules files, these rules change based on "
+            "what file the agent is currently working on. Call this at the start of any "
+            "file-editing session to get layer-specific constraints."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file_uri":  {"type": "string", "description": "Absolute or relative path to the file being edited."},
+                "root":      {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["file_uri"],
+        },
+    },
+    {
+        "name": "learn_from_accept",
+        "description": (
+            "RulesForge: store a coding pattern learned from a developer-accepted AI suggestion. "
+            "Provide the diff and a plain-English description of the pattern. RulesForge infers "
+            "the target layer from the diff's file paths and appends the pattern to the layer's "
+            "learned-rules list, which will appear in future get_applicable_rules calls for "
+            "files in that layer."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "diff":        {"type": "string", "description": "The diff text of the accepted change."},
+                "description": {"type": "string", "description": "Plain-English description of the pattern to learn."},
+                "root":        {"type": "string", "description": "Project root directory (default: .)"},
+            },
+            "required": ["diff", "description"],
+        },
+    },
 ]
+
+# Settings-gating: remove disabled tools from MCP discovery list.
+# Clients will not see disabled tools in their tool palette at all.
+if _DISABLED_TOOLS:
+    TOOLS = [t for t in TOOLS if t["name"] not in _DISABLED_TOOLS]
 
 
 TOOL_HANDLERS = {
@@ -582,7 +1104,104 @@ TOOL_HANDLERS = {
                             int(args.get("depth", 3)),
                         ),
     "list_packages":    lambda args: _list_packages(args.get("root", ".")),
+    # v1.5.0 — GhostMemory / session memory
+    "remember":         lambda args: _remember(
+                            args["category"],
+                            args["text"],
+                            args.get("root", "."),
+                        ),
+    "recall":           lambda args: _recall(args.get("root", ".")),
+    # v1.6.0 — DriftGuard
+    "validate_import":  lambda args: _validate_import(
+                            args["module"],
+                            args.get("symbol"),
+                            args.get("root", "."),
+                        ),
+    "scan_suggestion":  lambda args: _scan_suggestion(
+                            args["diff"],
+                            args.get("root", "."),
+                        ),
+    # v1.7.0 — ContextLens
+    "get_active_context":    lambda args: _get_active_context(args.get("root", ".")),
+    "measure_token_usage":   lambda args: _measure_token_usage(args.get("root", ".")),
+    "trace_last_tool_calls": lambda args: _trace_last_tool_calls(
+                                args.get("root", "."),
+                                int(args.get("n", 10)),
+                             ),
+    # v1.8.0 — TaskWeaver
+    "create_checkpoint":      lambda args: _create_checkpoint(
+                                  args["task_id"],
+                                  args["description"],
+                                  args.get("files_changed"),
+                                  args.get("root", "."),
+                              ),
+    "get_task_progress":      lambda args: _get_task_progress(
+                                  args["task_id"],
+                                  args.get("root", "."),
+                              ),
+    "rollback_to_checkpoint": lambda args: _rollback_to_checkpoint(
+                                  args["checkpoint_id"],
+                                  args.get("root", "."),
+                              ),
+    "list_checkpoints":       lambda args: _list_checkpoints(
+                                  args.get("task_id"),
+                                  args.get("root", "."),
+                              ),
+    # v1.8.0 — Budget Governor
+    "check_budget":           lambda args: _check_budget(args.get("root", ".")),
+    # v1.9.0 — RulesForge
+    "get_applicable_rules":   lambda args: _get_applicable_rules(
+                                  args["file_uri"],
+                                  args.get("root", "."),
+                              ),
+    "learn_from_accept":      lambda args: _learn_from_accept(
+                                  args["diff"],
+                                  args["description"],
+                                  args.get("root", "."),
+                              ),
 }
+
+# Apply settings-gating: remove disabled tools from dispatch table and discovery list.
+# A disabled tool's handler is replaced with an explicit error response so clients
+# that hardcode the tool name get a clear message rather than a silent failure.
+if _DISABLED_TOOLS:
+    for _dt in _DISABLED_TOOLS:
+        if _dt in TOOL_HANDLERS:
+            _disabled_name = _dt  # capture for lambda closure
+            TOOL_HANDLERS[_disabled_name] = (
+                lambda args, _n=_disabled_name: (
+                    f"### Tool Disabled\n\n"
+                    f"The tool `{_n}` is disabled by workspace settings.\n"
+                    f"Enable it in VS Code Settings → PruvaGraph → Modules."
+                )
+            )
+
+
+
+def _dispatch(tool_name: str, args: dict, handler_fn) -> str:
+    """Call a tool handler, auto-log to ContextLens, and record budget spend.
+
+    Single point where:
+      1. The handler is called
+      2. ContextLens records the call (tool_name, args, result, tokens)
+      3. BudgetGovernor records the token spend against the session budget
+    All side-effects are non-blocking — any exception is silently swallowed
+    so ContextLens/BudgetGovernor issues never break a tool call.
+    """
+    result: str = handler_fn(args)
+    root = args.get("root", ".")
+    token_est = len(result) // 4
+    try:
+        from pruvagraph.context_lens import record_tool_call
+        record_tool_call(tool_name, args, result, root=root)
+    except Exception:
+        pass  # ContextLens logging must never break a tool call
+    try:
+        from pruvagraph.budget_governor import record_spend
+        record_spend(token_est, tool_name, root=root)
+    except Exception:
+        pass  # Budget recording must never break a tool call
+    return result
 
 
 async def run_stdio_server() -> None:
@@ -609,7 +1228,7 @@ async def run_stdio_server() -> None:
             _st.tick()
         try:
             args = req.params.arguments or {}
-            result = handler(args)
+            result = _dispatch(req.params.name, args, handler)
             return CallToolResult(content=[TextContent(type="text", text=result)])
         except Exception as e:
             return CallToolResult(
@@ -621,18 +1240,27 @@ async def run_stdio_server() -> None:
             read_stream, write_stream,
             InitializationOptions(
                 server_name="pruvagraph",
-                server_version="1.4.0",
+                server_version="1.9.0",
                 capabilities=server.get_capabilities(
-                    notification_options=None,
+                    notification_options=NotificationOptions(),
                     experimental_capabilities={},
                 ),
             ),
         )
 
 
-def write_ide_configs(root: Path = Path(".")) -> dict[str, Path]:
+def write_ide_configs(
+    root: Path = Path("."),
+    disabled_modules: list[str] | None = None,
+) -> dict[str, Path]:
     """
     Write MCP config files for all major IDEs.
+
+    Args:
+        root:             Project root directory.
+        disabled_modules: List of module keys to disable via env var.
+                          When set, PRUVAGRAPH_DISABLED_MODULES is written
+                          into the server's env block in all IDE configs.
 
     Returns:
         Dict of {ide_name: config_path} for all files written.
@@ -642,12 +1270,16 @@ def write_ide_configs(root: Path = Path(".")) -> dict[str, Path]:
     exe = shutil.which("pruvagraph") or "python -m pruvagraph.mcp_server"
     server_cmd = [exe, "mcp-serve"] if shutil.which("pruvagraph") else ["python", "-m", "pruvagraph.mcp_server"]
 
+    server_env: dict[str, str] = {}
+    if disabled_modules:
+        server_env["PRUVAGRAPH_DISABLED_MODULES"] = ",".join(disabled_modules)
+
     mcp_config = {
         "mcpServers": {
             "pruvagraph": {
                 "command": server_cmd[0],
                 "args": server_cmd[1:],
-                "env": {},
+                "env": server_env,
                 "description": "PruvaGraph knowledge graph — query your codebase",
             }
         }
@@ -704,19 +1336,33 @@ def _write_claude_md(path: Path) -> None:
 
 This project uses PruvaGraph to maintain a knowledge graph of the codebase.
 
-## Available MCP Tools (v1.3.0 — 9 tools)
+## Available MCP Tools (v1.9.0 — 23 tools)
 
-| Tool              | Usage                                              |
-|-------------------|----------------------------------------------------|
-| `query_graph`     | Ask anything about the codebase in natural language |
-| `get_dependencies`| Find what a module/function depends on              |
-| `find_callers`    | Find who calls a function                           |
-| `get_summary`     | Get a one-sentence summary of any node              |
-| `list_communities`| See architectural module groupings                  |
-| `cost_report`     | View LLM cost savings from last build               |
-| `get_graph_diff`  | What changed since last build? (D1)                 |
-| `analyze_impact`  | What breaks if X changes? Risk-sorted list (D2)     |
-| `list_packages`   | Monorepo: list packages + cross-package edges (M1)  |
+| Tool                    | Usage                                              |
+|-------------------------|----------------------------------------------------|
+| `query_graph`           | Ask anything about the codebase in natural language |
+| `get_dependencies`      | Find what a module/function depends on              |
+| `find_callers`          | Find who calls a function                           |
+| `get_summary`           | Get a one-sentence summary of any node              |
+| `list_communities`      | See architectural module groupings                  |
+| `cost_report`           | View LLM cost savings from last build               |
+| `get_graph_diff`        | What changed since last build? (D1)                 |
+| `analyze_impact`        | What breaks if X changes? Risk-sorted list (D2)     |
+| `list_packages`         | Monorepo: list packages + cross-package edges (M1)  |
+| `remember`              | Persist a decision/task/blocker across sessions     |
+| `recall`                | Retrieve all persisted session memory               |
+| `validate_import`       | DriftGuard: check if a module/symbol exists         |
+| `scan_suggestion`       | DriftGuard: scan a diff for invalid imports         |
+| `get_active_context`    | ContextLens: session summary + token breakdown      |
+| `measure_token_usage`   | ContextLens: per-tool token cost this session       |
+| `trace_last_tool_calls` | ContextLens: recent tool call history               |
+| `create_checkpoint`     | TaskWeaver: save agent step with git micro-commit   |
+| `get_task_progress`     | TaskWeaver: show checkpoint DAG for a task          |
+| `rollback_to_checkpoint`| TaskWeaver: advisory rollback with git command      |
+| `list_checkpoints`      | TaskWeaver: list all checkpoints                    |
+| `check_budget`          | BudgetGovernor: remaining token budget this session |
+| `get_applicable_rules`  | RulesForge: context-aware rules for current file    |
+| `learn_from_accept`     | RulesForge: capture rule from accepted AI suggestion|
 
 ## Rebuilding the Graph
 
@@ -735,6 +1381,14 @@ pruvagraph impact SessionManager   # what breaks if SessionManager changes?
 pruvagraph impact auth.py --depth 4
 ```
 
+## Session Memory
+
+```
+remember(category="decisions", text="Use Gemini for doc extraction — 40x cheaper")
+remember(category="tasks", text="Wire preinjection into pipeline.py")
+recall()   # retrieve everything stored across sessions
+```
+
 ## Graph Location
 Output: `pruvagraph-out/`
   - `graph.json`        — full knowledge graph
@@ -744,7 +1398,7 @@ Output: `pruvagraph-out/`
   - `graph.html`        — interactive visualisation
 """
     if not path.exists():
-        path.write_text(content)
+        path.write_text(content, encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------

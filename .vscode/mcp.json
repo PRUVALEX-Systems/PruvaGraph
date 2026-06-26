@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "pruvagraph": {
+      "command": "C:\\Users\\affan\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+      "args": [
+        "-m",
+        "pruvagraph.cli",
+        "serve"
+      ],
+      "env": {},
+      "description": "PRUVALEX PruvaGraph \u2014 query your codebase knowledge graph"
+    }
+  }
+}

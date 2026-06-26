@@ -1,0 +1,9 @@
+# Everything except the extension output, assets, and runtime dependencies
+**/*
+!dist/
+!assets/
+!resources/
+!node_modules/**
+!LICENSE
+!package.json
+!README.md

@@ -9,8 +9,8 @@ fi
 NEW_VERSION="$1"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PYTHON_DIR="$ROOT/python"
-OMNIMCP_EXT="$ROOT/omnimcp/extension/package.json"
-OMNIMCP_EXT_STANDALONE="$ROOT/omnimcp/extension-standalone/package.json"
+PRUVAGRAPH_EXT="$ROOT/PruvaGraph/extension/package.json"
+PRUVAGRAPH_EXT_STANDALONE="$ROOT/PruvaGraph/extension-standalone/package.json"
 ROOT_PACKAGE="$ROOT/package.json"
 PYPROJECT="$PYTHON_DIR/pyproject.toml"
 INIT_FILE="$PYTHON_DIR/pruvagraph/__init__.py"
@@ -64,8 +64,8 @@ PY
 
 # Update JSON manifests
 replace_json_value "$ROOT_PACKAGE" "version" "$NEW_VERSION"
-replace_json_value "$OMNIMCP_EXT" "version" "$NEW_VERSION"
-replace_json_value "$OMNIMCP_EXT_STANDALONE" "version" "$NEW_VERSION"
+replace_json_value "$PRUVAGRAPH_EXT" "version" "$NEW_VERSION"
+replace_json_value "$PRUVAGRAPH_EXT_STANDALONE" "version" "$NEW_VERSION"
 
 # Update Python package version
 replace_pyproject_version "$PYPROJECT" "$NEW_VERSION"

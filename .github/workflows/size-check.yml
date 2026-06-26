@@ -23,36 +23,31 @@ jobs:
 
       - name: Install dependencies + vsce
         run: |
-          npm ci --workspaces
+          npm ci
           npm install -g @vscode/vsce
 
-      - name: Build
-        run: npm run build --workspaces
-
-      - name: Package VSIX (PR branch)
-        working-directory: extension
-        run: vsce package --no-dependencies
+      - name: Package VSIX
+        run: vsce package --no-git-tag-version --no-dependencies
 
       - name: Measure and assert VSIX size
         id: measure
-        working-directory: extension
         run: |
           VSIX_FILE=$(ls *.vsix | head -1)
           SIZE_KB=$(du -k "$VSIX_FILE" | cut -f1)
           SIZE_MB=$(node -e "console.log(($SIZE_KB / 1024).toFixed(2))")
 
-          echo "vsix_file=$VSIX_FILE" >> "$GITHUB_OUTPUT"
-          echo "size_kb=$SIZE_KB" >> "$GITHUB_OUTPUT"
-          echo "size_mb=${SIZE_MB}MB" >> "$GITHUB_OUTPUT"
+          echo "vsix_file=$VSIX_FILE"   >> "$GITHUB_OUTPUT"
+          echo "size_kb=$SIZE_KB"        >> "$GITHUB_OUTPUT"
+          echo "size_mb=${SIZE_MB}MB"    >> "$GITHUB_OUTPUT"
 
           echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "  VSIX Size Report"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "  File   : $VSIX_FILE"
-          echo "  Size   : ${SIZE_KB}KB (${SIZE_MB}MB)"
-          echo "  Budget : ${SIZE_LIMIT_KB}KB (10MB)"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  File    : $VSIX_FILE"
+          echo "  Size    : ${SIZE_KB}KB (${SIZE_MB}MB)"
+          echo "  Budget  : ${SIZE_LIMIT_KB}KB (10MB)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
           if [ "$SIZE_KB" -gt "$SIZE_LIMIT_KB" ]; then
             OVER=$((SIZE_KB - SIZE_LIMIT_KB))
@@ -60,10 +55,9 @@ jobs:
             echo "❌ VSIX exceeds budget by ${OVER}KB"
             echo ""
             echo "Common causes:"
-            echo "  - Bundled node_modules not excluded via .vscodeignore"
-            echo "  - Source maps included in production build"
-            echo "  - Large binary assets (use CDN or external download instead)"
-            echo "  - Python venv accidentally committed"
+            echo "  - node_modules not excluded via .vscodeignore"
+            echo "  - python/.venv accidentally packaged"
+            echo "  - Large binary assets not excluded"
             exit 1
           fi
 
@@ -77,24 +71,25 @@ jobs:
         if: always()
         with:
           script: |
-            const sizeKb = '${{ steps.measure.outputs.size_kb }}';
-            const sizeMb = '${{ '${{ steps.measure.outputs.size_mb }}' }}';
+            const sizeKb = parseInt('${{ steps.measure.outputs.size_kb }}');
+            const sizeMb = '${{ steps.measure.outputs.size_mb }}';
             const budget = 10240;
-            const passed = parseInt(sizeKb) <= budget;
-            const emoji = passed ? '✅' : '❌';
+            const passed = sizeKb <= budget;
+            const emoji  = passed ? '✅' : '❌';
             const status = passed ? 'within budget' : '**OVER BUDGET**';
 
-            const body = `## ${emoji} VSIX Size Check — ${status}
-
-            | Metric | Value |
-            |---|---|
-            | **VSIX size** | ${sizeKb}KB (${sizeMb}) |
-            | **Budget** | 10,240KB (10MB) |
-            | **Remaining** | ${budget - parseInt(sizeKb)}KB |
-            | **Status** | ${emoji} ${status} |
-
-            ${!passed ? '> ⚠️ **This PR increases the VSIX beyond the 10MB budget. Please reduce bundle size before merging.**' : ''}
-            `;
+            const body = [
+              `## ${emoji} VSIX Size Check — ${status}`,
+              '',
+              '| Metric | Value |',
+              '|--------|-------|',
+              `| **VSIX size** | ${sizeKb}KB (${sizeMb}) |`,
+              `| **Budget** | ${budget}KB (10MB) |`,
+              `| **Remaining** | ${budget - sizeKb}KB |`,
+              `| **Status** | ${emoji} ${status} |`,
+              '',
+              passed ? '' : '> ⚠️ **This PR increases VSIX beyond the 10MB budget. Reduce bundle size before merging.**',
+            ].join('\n');
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

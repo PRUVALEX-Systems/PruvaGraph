@@ -71,7 +71,7 @@ _RULES: list[RedactionRule] = [
     ),
 
     RedactionRule("google_api_key",
-        re.compile(r'\b(AIza[0-9A-Za-z\-_]{35})\b'),
+        re.compile(r'\b(AIza[0-9A-Za-z\-_]{35,})\b'),
         "[REDACTED:google_api_key]"),
 
     RedactionRule("sendgrid_key",

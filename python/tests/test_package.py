@@ -8,7 +8,7 @@ from pruvagraph.cli import main
 
 
 def test_version() -> None:
-    assert pruvagraph.__version__ == "1.5.0"
+    assert pruvagraph.__version__ == "1.9.0"
 
 
 def test_cli_help() -> None:

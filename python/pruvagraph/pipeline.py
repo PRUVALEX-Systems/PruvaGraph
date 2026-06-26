@@ -691,6 +691,19 @@ def _run_pipeline(cfg: BuildConfig) -> BuildResult:
     # Export graph AFTER enrichment (and AFTER loading old graph for diff)
     graph_json_path, html_path = export_graph(G, out_dir, no_viz=cfg.no_viz)
 
+    # Arch5: Update CLAUDE.md pre-injection block (idempotent — skips if unchanged)
+    # This is the single highest-ROI step: Claude Code reads CLAUDE.md at session
+    # start automatically, so every build refreshes the architecture context for
+    # free — zero tool calls, zero extra turns needed.
+    try:
+        from pruvagraph.preinjection import write_injection
+        claude_md = cfg.root / "CLAUDE.md"
+        updated = write_injection(claude_md, graph_json_path, root=cfg.root)
+        if updated:
+            _rich_print("  [Arch5] CLAUDE.md pre-injection updated — session context refreshed", "green")
+    except Exception:
+        pass  # never abort the build for an optional enhancement
+
     # A1: Build embedding index (after export so graph.json is final)
     try:
         from pruvagraph.embedder import build_embedding_index, is_available
@@ -793,6 +806,12 @@ def _rich_print(msg: str, color: str = "white") -> None:
         Console().print(f"[{color}]{msg}[/{color}]")
     except ImportError:
         print(msg)
+    except UnicodeEncodeError:
+        # Windows cp1252 console can't render Unicode symbols (e.g. checkmarks).
+        # Strip them and fall back to plain ASCII print.
+        import re
+        plain = re.sub(r'[^\x00-\x7F]', '', msg).strip()
+        print(plain)
 
 
 def build_graph_from_extractions(
