@@ -1,1 +1,4 @@
 pruvagraph-out/
+dist/
+build/
+*.egg-info/

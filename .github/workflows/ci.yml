@@ -159,6 +159,7 @@ jobs:
       - name: Run benchmark suite (84 questions, backend=none)
         working-directory: python
         run: |
+          python -m pruvagraph.cli .
           python -m pruvagraph.cli benchmark-suite \
             --root . \
             --output /tmp/ci_benchmark.jsonl
