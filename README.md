@@ -2,7 +2,7 @@
 
 > **Turn your codebase into a knowledge graph. Save 70–82% on LLM tokens. Keep code private.**
 
-[![Version](https://img.shields.io/badge/version-1.9.0-teal.svg)](https://github.com/PRUVALEX-Systems/PruvaGraph)
+[![Version](https://img.shields.io/badge/version-1.9.1-teal.svg)](https://github.com/PRUVALEX-Systems/PruvaGraph)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.85-blue.svg)](https://marketplace.visualstudio.com/)
 [![Tests](https://img.shields.io/badge/tests-508%20passed-brightgreen.svg)](#test-coverage)
 [![Coverage](https://img.shields.io/badge/coverage-JS%20%7C%20Python-yellow.svg)](#test-coverage)
@@ -21,9 +21,9 @@ questions with **70–82% fewer tokens** and **zero code leaving your machine**.
 
 ### 1 — Install the VS Code Extension
 
-**From VSIX (v1.9.0):**
+**From VSIX (v1.9.1):**
 ```bash
-code --install-extension pruvalex-pruvagraph-1.9.0.vsix
+code --install-extension pruvalex-pruvagraph-1.9.1.vsix
 ```
 
 Or search `"PRUVALEX PruvaGraph"` in the VS Code Extensions marketplace.
@@ -63,7 +63,7 @@ traversal, deterministic routing, and exact-match caching — not from approxima
 
 > **Known limitation — banner numbers are point-in-time snapshots.**
 > The `70.5%–81.5%` figures shown in the CLI banner (`LOGO` in `cli.py:60`) and
-> in this README tagline are hardcoded strings from the v1.9.0 benchmark run.
+> in this README tagline are hardcoded strings from the v1.9.1 benchmark run.
 > They follow the same pattern as the stale `31.6%` bug fixed in v1.9.0
 > (see CHANGELOG §Fixed — 31.6% Stale Hardcoded Savings Claim).
 > After any future benchmark rerun that produces meaningfully different numbers,
