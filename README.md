@@ -1,6 +1,7 @@
 <div align="center">
 
-<br>
+<img width="2976" height="1438" alt="Gemini_Generated_Image_9z09pu9z09pu9z09" src="https://github.com/user-attachments/assets/39b951ec-bd38-41fa-8fd6-a522c7ed1d1e" />
+
 
 <img src="docs/logo.png" width="88" alt="PruvaGraph logo">
 
@@ -27,7 +28,8 @@ Same questions. 70–82% fewer tokens. Zero code leaves your machine.**
 
 <br>
 
-</div>
+<img width="1421" height="1012" alt="image" src="https://github.com/user-attachments/assets/b23703db-621b-4755-9f0d-b62c6e1ba306" />
+
 
 ---
 
@@ -37,7 +39,8 @@ Same questions. 70–82% fewer tokens. Zero code leaves your machine.**
 
 </div>
 
-![PruvaGraph knowledge graph — 46,000 nodes, force-directed layout](docs/screenshot-graph.png)
+<img width="1920" height="954" alt="image" src="https://github.com/user-attachments/assets/2e5bad80-37f7-4bbe-9fba-599a2faba51c" />
+
 
 > *PruvaGraph's interactive HTML visualizer — every node is a module, function, or class. Every edge is a real dependency. Zoom, filter, search. Runs locally, no server.*
 
